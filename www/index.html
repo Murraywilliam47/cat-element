@@ -93,6 +93,16 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
 .node .lbl{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:6px;width:120px;font:900 12px/1.15 var(--body);color:var(--ink);text-shadow:0 2px 0 #0b0818,0 0 6px #0b0818;pointer-events:none}
 .node .lbl small{display:block;font:800 10px/1.3 var(--body);color:var(--gold);letter-spacing:.04em}
 .node svg{width:22px;height:22px;position:static}
+.big.small{font-size:16px;padding:10px 18px;box-shadow:0 4px 0 #120d24}
+.pause-btn{display:flex;align-items:center;gap:5px;font-size:11px;padding:6px 10px;color:var(--ink)}
+.settings{width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px;background:var(--panel);border-radius:16px;padding:14px 16px;text-align:left}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;font:800 15px var(--body);color:var(--ink)}
+.setrow input[type=range]{flex:1;max-width:210px;accent-color:var(--gold);height:28px}
+.setrow input[type=checkbox]{width:24px;height:24px;accent-color:var(--gold)}
+.seg{display:flex;background:var(--panel-2);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;color:var(--muted);font:800 13px var(--body);padding:8px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#17122b}
+.setnote{margin:0;font-size:12px!important;color:var(--muted)}
 .pearl-card{background:var(--panel);border-radius:16px;padding:10px 14px;border-left:4px solid #8fd3ff;text-align:left;max-width:520px;font-size:14px;color:var(--muted)}
 .pearl-card b{color:var(--ink)}
 @keyframes pulse{from{transform:scale(.85);opacity:1}to{transform:scale(1.25);opacity:0}}
@@ -121,8 +131,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
         </div>
       </div>
       <div class="meta-row">
-        <button class="icon-btn" id="mapBtn">Map</button>
-        <button class="icon-btn" id="soundBtn" aria-pressed="true">Sound on</button>
+        <button class="icon-btn pause-btn" id="pauseBtn" aria-label="Pause"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1" width="3" height="10" rx="1" fill="currentColor"/><rect x="7" y="1" width="3" height="10" rx="1" fill="currentColor"/></svg> Pause</button>
       </div>
     </div>
   </header>
@@ -132,7 +141,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <div id="hint" hidden></div>
     <div id="toast"></div>
     <div id="forms" role="group" aria-label="Pearl's forms" hidden></div>
-    <div class="keys"><kbd>←</kbd><kbd>→</kbd> move &nbsp;<kbd>Space</kbd> jump &nbsp;<kbd>E</kbd> power &nbsp;<kbd>1</kbd>–<kbd>5</kbd> cat &nbsp;<kbd>Q</kbd> change form</div>
+    <div class="keys"><kbd>←</kbd><kbd>→</kbd> move &nbsp;<kbd>Space</kbd> jump &nbsp;<kbd>E</kbd> power &nbsp;<kbd>1</kbd>–<kbd>5</kbd> cat &nbsp;<kbd>Q</kbd> change form &nbsp;<kbd>Esc</kbd> pause</div>
   </div>
   <div class="pad" id="pad">
     <div class="grp">
@@ -167,6 +176,23 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
       <svg viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true" id="worldSvg"></svg>
     </div>
     <p id="mapNote">Tap a level to play.</p>
+    <div class="btns"><button class="big alt small" id="tutBtn">Cat School (tutorial)</button><button class="big alt small" id="mapSettingsBtn">Settings</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="pauseScreen" hidden>
+  <div class="card">
+    <h2 id="pauseTitle">Paused</h2>
+    <div class="btns" id="pauseBtns"><button class="big" id="resumeBtn">Resume</button><button class="big alt" id="restartBtn">Restart level</button><button class="big alt" id="pauseMapBtn">World map</button></div>
+    <div class="settings">
+      <div class="setrow"><label for="musicVol">Music</label><input type="range" id="musicVol" min="0" max="100" step="5"></div>
+      <div class="setrow"><label for="fxVol">Sound effects</label><input type="range" id="fxVol" min="0" max="100" step="5"></div>
+      <div class="setrow"><span>Difficulty</span><div class="seg" id="diffSeg" role="group" aria-label="Difficulty"><button data-d="easy">Easy</button><button data-d="normal">Normal</button><button data-d="hard">Hard</button></div></div>
+      <div class="setrow"><label for="shakeChk">Screen shake</label><input type="checkbox" id="shakeChk"></div>
+      <div class="setrow"><label for="vibeChk">Vibration</label><input type="checkbox" id="vibeChk"></div>
+      <p class="setnote">Easy gives extra hearts and slower enemies. Hard gives fewer hearts and faster enemies. Difficulty changes when a level starts.</p>
+    </div>
+    <div class="btns" id="settingsBackRow" hidden><button class="big" id="settingsBackBtn">Done</button></div>
   </div>
 </div>
 
@@ -378,10 +404,26 @@ const LEVELS=[
     build:(f,g)=>{ f(0,0,0,13,'#'); g(1,34,12); f(6,9,8,8,'='); f(26,29,8,8,'='); f(15,20,5,5,'='); f(35,35,0,13,'#'); },
     enemies:[] },
 ];
+const TUTORIAL={ name:'Cat School', theme:'garden', w:104, start:3, goal:[96,11], speed:.8, tutorial:true,
+  build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,12,12); f(7,9,9,9,'='); f(13,23,12,13,'~'); g(24,48,12); f(29,30,0,11,'W'); f(38,39,0,11,'S');
+    g(49,64,7); f(58,59,0,6,'R'); g(65,100,12); p(70,11,'K'); f(101,103,0,13,'#'); },
+  enemies:[['bunny',80]],
+  signs:[
+    {c:4, text:'Welcome to Cat School! Move with the arrows and tap JUMP. Grab the fish!'},
+    {c:11,text:'Water ahead! Tap PEARL at the top, then tap FREEZE at the edge of the pond.'},
+    {c:26,text:'A wooden wall. Switch to QUINCY and tap SCREAM to burn it.'},
+    {c:35,text:'A shadow wall! MILEY can walk straight through shadows.'},
+    {c:45,text:'Too high to jump! LEXUS can jump, then jump again in the air.'},
+    {c:54,text:'Boulders! COOKIE can SMASH them. Heavy moves tire him out, so watch his stamina bar.'},
+    {c:67,text:'Every cat has more forms. Tap the buttons in the bottom-left, or press Q, to switch.'},
+    {c:74,text:'A dust bunny! Jump on its head or hit it with a power. Flags are checkpoints.'},
+    {c:91,text:'Reach the cushion to graduate!'},
+  ] };
+function levelDef(i){ return i==='tut' ? TUTORIAL : LEVELS[i]; }
 const MAP_PTS=[[62,232],[140,184],[228,222],[322,176],[272,96],[128,74]];
 
 function buildMap(i){
-  const L=LEVELS[i];
+  const L=levelDef(i);
   const m=Array.from({length:H},()=>Array(L.w).fill(' '));
   const f=(x0,x1,y0,y1,c)=>{ for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++) m[y][x]=c; };
   L.build(f,(x0,x1,top)=>f(x0,x1,top,13,'#'),(x,y,c)=>{ m[y][x]=c; });
@@ -403,6 +445,7 @@ const FISH_TOTAL=LEVELS.map((_,i)=>buildMap(i).fish.length);
 /* ================= progress ================= */
 let progress={unlocked:0,best:[0,0,0,0,0,0],beaten:false,v:3};
 try{ const s=JSON.parse(localStorage.getItem('cat-element-progress')||'null'); if(s&&typeof s.unlocked==='number'){ progress=Object.assign(progress,s); if(s.v!==3) progress.best=[0,0,0,0,0,0]; progress.v=3; } }catch(e){}
+if(progress.tutorialDone===undefined) progress.tutorialDone = progress.unlocked>0;
 function saveProgress(){ try{ localStorage.setItem('cat-element-progress',JSON.stringify(progress)); }catch(e){} }
 
 /* ================= state ================= */
@@ -428,13 +471,13 @@ function solidE(tx,ty){ const c=tile(tx,ty); return c!==' ' && (SOLID.includes(c
 function topAt(col){ for(let y=0;y<H;y++) if('#=IVP'.includes(tile(col,y))) return y; return 12; }
 
 function makeEnemy(type,col,a,b){
-  const sp=(lvl&&lvl.speed)||1;
+  const sp=((lvl&&lvl.speed)||1)*DIFF[settings.diff].speed;
   if(type==='bunny'||type==='spiky'){ const top=topAt(col); return {type,x:col*T+5,y:top*T-18,w:22,h:18,vx:-(type==='spiky'?52:48)*sp,alive:true,ph:Math.random()*6,frozen:0}; }
   if(type==='spray'){ const top=topAt(col); return {type,x:col*T+7,y:top*T-26,w:18,h:26,dir:a||-1,t:1+Math.random(),rate:1.7/sp,alive:true,ph:0,frozen:0}; }
   return {type:'moth',x0:col*T+16,y0:a*T+16,x:col*T+6,y:a*T+8,w:20,h:16,ph:Math.random()*6,alive:true,frozen:0,range:(b||3)*T,dir:1,sp};
 }
 function loadLevel(i){
-  lvlIdx=i; lvl=LEVELS[i]; W=lvl.w; theme=THEMES[lvl.theme];
+  lvlIdx=i; lvl=levelDef(i); W=lvl.w; theme=THEMES[lvl.theme];
   const b=buildMap(i); map=b.map; fish=b.fish;
   fx={queue:[],queued:new Set(),burning:new Map()};
   enemies=lvl.enemies.map(e=>makeEnemy(...e));
@@ -442,14 +485,14 @@ function loadLevel(i){
   GOAL = lvl.goal ? {x:lvl.goal[0]*T-12,y:lvl.goal[1]*T,w:56,h:32} : null;
   boss=null;
   if(lvl.boss){ const ids=shuffle(CATS.map(c=>c.id)); const extra=shuffle(CATS.map(c=>c.id).filter(x=>x!==ids[4])).slice(0,2); boss={x:24*T,y:12*T-58,w:92,h:58,vx:0,dir:-1,state:'roam',t:2.2,hp:7,max:7,order:ids.concat(extra),idx:0,inv:0,anim:0,shotT:0,raged:false}; }
-  maxHearts = lvl.boss?5:3; hearts=maxHearts;
+  maxHearts = Math.max(1,(lvl.boss?5:3)+DIFF[settings.diff].hearts); hearts=maxHearts;
   const sy=topAt(lvl.start);
   player={x:lvl.start*T,y:sy*T-26,w:24,h:26,vx:0,vy:0,ext:0,facing:1,onGround:false,coyote:0,airJumps:1,airDash:true,dashT:0,cool:0,inv:0,prevBottom:0,cloudT:0,cloudUsed:false,zapT:0,sprintT:0,blinkT:0,shineT:0,rollT:0,stormT:0,lion:false,stam:100,tiredT:0,pound:false};
   shadowT=0;
   lastSafe={x:player.x,y:player.y}; checkpoint={x:player.x,y:player.y};
   time=0; deadT=0; finishing=0; flashT=0;
   for(const k in input) input[k]=false;
-  document.getElementById('levelTag').textContent=`${i+1} · ${lvl.name}`;
+  document.getElementById('levelTag').textContent= i==='tut' ? 'Cat School' : `${i+1} · ${lvl.name}`;
   resize();
   cam.x=0; cam.y=viewH>=H*T?H*T-viewH:Math.max(0,player.y-viewH*.5);
   updateFish(); updateHearts(); setHint('');
@@ -486,7 +529,11 @@ function initAudio(){
   reverb.buffer=ir; const rg=ac.createGain(); rg.gain.value=.35; reverb.connect(rg); rg.connect(comp);
   noiseBuf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);
   const nd=noiseBuf.getChannelData(0); for(let i=0;i<nd.length;i++) nd[i]=Math.random()*2-1;
+  musicBus=ac.createGain(); musicBus.connect(comp);
+  const mrv=ac.createGain(); mrv.gain.value=.3; musicBus.connect(mrv); mrv.connect(reverb);
+  applyVolumes();
   ac.resume();
+  if(pendingSong){ const s=pendingSong; pendingSong=null; playMusic(s); }
 }
 function out(node,wet){ node.connect(master); if(wet){ const s=ac.createGain(); s.gain.value=wet; node.connect(s); s.connect(reverb); } }
 function env(g,t,a,peak,d){ g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+a+d); }
@@ -567,9 +614,89 @@ function sfx(type){
   if(!ac||!soundOn||!master) return;
   const now=performance.now(); if(lastPlay[type] && now-lastPlay[type]<40) return; lastPlay[type]=now;
   const fn=SOUNDS[type]; if(fn) try{ fn(); }catch(e){}
+  if(type==='scream'||type==='roar'||type==='boom'||type==='bosshit'||type==='crash') vibrate(35);
 }
-const soundBtn=document.getElementById('soundBtn');
-soundBtn.addEventListener('click',()=>{ soundOn=!soundOn; soundBtn.textContent=soundOn?'Sound on':'Sound off'; soundBtn.setAttribute('aria-pressed',soundOn); soundBtn.blur(); });
+/* ---------- settings (saved on this device) ---------- */
+let settings={music:60,fx:85,diff:'normal',shake:true,vibe:true};
+try{ Object.assign(settings,JSON.parse(localStorage.getItem('cat-element-settings')||'{}')); }catch(e){}
+if(!['easy','normal','hard'].includes(settings.diff)) settings.diff='normal';
+const DIFF={easy:{hearts:2,speed:.8},normal:{hearts:0,speed:1},hard:{hearts:-1,speed:1.2}};
+function saveSettings(){ try{ localStorage.setItem('cat-element-settings',JSON.stringify(settings)); }catch(e){} applyVolumes(); }
+function applyVolumes(duck){ soundOn=settings.fx>0; if(master) master.gain.value=.9*settings.fx/100; if(musicBus) musicBus.gain.value=.5*settings.music/100*(duck?.35:1); }
+function vibrate(ms){ if(!settings.vibe) return; try{ navigator.vibrate&&navigator.vibrate(ms); }catch(e){} }
+
+/* ---------- background music: a small live sequencer, one song per world ---------- */
+let musicBus=null, pendingSong=null;
+const music={name:null,next:0,step:0,timer:null,pat:{}};
+const SONGS={
+  menu:  {bpm:84, root:53,chords:[[0,4,7,11],[5,9,12,16],[2,5,9,12],[7,11,14,17]],scale:[0,2,4,5,7,9,11],lead:'bell',drums:0,density:.42},
+  garden:{bpm:108,root:60,chords:[[0,4,7],[5,9,12],[9,12,16],[7,11,14]],scale:[0,2,4,7,9],lead:'tri',drums:1,density:.62},
+  frost: {bpm:88, root:57,chords:[[0,3,7],[8,12,15],[3,7,10],[10,14,17]],scale:[0,2,3,5,7,8,10],lead:'bell',drums:0,density:.5},
+  ember: {bpm:100,root:62,chords:[[0,3,7],[5,9,12],[0,3,7],[10,14,17]],scale:[0,2,3,5,7,9,10],lead:'tri',drums:1,density:.58},
+  roof:  {bpm:92, root:52,chords:[[0,3,7,10],[5,8,12,15],[10,14,17,21],[8,12,15,19]],scale:[0,3,5,7,10],lead:'bell',drums:2,density:.55,swing:.2},
+  peaks: {bpm:124,root:50,chords:[[0,3,7],[10,14,17],[8,12,15],[7,10,14]],scale:[0,2,3,5,7,8,10],lead:'saw',drums:1,density:.68},
+  lair:  {bpm:138,root:48,chords:[[0,3,7],[0,3,7],[8,12,15],[7,11,14]],scale:[0,1,3,5,7,8,11],lead:'saw',drums:3,density:.72,ostinato:true},
+};
+const midiHz=m=>440*Math.pow(2,(m-69)/12);
+function songPattern(name){
+  if(music.pat[name]) return music.pat[name];
+  const S=SONGS[name], rnd=srand([...name].reduce((a,c)=>a*31+c.charCodeAt(0),7)), bars=S.chords.length*2, mel=[];
+  let prev=S.root+12+S.scale[2];
+  for(let b=0;b<bars;b++){ const ch=S.chords[b%S.chords.length];
+    for(let s=0;s<8;s++){
+      const strong=s%4===0, play=strong?rnd()<.9:rnd()<S.density*(s%2?.7:1);
+      if(!play){ mel.push(null); continue; }
+      let n;
+      if(strong){ n=S.root+12+ch[Math.floor(rnd()*ch.length)]; }
+      else { const pool=[]; for(let o=0;o<2;o++) for(const d of S.scale) pool.push(S.root+12+o*12+d); pool.sort((a,c)=>Math.abs(a-prev)-Math.abs(c-prev)); n=pool[Math.floor(rnd()*3)]; }
+      if(b===bars-1&&s===4) n=S.root+12+ch[0];
+      mel.push(n); prev=n;
+    } }
+  return (music.pat[name]={mel,bars});
+}
+function mvoice(type,f,t,dur,gain,lp,a=.01){
+  const o=ac.createOscillator(); o.type=type; o.frequency.value=f;
+  const g=ac.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(gain,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  if(lp){ const fl=ac.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=lp; o.connect(fl); fl.connect(g); } else o.connect(g);
+  g.connect(musicBus); o.start(t); o.stop(t+dur+.05);
+}
+function mnoise(t,dur,type,f,gain){
+  const s=ac.createBufferSource(); s.buffer=noiseBuf; const fl=ac.createBiquadFilter(); fl.type=type; fl.frequency.value=f;
+  const g=ac.createGain(); g.gain.setValueAtTime(gain,t); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  s.connect(fl); fl.connect(g); g.connect(musicBus); s.start(t,Math.random()*1.5); s.stop(t+dur+.02);
+}
+function musicStep(S,P,step,t,sd){
+  const bar=Math.floor(step/8), s=step%8, ch=S.chords[bar%S.chords.length];
+  if(s===0) for(const c of ch.slice(0,3)) mvoice('sine',midiHz(S.root+c),t,sd*8.2,.022,0,.25);
+  const n=P.mel[step];
+  if(n){ if(S.lead==='bell'){ mvoice('sine',midiHz(n),t,1.1,.05); mvoice('sine',midiHz(n+12),t,.5,.012); }
+    else if(S.lead==='saw') mvoice('sawtooth',midiHz(n),t,sd*1.5,.03,1500);
+    else mvoice('triangle',midiHz(n),t,sd*1.6,.06,3200); }
+  const bassN=S.root-12+ch[0];
+  if(S.ostinato){ mvoice('sawtooth',midiHz(bassN+(s%2?12:0)),t,sd*.9,.05,500); }
+  else if(s===0||s===4||(S.drums&&s===6)) mvoice('triangle',midiHz(bassN+(s===6?7:0)),t,sd*1.8,.1,900);
+  if(S.drums===1){ if(s===0||s===4) mvoice('sine',120,t,.14,.18,0,.002); if(s%2) mnoise(t,.03,'highpass',7000,.025); if(s===6) mnoise(t,.1,'bandpass',1800,.05); }
+  if(S.drums===2){ if(s%2) mnoise(t,.05,'highpass',6000,.02); if(s===2||s===6) mnoise(t,.05,'bandpass',2500,.04); if(s===0) mvoice('sine',90,t,.18,.12,0,.002); }
+  if(S.drums===3){ if(s===0||s===3||s===4) mvoice('sine',110,t,.15,.24,0,.002); if(s===2||s===6) mnoise(t,.12,'bandpass',1600,.09); mnoise(t,.025,'highpass',8000,.02); }
+}
+function scheduleMusic(){
+  if(!ac||!musicBus||!music.name||ac.state!=='running') return;
+  const S=SONGS[music.name], P=songPattern(music.name), sd=60/S.bpm/2;
+  if(music.next<ac.currentTime) music.next=ac.currentTime+.05;
+  while(music.next<ac.currentTime+.25){
+    const t=music.next+((music.step%2&&S.swing)?S.swing*sd:0);
+    try{ musicStep(S,P,music.step,t,sd); }catch(e){}
+    music.next+=sd; music.step=(music.step+1)%(P.bars*8);
+  }
+}
+function playMusic(name){
+  if(!ac||!musicBus){ pendingSong=name; return; }
+  if(music.name===name) return;
+  music.name=name; music.step=0; music.next=ac.currentTime+.1;
+  if(!music.timer) music.timer=setInterval(scheduleMusic,40);
+}
+function levelSong(){ return lvl&&lvl.boss ? 'lair' : (lvl?lvl.theme:'garden'); }
+document.addEventListener('visibilitychange',()=>{ if(!ac) return; if(document.hidden){ if(running) pauseGame(); ac.suspend(); } else ac.resume(); });
 
 /* ================= cat switching & Pearl's forms ================= */
 const roster=document.getElementById('roster'), powerBtn=document.getElementById('powerBtn'), formsEl=document.getElementById('forms');
@@ -968,7 +1095,7 @@ function overlap(a,b){ return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a
 function hurt(fromX){
   const p=player; if(p.inv>0||deadT>0||finishing) return;
   if(p.stormT>0||p.lion) return;
-  hearts--; updateHearts(); sfx('hurt'); shakeT=.2; p.cloudT=0;
+  hearts--; updateHearts(); sfx('hurt'); vibrate(90); shakeT=.2; p.cloudT=0;
   puff(p.x+p.w/2,p.y+p.h/2,'#ff6b8a',12,160,.5,3);
   if(hearts<=0){ gameOver(); return; }
   p.inv=1.3; const d=Math.sign(p.x+p.w/2-fromX)||-p.facing; p.vx=d*260; p.vy=-330; p.dashT=0;
@@ -977,7 +1104,7 @@ function hazard(kind){
   if(deadT>0||finishing) return;
   const p=player; deadT=.75; p.cloudT=0;
   puff(p.x+p.w/2,Math.min(p.y+p.h,H*T),kind==='spike'?'#ff6b8a':'#8fd0ff',26,240,.7,3,600); sfx(kind==='spike'?'hurt':'splash');
-  hearts--; updateHearts();
+  hearts--; updateHearts(); vibrate(120);
   if(hearts<=0){ gameOver(); return; }
   toast(kind==='spike'?'Ouch! Spikes':kind==='fall'?'Whoops! Mind the gap':'Splash! Cats hate water');
 }
@@ -1313,7 +1440,7 @@ function render(dt){
     ctx.save(); ctx.globalAlpha=.07; ctx.fillStyle='#ffe6a8'; for(let i=0;i<6;i++){ const a=-2.2+i*.28+Math.sin(time*.2+i)*.03; ctx.beginPath(); ctx.moveTo(cw*.7,ch*.62); ctx.lineTo(cw*.7+Math.cos(a)*ch*1.4,ch*.62+Math.sin(a)*ch*1.4); ctx.lineTo(cw*.7+Math.cos(a+.08)*ch*1.4,ch*.62+Math.sin(a+.08)*ch*1.4); ctx.fill(); } ctx.restore();
     ctx.fillStyle='#ffcf7a'; ctx.beginPath(); ctx.arc(cw*.7,ch*.62,52,0,7); ctx.fill(); }
   drawClouds(cw,ch);
-  let sx=0, sy=0; if(shakeT>0 && !reduceMotion){ sx=(Math.random()-.5)*6; sy=(Math.random()-.5)*6; }
+  let sx=0, sy=0; if(shakeT>0 && !reduceMotion && settings.shake){ sx=(Math.random()-.5)*6; sy=(Math.random()-.5)*6; }
   ctx.setTransform(dpr*scale,0,0,dpr*scale,(-cam.x*scale+sx)*dpr,(-cam.y*scale+sy)*dpr);
   const skyTop=theme.sky[1];
   mountains(.1,8.2*T,mixc(theme.hills[0],skyTop,.45),(theme===THEMES.frost||theme===THEMES.peaks)?'rgba(235,245,255,.75)':null,3);
@@ -1329,6 +1456,7 @@ function render(dt){
     for(let x=c0;x<=c1;x++) if(!'#V'.includes(tile(x,H-1))){ ctx.fillStyle='rgba(5,3,14,.75)'; ctx.fillRect(x*T,H*T,T,cam.y+viewH-H*T+10); }
   }
   if(GOAL) drawGoal();
+  if(lvl.signs) drawSigns();
   for(const f of fish) if(!f.got) drawFish(f);
   for(const e of enemies) if(e.alive){ ({bunny:drawBunny,spiky:drawSpiky,spray:drawSpray,moth:drawMoth})[e.type](e); if(e.frozen>0) drawIce(e); }
   if(boss) drawBoss(boss);
@@ -1669,6 +1797,34 @@ function drawTile(x,y){
       break; }
   }
 }
+function drawSigns(){
+  const pc=(player.x+player.w/2)/T;
+  for(const s of lvl.signs){
+    const top=topAt(s.c), gx=s.c*T+16, gy=top*T;
+    if(gx<cam.x-260||gx>cam.x+viewW+260) continue;
+    ctx.fillStyle='#6e4423'; ctx.fillRect(gx-2,gy-26,4,26);
+    ctx.fillStyle='#c38a52'; rr(ctx,gx-11,gy-34,22,14,3); ctx.fill(); ctx.strokeStyle='#6e4423'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#2a1a10'; ctx.font='900 11px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillText('?',gx,gy-23);
+    const d=Math.abs(pc-s.c); if(d>5) continue;
+    const a=Math.min(1,(5-d)/1.5);
+    ctx.save(); ctx.globalAlpha=a;
+    ctx.font='800 11px Nunito, sans-serif';
+    const maxW=Math.min(190,viewW-24), words=s.text.split(' '), lines=[]; let line='';
+    for(const w of words){ const tst=line?line+' '+w:w; if(ctx.measureText(tst).width>maxW-16 && line){ lines.push(line); line=w; } else line=tst; }
+    if(line) lines.push(line);
+    const bw=Math.min(maxW,Math.max(...lines.map(l=>ctx.measureText(l).width))+18), bh=lines.length*14+12;
+    let bx=Math.max(cam.x+8,Math.min(cam.x+viewW-bw-8,gx-bw/2)), by=gy-44-bh-Math.sin(time*2)*1.5;
+    ctx.fillStyle='rgba(15,10,30,.25)'; rr(ctx,bx+2,by+3,bw,bh,9); ctx.fill();
+    ctx.fillStyle='#fff3e3'; rr(ctx,bx,by,bw,bh,9); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(gx-6,by+bh); ctx.lineTo(gx,by+bh+8); ctx.lineTo(gx+6,by+bh); ctx.fill();
+    ctx.fillStyle='#231b3d'; ctx.textAlign='left';
+    lines.forEach((l,i)=>{
+      let x=bx+9; const y=by+18+i*14;
+      for(const part of l.split(/(\b[A-Z]{3,}\b)/)){ if(!part) continue; ctx.fillStyle=/^[A-Z]{3,}$/.test(part)?'#c0392b':'#231b3d'; ctx.fillText(part,x,y); x+=ctx.measureText(part).width; }
+    });
+    ctx.restore();
+  }
+}
 function drawFish(f){
   const y=f.y+Math.sin(time*3+f.ph)*3;
   ctx.fillStyle='rgba(255,207,90,.18)'; ctx.beginPath(); ctx.arc(f.x,y,13,0,7); ctx.fill();
@@ -1808,8 +1964,48 @@ function drawBoss(b){
 }
 
 /* ================= screens ================= */
-const screens=['titleScreen','mapScreen','clearScreen','overScreen','finalScreen'].map(id=>document.getElementById(id));
-function show(id){ for(const s of screens) s.hidden = s.id!==id; setHint(''); toastEl.classList.remove('on'); }
+const screens=['titleScreen','mapScreen','clearScreen','overScreen','finalScreen','pauseScreen'].map(id=>document.getElementById(id));
+function show(id){
+  for(const s of screens) s.hidden = s.id!==id; setHint(''); toastEl.classList.remove('on');
+  if(id && id!=='pauseScreen') playMusic('menu');
+}
+/* ---------- pause menu & settings ---------- */
+let paused=false, settingsFrom=null;
+const pauseScreen=document.getElementById('pauseScreen');
+function syncSettingsUI(){
+  document.getElementById('musicVol').value=settings.music;
+  document.getElementById('fxVol').value=settings.fx;
+  document.getElementById('shakeChk').checked=settings.shake;
+  document.getElementById('vibeChk').checked=settings.vibe;
+  document.querySelectorAll('#diffSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.d===settings.diff));
+}
+function pauseGame(){
+  if(!running||finishing||deadT>0&&hearts<=0) return;
+  running=false; paused=true; for(const k in input) input[k]=false;
+  document.getElementById('pauseTitle').textContent='Paused';
+  document.getElementById('pauseBtns').hidden=false; document.getElementById('settingsBackRow').hidden=true;
+  syncSettingsUI(); show('pauseScreen'); applyVolumes(true); sfx('swap');
+}
+function resumeGame(){ if(!paused) return; paused=false; show(null); running=true; applyVolumes(); }
+function openSettingsFromMap(){
+  settingsFrom='map';
+  document.getElementById('pauseTitle').textContent='Settings';
+  document.getElementById('pauseBtns').hidden=true; document.getElementById('settingsBackRow').hidden=false;
+  syncSettingsUI(); for(const s of screens) s.hidden = s.id!=='pauseScreen';
+}
+document.getElementById('pauseBtn').addEventListener('click',e=>{ e.currentTarget.blur(); pauseGame(); });
+document.getElementById('resumeBtn').addEventListener('click',resumeGame);
+document.getElementById('restartBtn').addEventListener('click',()=>{ paused=false; startLevel(lvlIdx); });
+document.getElementById('pauseMapBtn').addEventListener('click',()=>{ paused=false; showMap(); });
+document.getElementById('settingsBackBtn').addEventListener('click',()=>{ settingsFrom=null; showMap(); });
+document.getElementById('mapSettingsBtn').addEventListener('click',openSettingsFromMap);
+document.getElementById('tutBtn').addEventListener('click',()=>startLevel('tut'));
+document.getElementById('musicVol').addEventListener('input',e=>{ settings.music=+e.target.value; saveSettings(); if(paused) applyVolumes(true); });
+document.getElementById('fxVol').addEventListener('input',e=>{ settings.fx=+e.target.value; saveSettings(); if(paused) applyVolumes(true); });
+document.getElementById('fxVol').addEventListener('change',()=>sfx('fish'));
+document.getElementById('shakeChk').addEventListener('change',e=>{ settings.shake=e.target.checked; saveSettings(); });
+document.getElementById('vibeChk').addEventListener('change',e=>{ settings.vibe=e.target.checked; saveSettings(); vibrate(40); });
+document.querySelectorAll('#diffSeg button').forEach(b=>b.addEventListener('click',()=>{ settings.diff=b.dataset.d; saveSettings(); syncSettingsUI(); }));
 function fillLineup(el){
   el.innerHTML='';
   for(const c of CATS){
@@ -1861,13 +2057,24 @@ function startLevel(i){
   ensureAudio();
   loadLevel(i);
   selectCat(CATS.indexOf(cat),true);
-  show(null); running=true; fadeT=1.1;
+  paused=false; show(null); running=true; fadeT=1.1;
+  playMusic(levelSong());
   toast(lvl.boss ? 'Boss: the Vacuum King!' : lvl.name, 1.6);
 }
 function fmt(s){ s=Math.floor(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 function levelClear(){
   running=false;
   const got=fish.filter(f=>f.got).length;
+  if(lvlIdx==='tut'){
+    progress.tutorialDone=true; saveProgress();
+    document.getElementById('clearSub').textContent=`You graduated from Cat School! ${cat.name} is ready for the real adventure.`;
+    document.getElementById('clearFish').textContent=`${got}/${fish.length}`;
+    document.getElementById('clearTime').textContent=fmt(time);
+    document.getElementById('clearHearts').textContent=`${hearts}/${maxHearts}`;
+    const cv=document.getElementById('clearCat'); const g=cv.getContext('2d'); g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,cv.width,cv.height); g.setTransform(3.6,0,0,3.6,100,142); drawCat(g,cat,{});
+    document.getElementById('nextBtn').textContent='Start the adventure';
+    show('clearScreen'); return;
+  }
   progress.best[lvlIdx]=Math.max(progress.best[lvlIdx]||0,got);
   progress.unlocked=Math.max(progress.unlocked,Math.min(lvlIdx+1,LEVELS.length-1));
   if(lvl.boss) progress.beaten=true;
@@ -1897,14 +2104,13 @@ function fromCheckpoint(){
   for(const k in input) input[k]=false;
   show(null); running=true; toast('Back at the checkpoint',1.2);
 }
-document.getElementById('playBtn').addEventListener('click',()=>{ ensureAudio(); showMap(); });
-document.getElementById('nextBtn').addEventListener('click',()=>startLevel(Math.min(lvlIdx+1,LEVELS.length-1)));
+document.getElementById('playBtn').addEventListener('click',()=>{ ensureAudio(); if(!progress.tutorialDone) startLevel('tut'); else showMap(); });
+document.getElementById('nextBtn').addEventListener('click',()=>startLevel(lvlIdx==='tut'?0:Math.min(lvlIdx+1,LEVELS.length-1)));
 document.getElementById('clearMapBtn').addEventListener('click',showMap);
 document.getElementById('cpBtn').addEventListener('click',fromCheckpoint);
 document.getElementById('retryBtn').addEventListener('click',()=>startLevel(lvlIdx));
 document.getElementById('overMapBtn').addEventListener('click',showMap);
 document.getElementById('finalMapBtn').addEventListener('click',showMap);
-document.getElementById('mapBtn').addEventListener('click',e=>{ e.currentTarget.blur(); showMap(); });
 
 /* ================= input ================= */
 function press(k,v){
@@ -1914,10 +2120,13 @@ function press(k,v){
 }
 const KEYS={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'jump',w:'jump',W:'jump',' ':'jump',e:'power',E:'power',Shift:'power',x:'power',X:'power'};
 addEventListener('keydown',e=>{
-  if(!running){ if(e.key==='Enter' && !document.getElementById('titleScreen').hidden){ e.preventDefault(); ensureAudio(); showMap(); } return; }
+  if(!running){
+    if(paused && (e.key==='Escape'||e.key==='p'||e.key==='P')){ resumeGame(); return; }
+    if(e.key==='Enter' && !document.getElementById('titleScreen').hidden){ e.preventDefault(); document.getElementById('playBtn').click(); }
+    return; }
   if(e.key>='1'&&e.key<='5'){ selectCat(+e.key-1); return; }
   if(e.key==='q'||e.key==='Q'){ cycleForm(); return; }
-  if(e.key==='Escape'||e.key==='m'||e.key==='M'){ showMap(); return; }
+  if(e.key==='Escape'||e.key==='p'||e.key==='P'){ pauseGame(); return; }
   const k=KEYS[e.key]; if(!k) return; e.preventDefault(); if(e.repeat) return; press(k,true);
 });
 addEventListener('keyup',e=>{ const k=KEYS[e.key]; if(k) press(k,false); });
@@ -1936,7 +2145,7 @@ resize(); loadLevel(0); selectCat(0,true);
 let last=performance.now();
 function frame(now){
   const dt=Math.min(1/30,(now-last)/1000); last=now;
-  if(running) update(dt); else { time+=dt; updateParticles(dt); }
+  if(running) update(dt); else if(!paused){ time+=dt; updateParticles(dt); }
   render(dt);
   requestAnimationFrame(frame);
 }
