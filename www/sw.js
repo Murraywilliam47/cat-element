@@ -1,5 +1,5 @@
 // Cat Element offline support: caches the game so it opens without internet after the first visit.
-const CACHE = 'cat-element-v4';
+const CACHE = 'cat-element-v5';
 const APP_SHELL = [
   './',
   './index.html',
