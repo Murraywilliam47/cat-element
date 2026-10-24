@@ -25,6 +25,7 @@
   --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
   color-scheme:dark;
 }
+[hidden]{display:none!important}
 html,body{height:100%}
 body{background:var(--night);color:var(--ink);font-family:var(--body);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 #app{height:100%;display:flex;flex-direction:column}
@@ -84,12 +85,17 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
 #joyZone.right{left:auto;right:0}
 .joy-base{position:absolute;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:50%;border:3px solid rgba(255,243,227,.3);background:rgba(23,18,43,.4);pointer-events:none}
 .joy-knob{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,243,227,.6);box-shadow:0 3px 0 rgba(0,0,0,.3);pointer-events:none}
-.wheel{position:absolute;z-index:6;width:0;height:0;pointer-events:none}
-.wheel button{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:3px solid #0f0b1e;background:var(--panel-2);color:var(--ink);font:900 10px var(--body);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 4px 0 #0b0818;pointer-events:auto;transition:transform .08s}
-.wheel button.hot{border-color:var(--gold);transform:scale(1.18)}
-.wheel button.cur{background:#43377a}
-.wheel button canvas{width:44px;height:32px}
-.wheel button svg{width:24px;height:24px}
+.wheel{--ts:64px;position:absolute;z-index:6;display:flex;flex-direction:column;gap:8px;padding:10px 10px 12px;background:rgba(23,18,43,.96);border:2px solid var(--el);border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,.45);pointer-events:none;animation:trayIn .12s ease-out}
+@keyframes trayIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wheel .tray-title{font:900 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--el);text-align:center}
+.wheel .tray-row{display:flex;gap:8px}
+.wheel button{position:relative;width:var(--ts);height:calc(var(--ts) + 6px);flex:none;border-radius:14px;border:2px solid transparent;background:var(--panel-2);color:var(--ink);font:900 11px/1 var(--body);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;pointer-events:auto;transition:transform .08s,border-color .08s,background .08s}
+.wheel button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+.wheel button.cur{background:#3d3170;border-color:rgba(255,243,227,.25)}
+.wheel button.cur::after{content:'';position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--el)}
+.wheel button.hot{border-color:var(--gold);background:#4a3d86;transform:translateY(-4px)}
+.wheel button canvas{width:calc(var(--ts)*.7);height:calc(var(--ts)*.5)}
+.wheel button svg{width:calc(var(--ts)*.38);height:calc(var(--ts)*.38)}
 .meet{width:100%;text-align:left}
 .meet summary{cursor:pointer;font:400 18px var(--display);color:var(--gold);text-align:center;list-style:none;padding:8px}
 .meet summary::-webkit-details-marker{display:none}
@@ -103,9 +109,22 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
   .cat-btn small{font-size:7px;letter-spacing:.02em}
   .hearts svg{width:17px;height:15px}
 }
-@media (hover:hover) and (pointer:fine){ .touch-only{display:none!important} }
+@media (hover:hover) and (pointer:fine){ html:not(.touchdev) .touch-only{display:none!important} }
 @media (hover:none),(pointer:coarse){ #forms{display:none!important} }
-@media (hover:hover) and (pointer:fine){ .pad{display:none} .keys{display:block} #forms{bottom:48px} }
+html.touchdev #forms{display:none!important}
+@media (hover:hover) and (pointer:fine){ html:not(.touchdev) .pad{display:none} html:not(.touchdev) .keys{display:block} #forms{bottom:48px} }
+/* Tablets (iPad): bigger buttons, tidier top bar, larger menus */
+@media (min-width:700px) and (min-height:700px){
+  .pad{--bs:1.3;padding-top:14px;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))} .pad.size-s{--bs:1.12} .pad.size-l{--bs:1.5}
+  .pad .mini{font-size:11px} .pad #powerBtn .mini{font-size:12px}
+  .joy-hint{font-size:15px;padding:20px 28px}
+  .joy-base{width:150px;height:150px;margin:-75px 0 0 -75px} .joy-knob{width:68px;height:68px;margin:-34px 0 0 -34px}
+  .roster{justify-content:center} .cat-btn{max-width:132px;font-size:14px} .cat-btn canvas{width:54px;height:40px} .cat-btn small{font-size:10px}
+  .hearts svg{width:26px;height:23px} .fishes{font-size:17px} .icon-btn{font-size:12px;padding:7px 10px}
+  #hint{font-size:17px;max-width:min(80%,560px)} #toast{font-size:30px}
+  .overlay>*{zoom:1.3}
+  .wheel .tray-title{font-size:13px} .wheel button{font-size:13px}
+}
 .overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(15,10,30,.86);backdrop-filter:blur(3px);padding-block:calc(16px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-y:auto}
 .card{max-width:640px;width:100%;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center;margin:auto}
 .card h1{font:400 clamp(42px,12vw,80px)/.92 var(--display);margin:0;color:var(--ink);text-shadow:0 5px 0 #0b0818;text-wrap:balance}
@@ -195,6 +214,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 </style>
 </head>
 <body>
+<script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 
 <div id="app">
   <header>
@@ -231,7 +251,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
       <div class="joy-hint" aria-hidden="true">Drag here to move</div>
     </div>
     <div class="grp act">
-      <button id="catBtn" class="catbtn" aria-label="Switch cat. Tap for the next cat, hold for the cat wheel"><canvas id="catBtnCv"></canvas><span class="mini">Cat</span></button>
+      <button id="catBtn" class="catbtn" aria-label="Switch cat. Tap for the next cat, hold to pick a cat"><canvas id="catBtnCv"></canvas><span class="mini">Cat</span></button>
       <button data-k="jump" id="jumpBtn" aria-label="Jump"><svg viewBox="0 0 24 24"><path d="M5 14l7-7 7 7M5 20l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="mini">Jump</span></button>
       <button id="powerBtn" aria-label="Use power. Swipe up or down to change form, hold for the form wheel"></button>
     </div>
@@ -2121,7 +2141,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v5';
+const GAME_VERSION='v6';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -2371,7 +2391,7 @@ function startLevel(i){
   paused=false; show(null); running=true; fadeT=1.1;
   playMusic(levelSong());
   toast(lvl.boss ? 'Boss: the Vacuum King!' : lvl.name, 1.6);
-  if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); setTimeout(()=>{ if(running) toast('Tip: swipe up on the power button to change form. Hold the cat button for the cat wheel.',4.5); },1900); }
+  if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); setTimeout(()=>{ if(running) toast('Tip: swipe up on the power button to change form. Hold the cat button to pick a cat.',4.5); },1900); }
   layoutJoyZone();
 }
 function fmt(s){ s=Math.floor(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
@@ -2453,7 +2473,7 @@ addEventListener('blur',()=>{ for(const k in input) input[k]=false; });
 /* ---------- touch controls: wheels, swipeable power button, floating joystick ---------- */
 const appEl=document.getElementById('app'), padEl=document.getElementById('pad'), wheelEl=document.getElementById('wheel');
 const catBtn=document.getElementById('catBtn'), joyZone=document.getElementById('joyZone');
-const isTouch=matchMedia('(hover: none), (pointer: coarse)').matches;
+const isTouch=matchMedia('(hover: none), (pointer: coarse)').matches || document.documentElement.classList.contains('touchdev');
 function applyControls(){
   padEl.classList.toggle('joy', settings.move==='joy');
   padEl.classList.toggle('lefty', settings.hand==='left');
@@ -2472,28 +2492,36 @@ function layoutJoyZone(){
 }
 // wheel shared by cats and forms
 let wheelItems=[], wheelHot=-1, wheelPick=null;
-function openWheel(anchor,items,pick){
+// A tidy tray of equal tiles that opens just above the buttons, always fully on screen.
+function openWheel(anchor,items,pick,title){
   wheelEl.innerHTML=''; wheelItems=[]; wheelHot=-1; wheelPick=pick;
-  const ar=anchor.getBoundingClientRect(), ap=appEl.getBoundingClientRect();
-  const cx=ar.left+ar.width/2-ap.left, cy=ar.top+ar.height/2-ap.top, n=items.length, R=n>4?132:118;
-  const lefty=settings.hand==='left', a0=lefty?-135:-180, a1=lefty?0:-45;
+  const ar=anchor.getBoundingClientRect(), ap=appEl.getBoundingClientRect(), pr=padEl.getBoundingClientRect();
+  const n=items.length, gap=8, padX=10, margin=8, big=innerWidth>=700&&innerHeight>=700;
+  const ts=Math.floor(Math.min(big?84:68, (ap.width-margin*2-padX*2-4-gap*(n-1))/n));
+  wheelEl.style.setProperty('--ts',ts+'px');
+  if(title) wheelEl.insertAdjacentHTML('beforeend',`<div class="tray-title">${title}</div>`);
+  const row=document.createElement('div'); row.className='tray-row'; wheelEl.append(row);
   items.forEach((it,i)=>{
-    const a=(a0+(a1-a0)*(n===1?.5:i/(n-1)))*Math.PI/180;
-    let x=cx+Math.cos(a)*R, y=cy+Math.sin(a)*R; x=Math.max(38,Math.min(ap.width-38,x)); y=Math.max(40,y);
-    const b=document.createElement('button'); b.style.left=x+'px'; b.style.top=y+'px';
+    const b=document.createElement('button');
     if(it.cur) b.classList.add('cur'); b.setAttribute('aria-label',it.label);
     if(it.cat){ const cv=document.createElement('canvas'); paintPortrait(cv,it.cat,44,32,.95,22,31); b.append(cv); }
     else b.insertAdjacentHTML('beforeend',iconSvg(it.icon));
     b.insertAdjacentHTML('beforeend',`<span>${it.label}</span>`);
     b.addEventListener('click',()=>{ closeWheel(); pick(i); });
-    wheelEl.append(b); wheelItems.push(b);
+    row.append(b); wheelItems.push(b);
   });
-  wheelEl.style.left='0px'; wheelEl.style.top='0px'; wheelEl.hidden=false; vibrate(15);
+  wheelEl.hidden=false; wheelEl.style.visibility='hidden'; wheelEl.style.left='0px'; wheelEl.style.top='0px';
+  const tw=wheelEl.offsetWidth, th=wheelEl.offsetHeight, ax=ar.left+ar.width/2-ap.left;
+  const x=Math.max(margin,Math.min(ap.width-margin-tw, ax-tw/2));
+  const y=Math.max(margin, pr.top-ap.top-th-10);
+  wheelEl.style.left=x+'px'; wheelEl.style.top=y+'px'; wheelEl.style.visibility=''; vibrate(15);
 }
 function hoverWheel(px,py){
   let best=-1, bd=1e9;
-  wheelItems.forEach((b,i)=>{ const r=b.getBoundingClientRect(), d=Math.hypot(r.left+r.width/2-px,r.top+r.height/2-py); if(d<bd){ bd=d; best=i; } });
-  if(bd>56) best=-1;
+  // Light up the tile under the finger once it slides into the tray (nearest tile by column).
+  const tr=wheelEl.getBoundingClientRect(), tol=14;
+  if(px>=tr.left-tol&&px<=tr.right+tol&&py>=tr.top-tol&&py<=tr.bottom+tol)
+    wheelItems.forEach((b,i)=>{ const r=b.getBoundingClientRect(), d=Math.abs(r.left+r.width/2-px); if(d<bd){ bd=d; best=i; } });
   if(best!==wheelHot){ wheelItems.forEach((b,i)=>b.classList.toggle('hot',i===best)); wheelHot=best; if(best>=0) vibrate(8); }
 }
 function closeWheel(){ wheelEl.hidden=true; wheelEl.innerHTML=''; wheelItems=[]; }
@@ -2514,11 +2542,11 @@ function holdButton(btn,{onTap,onHold,onSwipe}){
 }
 holdButton(catBtn,{
   onTap:()=>selectCat((CATS.indexOf(cat)+1)%CATS.length),
-  onHold:()=>openWheel(catBtn,CATS.map(c=>({cat:c,label:c.name,cur:c===cat})),i=>selectCat(i)),
+  onHold:()=>openWheel(catBtn,CATS.map(c=>({cat:c,label:c.name,cur:c===cat})),i=>selectCat(i),'Pick a cat'),
 });
 holdButton(powerBtn,{
   onTap:()=>{ press('power',true); press('power',false); },
-  onHold:()=>{ const list=CAT_FORMS[cat.id]; if(list) openWheel(powerBtn,list.map(f=>({icon:f.id,label:f.label,cur:f.id===modes[cat.id]})),i=>{ setForm(list[i].id); toast(`${cat.name} · ${list[i].label}`,.8); }); },
+  onHold:()=>{ const list=CAT_FORMS[cat.id]; if(list) openWheel(powerBtn,list.map(f=>({icon:f.id,label:f.label,cur:f.id===modes[cat.id]})),i=>{ setForm(list[i].id); toast(`${cat.name} · ${list[i].label}`,.8); },`${cat.name}'s powers`); },
   onSwipe:d=>cycleForm(d),
 });
 // floating joystick
