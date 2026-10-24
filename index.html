@@ -94,6 +94,15 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
 .meet summary{cursor:pointer;font:400 18px var(--display);color:var(--gold);text-align:center;list-style:none;padding:8px}
 .meet summary::-webkit-details-marker{display:none}
 .meet[open]{display:flex;flex-direction:column;gap:10px}
+@media (max-width:380px){
+  .pad{--bs:.82;gap:6px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+  .pad.size-l{--bs:.9} .pad.size-s{--bs:.74}
+  .joy-hint{padding:10px 10px;font-size:11px}
+  .cat-btn{font-size:9.5px;overflow:hidden;padding-left:1px;padding-right:1px} .roster{gap:3px} header{gap:5px}
+  .cat-btn canvas{width:34px!important;height:26px!important}
+  .cat-btn small{font-size:7px;letter-spacing:.02em}
+  .hearts svg{width:17px;height:15px}
+}
 @media (hover:hover) and (pointer:fine){ .touch-only{display:none!important} }
 @media (hover:none),(pointer:coarse){ #forms{display:none!important} }
 @media (hover:hover) and (pointer:fine){ .pad{display:none} .keys{display:block} #forms{bottom:48px} }
@@ -1205,6 +1214,11 @@ function updateFx(dt){
 function moveX(dt){
   const p=player, dx=(p.vx+p.ext)*dt; p.x+=dx;
   const top=Math.floor(p.y/T), bot=Math.floor((p.y+p.h-.01)/T);
+  // Step up onto a fallen-pillar bridge without needing to jump.
+  if(dx!==0&&p.vy>=0){ const tx=dx>0?Math.floor((p.x+p.w-.001)/T):Math.floor(p.x/T);
+    if(tile(tx,bot)==='P'&&p.y+p.h-bot*T<=T+.5){ const ny=bot*T-p.h, nt=Math.floor(ny/T); let free=true;
+      for(let ty=nt;ty<bot;ty++) if(solid(tx,ty)) free=false;
+      if(free){ p.y=ny; return; } } }
   if(dx>0){ const tx=Math.floor((p.x+p.w-.001)/T); for(let ty=top;ty<=bot;ty++) if(solid(tx,ty)){ p.x=tx*T-p.w; p.vx=0; break; } }
   else if(dx<0){ const tx=Math.floor(p.x/T); for(let ty=top;ty<=bot;ty++) if(solid(tx,ty)){ p.x=(tx+1)*T; p.vx=0; break; } }
 }
@@ -2107,7 +2121,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v4';
+const GAME_VERSION='v5';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -2394,7 +2408,7 @@ function levelClear(){
 function gameOver(){
   running=false; deadT=0;
   document.getElementById('cpBtn').hidden = !!lvl.boss;
-  setTimeout(()=>show('overScreen'),500);
+  const lv=lvl; setTimeout(()=>{ if(!running&&!story&&lvl===lv&&hearts<=0) show('overScreen'); },500);
 }
 function fromCheckpoint(){
   hearts=maxHearts; updateHearts();
@@ -2546,7 +2560,6 @@ function frame(now){
 requestAnimationFrame(frame);
 })();
 </script>
-
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
