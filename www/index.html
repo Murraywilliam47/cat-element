@@ -94,6 +94,41 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
 .node .lbl small{display:block;font:800 10px/1.3 var(--body);color:var(--gold);letter-spacing:.04em}
 .node svg{width:22px;height:22px;position:static}
 .big.small{font-size:16px;padding:10px 18px;box-shadow:0 4px 0 #120d24}
+#app{position:relative}
+textarea{user-select:text;-webkit-user-select:text}
+body.story-mode header,body.story-mode .pad,body.story-mode #forms,body.story-mode .keys,body.story-mode #levelTag,body.story-mode #hint,body.story-mode #toast{display:none!important}
+#storyBox{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,calc(100% - 32px));background:rgba(23,18,43,.92);border:2px solid var(--gold);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#storyText{margin:0;font:800 17px/1.4 var(--body);color:var(--ink);text-wrap:balance}
+.story-btns{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.story-btns .big{font-size:18px;padding:10px 24px}
+.dots{display:flex;gap:6px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#4a4268}
+.dots i.on{background:var(--gold)}
+.skip{border:0;background:none;color:var(--muted);font:800 13px var(--body);cursor:pointer;padding:8px}
+.stars{display:flex;gap:4px}
+.stars button{font-size:36px;line-height:1;background:none;border:0;color:#4a4268;cursor:pointer;padding:2px 4px}
+.stars button[aria-pressed="true"]{color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px}
+.chips button{border:2px solid var(--panel-2);background:var(--panel);color:var(--ink);font:800 13px var(--body);padding:8px 12px;border-radius:999px;cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--gold);background:#3d3170}
+.fb-field{width:100%;max-width:440px;box-sizing:border-box;background:var(--panel);color:var(--ink);border:2px solid var(--panel-2);border-radius:14px;padding:10px 12px;font:600 15px/1.4 var(--body);resize:vertical}
+.fb-field:focus{outline:none;border-color:var(--gold)}
+@media (orientation:landscape) and (max-height:540px){
+  header{padding-block:4px}
+  .cat-btn{flex-direction:row;gap:4px;padding:3px 6px}
+  .cat-btn canvas{width:30px;height:22px}
+  .cat-btn small{display:none}
+  .meta{flex-direction:row;align-items:center;gap:8px}
+  .pad{position:absolute;left:0;right:0;bottom:0;background:none;border:0;pointer-events:none;padding-top:0;padding-bottom:max(10px,env(safe-area-inset-bottom,0px))}
+  .pad .grp{pointer-events:auto}
+  .pad button{width:60px;height:60px;opacity:.88}
+  .pad #powerBtn{width:66px;height:66px}
+  #forms{left:50%;transform:translateX(-50%);bottom:10px}
+  #levelTag{display:none}
+  .card{gap:10px}
+  .card h1{font-size:44px}
+  .lineup canvas{max-width:64px}
+}
 .pause-btn{display:flex;align-items:center;gap:5px;font-size:11px;padding:6px 10px;color:var(--ink)}
 .settings{width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px;background:var(--panel);border-radius:16px;padding:14px 16px;text-align:left}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;font:800 15px var(--body);color:var(--ink)}
@@ -141,6 +176,10 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <div id="hint" hidden></div>
     <div id="toast"></div>
     <div id="forms" role="group" aria-label="Pearl's forms" hidden></div>
+    <div id="storyBox" hidden>
+      <p id="storyText"></p>
+      <div class="story-btns"><button class="skip" id="storySkip">Skip story</button><div class="dots" id="storyDots"></div><button class="big" id="storyNext">Next</button></div>
+    </div>
     <div class="keys"><kbd>←</kbd><kbd>→</kbd> move &nbsp;<kbd>Space</kbd> jump &nbsp;<kbd>E</kbd> power &nbsp;<kbd>1</kbd>–<kbd>5</kbd> cat &nbsp;<kbd>Q</kbd> change form &nbsp;<kbd>Esc</kbd> pause</div>
   </div>
   <div class="pad" id="pad">
@@ -176,14 +215,14 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
       <svg viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true" id="worldSvg"></svg>
     </div>
     <p id="mapNote">Tap a level to play.</p>
-    <div class="btns"><button class="big alt small" id="tutBtn">Cat School (tutorial)</button><button class="big alt small" id="mapSettingsBtn">Settings</button></div>
+    <div class="btns"><button class="big alt small" id="tutBtn">Cat School (tutorial)</button><button class="big alt small" id="storyBtn">Story</button><button class="big alt small" id="mapSettingsBtn">Settings</button><button class="big alt small" id="mapFbBtn">Send feedback</button></div>
   </div>
 </div>
 
 <div class="overlay" id="pauseScreen" hidden>
   <div class="card">
     <h2 id="pauseTitle">Paused</h2>
-    <div class="btns" id="pauseBtns"><button class="big" id="resumeBtn">Resume</button><button class="big alt" id="restartBtn">Restart level</button><button class="big alt" id="pauseMapBtn">World map</button></div>
+    <div class="btns" id="pauseBtns"><button class="big" id="resumeBtn">Resume</button><button class="big alt" id="restartBtn">Restart level</button><button class="big alt" id="pauseMapBtn">World map</button><button class="big alt small" id="pauseFbBtn">Send feedback</button></div>
     <div class="settings">
       <div class="setrow"><label for="musicVol">Music</label><input type="range" id="musicVol" min="0" max="100" step="5"></div>
       <div class="setrow"><label for="fxVol">Sound effects</label><input type="range" id="fxVol" min="0" max="100" step="5"></div>
@@ -193,6 +232,20 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
       <p class="setnote">Easy gives extra hearts and slower enemies. Hard gives fewer hearts and faster enemies. Difficulty changes when a level starts.</p>
     </div>
     <div class="btns" id="settingsBackRow" hidden><button class="big" id="settingsBackBtn">Done</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="feedbackScreen" hidden>
+  <div class="card">
+    <h2>Send <span>feedback</span></h2>
+    <p>How was it? Your notes help make Cat Element better.</p>
+    <div class="stars" id="fbStars" role="group" aria-label="Your rating"></div>
+    <div class="chips" id="fbTags" role="group" aria-label="Quick tags"></div>
+    <label for="fbText" class="setnote" style="align-self:center">Tell us more (optional)</label>
+    <textarea id="fbText" class="fb-field" rows="4" placeholder="What did you love? Where did you get stuck? Any bugs?"></textarea>
+    <div class="btns"><button class="big" id="fbShare">Send</button><button class="big alt" id="fbCopy">Copy</button><button class="big alt" id="fbClose">Back</button></div>
+    <p id="fbStatus" class="setnote" aria-live="polite"></p>
+    <textarea id="fbOut" class="fb-field" rows="6" readonly hidden></textarea>
   </div>
 </div>
 
@@ -207,6 +260,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
       <div><b id="clearHearts">3</b><span>Hearts left</span></div>
     </div>
     <div class="btns"><button class="big" id="nextBtn">Next level</button><button class="big alt" id="clearMapBtn">World map</button></div>
+    <button class="skip" id="clearFbBtn">Tell us how that level felt</button>
   </div>
 </div>
 
@@ -446,6 +500,7 @@ const FISH_TOTAL=LEVELS.map((_,i)=>buildMap(i).fish.length);
 let progress={unlocked:0,best:[0,0,0,0,0,0],beaten:false,v:3};
 try{ const s=JSON.parse(localStorage.getItem('cat-element-progress')||'null'); if(s&&typeof s.unlocked==='number'){ progress=Object.assign(progress,s); if(s.v!==3) progress.best=[0,0,0,0,0,0]; progress.v=3; } }catch(e){}
 if(progress.tutorialDone===undefined) progress.tutorialDone = progress.unlocked>0;
+if(progress.storySeen===undefined) progress.storySeen = progress.unlocked>0;
 function saveProgress(){ try{ localStorage.setItem('cat-element-progress',JSON.stringify(progress)); }catch(e){} }
 
 /* ================= state ================= */
@@ -1416,7 +1471,8 @@ function resize(){
   dpr=Math.min(devicePixelRatio||1,2.5);
   const w=canvas.clientWidth||300, h=canvas.clientHeight||300;
   canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
-  scale=Math.max(.65,Math.min(h/(H*T), w/(11*T)));
+  const padEl=document.getElementById('pad'), overlayPad = padEl && getComputedStyle(padEl).position==='absolute' && getComputedStyle(padEl).display!=='none' ? 78 : 0;
+  scale=Math.max(.6,Math.min((h-overlayPad)/(H*T), w/(11*T)));
   viewW=w/scale; viewH=h/scale;
 }
 function render(dt){
@@ -1934,7 +1990,7 @@ function drawBird(b){
 }
 function drawBoss(b){
   const shake = b.state==='windup' ? (Math.random()-.5)*5 : 0;
-  const need = b.state==='dead' ? null : CAT_BY[bossNeed()];
+  const need = b.story ? (b.noCore?null:CAT_BY[b.core||'quincy']) : b.state==='dead' ? null : CAT_BY[bossNeed()];
   ctx.save(); ctx.translate(b.x+b.w/2+shake,b.y+b.h); ctx.scale(b.dir,1);
   if(b.inv>0 && Math.floor(b.inv*20)%2) ctx.globalAlpha=.5;
   ctx.fillStyle='rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(0,0,50,6,0,0,7); ctx.fill();
@@ -1958,16 +2014,171 @@ function drawBoss(b){
   ctx.fillStyle='#17122b'; ctx.beginPath(); ctx.ellipse(44,-14,4,b.state==='suck'?8:4,0,0,7); ctx.fill();
   if(b.state==='frozen'){ ctx.fillStyle='rgba(191,230,255,.55)'; rr(ctx,-52,-82,104,82,10); ctx.fill(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=2; ctx.stroke(); }
   ctx.restore();
-  if(b.state!=='dead'){
+  if(b.state!=='dead'&&!b.story){
     for(let i=0;i<b.max;i++){ ctx.fillStyle = i<b.hp ? '#ff6b8a' : 'rgba(255,255,255,.2)'; ctx.beginPath(); ctx.arc(b.x+b.w/2-(b.max-1)*6+i*12,b.y-34,4,0,7); ctx.fill(); }
   }
 }
 
 /* ================= screens ================= */
-const screens=['titleScreen','mapScreen','clearScreen','overScreen','finalScreen','pauseScreen'].map(id=>document.getElementById(id));
+const screens=['titleScreen','mapScreen','clearScreen','overScreen','finalScreen','pauseScreen','feedbackScreen'].map(id=>document.getElementById(id));
 function show(id){
   for(const s of screens) s.hidden = s.id!==id; setHint(''); toastEl.classList.remove('on');
-  if(id && id!=='pauseScreen') playMusic('menu');
+  if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
+}
+/* ---------- feedback ---------- */
+const GAME_VERSION='v4';
+let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
+const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
+const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
+for(let i=1;i<=5;i++){ const b=document.createElement('button'); b.textContent='★'; b.setAttribute('aria-label',`${i} star${i>1?'s':''}`); b.addEventListener('click',()=>{ fbRating=i; paintStars(); }); fbStarsEl.append(b); }
+function paintStars(){ [...fbStarsEl.children].forEach((b,j)=>b.setAttribute('aria-pressed',j<fbRating)); }
+for(const t of FB_TAGS){ const b=document.createElement('button'); b.textContent=t; b.setAttribute('aria-pressed','false'); b.addEventListener('click',()=>{ fbTagsOn.has(t)?fbTagsOn.delete(t):fbTagsOn.add(t); b.setAttribute('aria-pressed',fbTagsOn.has(t)); }); fbTagsEl.append(b); }
+function openFeedback(from){
+  fbFrom=from; paintStars();
+  document.getElementById('fbStatus').textContent=''; document.getElementById('fbOut').hidden=true;
+  document.getElementById('fbShare').hidden=!navigator.share;
+  for(const s of screens) s.hidden = s.id!=='feedbackScreen';
+}
+function feedbackText(){
+  const where = lvl ? (lvlIdx==='tut'?'Cat School':`Level ${lvlIdx+1} (${lvl.name})`) : 'Menu';
+  const ua=navigator.userAgent, dev=/iPhone|iPad/.test(ua)?'iPhone/iPad':/Android/.test(ua)?'Android':/Mac/.test(ua)?'Mac':/Windows/.test(ua)?'Windows':'Other';
+  return `Cat Element feedback\nRating: ${fbRating?'★'.repeat(fbRating)+'☆'.repeat(5-fbRating)+` (${fbRating}/5)`:'not given'}\nTags: ${[...fbTagsOn].join(', ')||'none'}\nNotes: ${document.getElementById('fbText').value.trim()||'(none)'}\n---\nWhere: ${where} · Cat: ${cat.name} · Difficulty: ${settings.diff}\nDevice: ${dev}, ${innerWidth}x${innerHeight} · Game ${GAME_VERSION}`;
+}
+function closeFeedback(){
+  if(fbFrom==='pause'){ for(const s of screens) s.hidden = s.id!=='pauseScreen'; }
+  else if(fbFrom==='clear') { for(const s of screens) s.hidden = s.id!=='clearScreen'; }
+  else showMap();
+}
+document.getElementById('fbClose').addEventListener('click',closeFeedback);
+document.getElementById('fbShare').addEventListener('click',async()=>{
+  const st=document.getElementById('fbStatus');
+  try{ await navigator.share({title:'Cat Element feedback',text:feedbackText()}); st.textContent='Thanks! Your feedback is on its way.'; }
+  catch(e){ if(e&&e.name==='AbortError') return; st.textContent='Sharing is not available here. Tap Copy instead and paste it into a message.'; }
+});
+document.getElementById('fbCopy').addEventListener('click',()=>{
+  const txt=feedbackText(), st=document.getElementById('fbStatus'), out=document.getElementById('fbOut');
+  const fallback=()=>{ out.value=txt; out.hidden=false; out.focus(); out.select(); st.textContent='Copy the text below and paste it into a message.'; };
+  try{ navigator.clipboard.writeText(txt).then(()=>{ st.textContent='Copied! Paste it into a message, WhatsApp or email.'; },fallback); }catch(e){ fallback(); }
+});
+document.getElementById('pauseFbBtn').addEventListener('click',()=>openFeedback('pause'));
+document.getElementById('mapFbBtn').addEventListener('click',()=>openFeedback('map'));
+document.getElementById('clearFbBtn').addEventListener('click',()=>openFeedback('clear'));
+
+/* ---------- story scenes, drawn in-engine ---------- */
+let story=null;
+const STORIES={
+  intro:[
+    {scene:'nap',   text:'Five cats lived happily in a cozy house: Pearl, Miley, Quincy, Lexus and Cookie. Their favorite thing in the world was one big, soft cushion.'},
+    {scene:'vroom', text:'One night, a terrible noise shook the house. VRRRMMM! The Vacuum King rolled in.'},
+    {scene:'steal', text:'He swallowed their beloved cushion whole, then zoomed off to his lair far across the land.'},
+    {scene:'power', text:'Each cat felt a power wake up inside: ice, shadow, fire, storm and earth. Together, they set out to bring the cushion home!'},
+  ],
+  ending:[
+    {scene:'defeat',text:'The Vacuum King sputtered, sparked, and finally unplugged with a sad little wheeze.'},
+    {scene:'carry', text:'Out popped the cushion! The five cats carried it all the way home, across every world they had crossed.'},
+    {scene:'home',  text:'And in the warm moonlight, five heroes curled up together for the best nap ever. The End.'},
+  ],
+};
+function startStory(kind,done){
+  story={kind,panels:STORIES[kind],idx:0,t:0,done};
+  running=false; for(const s of screens) s.hidden=true;
+  document.body.classList.add('story-mode'); document.getElementById('storyBox').hidden=false;
+  playMusic(kind==='ending'?'garden':'menu'); paintStory(); resize();
+}
+function paintStory(){
+  document.getElementById('storyText').textContent=story.panels[story.idx].text;
+  document.getElementById('storyNext').textContent= story.idx===story.panels.length-1 ? (story.kind==='intro'?"Let's go!":'The End') : 'Next';
+  const d=document.getElementById('storyDots'); d.innerHTML=''; story.panels.forEach((_,i)=>{ const e=document.createElement('i'); if(i===story.idx) e.className='on'; d.append(e); });
+}
+function storyNext(){ if(!story) return; sfx('swap'); if(story.idx<story.panels.length-1){ story.idx++; story.t=0; paintStory(); } else endStory(); }
+function endStory(){ if(!story) return; const done=story.done; story=null; document.body.classList.remove('story-mode'); document.getElementById('storyBox').hidden=true; resize(); done&&done(); }
+document.getElementById('storyNext').addEventListener('click',storyNext);
+document.getElementById('storySkip').addEventListener('click',endStory);
+document.getElementById('storyBtn').addEventListener('click',()=>{ ensureAudio(); startStory('intro',showMap); });
+function storyCushion(g,x,y,s){ g.save(); g.translate(x,y); g.scale(s,s);
+  g.fillStyle='rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(0,6,34,6,0,0,7); g.fill();
+  g.fillStyle='#a8384f'; g.beginPath(); g.ellipse(0,0,32,11,0,0,7); g.fill();
+  g.fillStyle='#e85d75'; g.beginPath(); g.ellipse(0,-4,32,10,0,0,7); g.fill();
+  g.fillStyle='#ff9fb0'; g.beginPath(); g.ellipse(0,-5,22,6,0,0,7); g.fill(); g.restore(); }
+function storyRoom(g,t){
+  const wg=g.createLinearGradient(0,0,0,290); wg.addColorStop(0,'#2e2250'); wg.addColorStop(1,'#46336e'); g.fillStyle=wg; g.fillRect(0,0,640,290);
+  g.fillStyle='rgba(255,255,255,.05)'; for(let x=20;x<640;x+=40) for(let y=20;y<280;y+=40) { g.beginPath(); g.arc(x+(y/40%2)*20,y,3,0,7); g.fill(); }
+  g.fillStyle='#1d1640'; g.fillRect(420,50,150,120); const sg=g.createLinearGradient(0,50,0,170); sg.addColorStop(0,'#1d1640'); sg.addColorStop(1,'#4a2d63'); g.fillStyle=sg; g.fillRect(426,56,138,108);
+  g.fillStyle='#fff3e3'; g.beginPath(); g.arc(520,92,18,0,7); g.fill(); g.fillStyle='rgba(255,243,227,.6)'; for(const [sx,sy] of [[450,75],[470,130],[545,140],[440,110]]){ g.beginPath(); g.arc(sx,sy,1.4,0,7); g.fill(); }
+  g.fillStyle='#6e4423'; g.fillRect(420,108,150,6); g.fillRect(492,50,6,120); g.strokeStyle='#6e4423'; g.lineWidth=6; g.strokeRect(420,50,150,120);
+  g.fillStyle='rgba(255,236,190,.08)'; g.beginPath(); g.moveTo(426,170); g.lineTo(564,170); g.lineTo(600,290); g.lineTo(380,290); g.fill();
+  const fg=g.createLinearGradient(0,290,0,360); fg.addColorStop(0,'#7a5236'); fg.addColorStop(1,'#4f3424'); g.fillStyle=fg; g.fillRect(0,290,640,70);
+  g.strokeStyle='rgba(40,24,14,.35)'; g.lineWidth=2; for(let x=-20;x<660;x+=80){ g.beginPath(); g.moveTo(x,290); g.lineTo(x-30,360); g.stroke(); }
+  g.fillStyle='#5a3e8a'; g.beginPath(); g.ellipse(300,318,190,24,0,0,7); g.fill(); g.strokeStyle='#ffcf5a'; g.lineWidth=3; g.beginPath(); g.ellipse(300,318,176,19,0,0,7); g.stroke();
+}
+function storyOutdoor(g,t,th){
+  const T2=THEMES[th], sg=g.createLinearGradient(0,0,0,360); T2.sky.forEach((c,i)=>sg.addColorStop([0,.55,.85,1][i],c)); g.fillStyle=sg; g.fillRect(0,0,640,360);
+  g.fillStyle='rgba(255,243,227,.85)'; g.beginPath(); g.arc(520,70,24,0,7); g.fill();
+  for(const [col,base,amp,f,off] of [[T2.hills[0],210,30,.012,t*8],[T2.hills[1],250,22,.02,t*20]]){ g.fillStyle=col; g.beginPath(); g.moveTo(0,360); for(let x=0;x<=640;x+=10) g.lineTo(x,base+Math.sin((x+off)*f)*amp); g.lineTo(640,360); g.fill(); }
+  g.fillStyle=T2.grass[1]; g.fillRect(0,290,640,8); g.fillStyle=T2.soil; g.fillRect(0,298,640,62);
+}
+function catAt(g,c,x,y,s,o={}){ g.save(); g.translate(x,y); g.scale((o.flip?-1:1)*s,s); if(o.rot) g.rotate(o.rot); drawCat(g,c,o); g.restore(); }
+function bossAt(g,x,y,s,extra){ const b=Object.assign({x:-46,y:-58,w:92,h:58,vx:0,dir:-1,state:'roam',t:0,hp:7,max:7,anim:story?story.t:0,inv:0,raged:false,story:true},extra||{}); g.save(); g.translate(x,y); g.scale(s,s); drawBoss(b); g.restore(); }
+function renderStory(dt){
+  story.t+=dt;
+  const cw=canvas.clientWidth, ch=canvas.clientHeight, t=story.t, sc=story.panels[story.idx].scene;
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.fillStyle='#0f0a1e'; ctx.fillRect(0,0,cw,ch);
+  const boxH=document.getElementById('storyBox').offsetHeight||120;
+  const availH=ch-boxH-30, s=Math.min(cw/640,availH/360), ox=(cw-640*s)/2, oy=Math.max(10,(availH-360*s)/2);
+  ctx.setTransform(dpr*s,0,0,dpr*s,ox*dpr,oy*dpr);
+  ctx.save(); ctx.beginPath(); rr(ctx,0,0,640,360,18); ctx.clip();
+  const g=ctx, C=CAT_BY;
+  if(sc==='nap'||sc==='vroom'||sc==='steal'||sc==='home'){
+    if(sc==='vroom'&&settings.shake&&!reduceMotion) g.translate((Math.random()-.5)*4,(Math.random()-.5)*4);
+    storyRoom(g,t);
+  }
+  if(sc==='nap'||sc==='home'){
+    storyCushion(g,308,302,3.2);
+    const spots=[[196,284,'pearl',false],[252,276,'miley',true],[308,272,'quincy',false],[364,278,'lexus',true],[420,288,'cookie',true]];
+    for(const [x,y,id,f] of spots) catAt(g,C[id],x,y+Math.sin(t*2+x)*1.2,2.3,{blink:true,flip:f});
+    g.fillStyle='#fff3e3'; g.font='400 22px "Lilita One", sans-serif'; g.textAlign='center';
+    for(let i=0;i<3;i++){ const k=(t*.6+i/3)%1; g.globalAlpha=1-k; g.fillText('z',320+k*40+i*6,230-k*70); } g.globalAlpha=1;
+    if(sc==='home') for(let i=0;i<5;i++){ const k=(t*.35+i/5)%1; g.globalAlpha=(1-k)*.9; g.fillStyle='#ff6b8a'; const hx=180+i*70, hy=250-k*150; g.beginPath(); g.moveTo(hx,hy+6); g.bezierCurveTo(hx-10,hy-4,hx-4,hy-12,hx,hy-5); g.bezierCurveTo(hx+4,hy-12,hx+10,hy-4,hx,hy+6); g.fill(); } g.globalAlpha=1;
+  }
+  if(sc==='vroom'){
+    storyCushion(g,230,300,2.2);
+    const bx=640-Math.min(1,t/1.4)*230;
+    bossAt(g,bx,300,1.7,{dir:-1,state:'charge',vx:1,core:'quincy'});
+    const ids=['pearl','miley','quincy','lexus','cookie'];
+    ids.forEach((id,i)=>{ const jump=Math.abs(Math.sin(t*6+i))*22; catAt(g,C[id],70+i*52,292-jump,2,{air:true}); g.fillStyle='#ffcf5a'; g.font='400 20px "Lilita One", sans-serif'; g.textAlign='center'; if(Math.sin(t*6+i)>0) g.fillText('!',70+i*52+10,226-jump); });
+    g.save(); g.font='400 54px "Lilita One", sans-serif'; g.textAlign='center'; g.fillStyle='#fff3e3'; g.strokeStyle='#17122b'; g.lineWidth=8; g.translate(320,80); g.rotate(-.06); g.strokeText('VRRRMMM!',0,0); g.fillText('VRRRMMM!',0,0); g.restore();
+  }
+  if(sc==='steal'){
+    const k=Math.min(1,t/1.3), gone=Math.max(0,t-1.5), bx=380+Math.min(1,gone/1.8)*380;
+    if(k<1){ storyCushion(g,bx-80-110*(1-k),300-k*24,2.2*(1-k*.85)); for(let i=0;i<8;i++){ const a=(t*3+i/8)%1; g.fillStyle=`rgba(220,210,235,${1-a})`; g.beginPath(); g.arc(bx-220+a*150,270+Math.sin(i*2)*22,3,0,7); g.fill(); } }
+    bossAt(g,bx,300,1.7,{dir:gone>0?1:-1,state:gone>0?'charge':'suck',core:'quincy',vx:gone>0?1:0});
+    ['pearl','miley','quincy','lexus','cookie'].forEach((id,i)=>catAt(g,C[id],40+i*46+Math.min(50,t*20),292,1.9,{moving:true,phase:t*10+i}));
+  }
+  if(sc==='power'){
+    storyOutdoor(g,t,'garden');
+    const ids=['pearl','miley','quincy','lexus','cookie'];
+    ids.forEach((id,i)=>{ const x=80+i*120, y=290, c=C[id], pulse=.6+.4*Math.sin(t*3+i);
+      const rg=g.createRadialGradient(x,y-26,4,x,y-26,60); rg.addColorStop(0,c.color); rg.addColorStop(1,'rgba(0,0,0,0)'); g.globalAlpha=.55*pulse; g.fillStyle=rg; g.fillRect(x-60,y-90,120,120); g.globalAlpha=1;
+      for(let k=0;k<5;k++){ const a=t*2+k*1.26+i, r=34+6*Math.sin(t*4+k); g.fillStyle=c.color; g.beginPath(); g.arc(x+Math.cos(a)*r,y-26+Math.sin(a)*r*.6,2.5,0,7); g.fill(); }
+      catAt(g,c,x,y,2.4,{phase:t*2,blink:false});
+      g.fillStyle='#fff3e3'; g.font='400 16px "Lilita One", sans-serif'; g.textAlign='center'; g.fillText(c.name,x,y+30); });
+  }
+  if(sc==='defeat'){
+    const lg=g.createLinearGradient(0,0,0,360); THEMES.lair.sky.forEach((c,i)=>lg.addColorStop([0,.55,.85,1][i],c)); g.fillStyle=lg; g.fillRect(0,0,640,360);
+    g.fillStyle=THEMES.lair.soil; g.fillRect(0,298,640,62); g.fillStyle=THEMES.lair.grass[1]; g.fillRect(0,290,640,8);
+    bossAt(g,330,300,2,{state:'stun',noCore:true,anim:t,dir:-1});
+    for(let i=0;i<6;i++){ const k=(t*.5+i/6)%1; g.fillStyle=`rgba(120,110,130,${(1-k)*.6})`; g.beginPath(); g.arc(300+Math.sin(i*3)*40,200-k*120,10+k*20,0,7); g.fill(); }
+    ['pearl','miley','quincy'].forEach((id,i)=>catAt(g,C[id],50+i*58,292,2,{}));
+    ['lexus','cookie'].forEach((id,i)=>catAt(g,C[id],520+i*58,292,2,{flip:true}));
+  }
+  if(sc==='carry'){
+    storyOutdoor(g,t,'garden');
+    const ids=['pearl','miley','quincy','lexus','cookie'], xs=[120,195,270,345,420], shift=(t*30)%640;
+    storyCushion(g,270,212+Math.sin(t*6)*2,3);
+    ids.forEach((id,i)=>catAt(g,C[id],xs[i],292,2.2,{moving:true,phase:t*9+i}));
+  }
+  ctx.restore();
+  ctx.strokeStyle='#ffcf5a'; ctx.lineWidth=3; rr(ctx,0,0,640,360,18); ctx.stroke();
 }
 /* ---------- pause menu & settings ---------- */
 let paused=false, settingsFrom=null;
@@ -2082,7 +2293,7 @@ function levelClear(){
   if(lvl.boss){
     document.getElementById('finalFish').textContent=`${progress.best.slice(0,5).reduce((a,b)=>a+b,0)}/${FISH_TOTAL.slice(0,5).reduce((a,b)=>a+b,0)}`;
     document.getElementById('finalTime').textContent=fmt(time);
-    show('finalScreen'); return;
+    startStory('ending',()=>show('finalScreen')); return;
   }
   document.getElementById('clearSub').textContent=`${lvl.name} is done. ${cat.name} curls up on the cushion.`;
   document.getElementById('clearFish').textContent=`${got}/${fish.length}`;
@@ -2104,7 +2315,11 @@ function fromCheckpoint(){
   for(const k in input) input[k]=false;
   show(null); running=true; toast('Back at the checkpoint',1.2);
 }
-document.getElementById('playBtn').addEventListener('click',()=>{ ensureAudio(); if(!progress.tutorialDone) startLevel('tut'); else showMap(); });
+document.getElementById('playBtn').addEventListener('click',()=>{
+  ensureAudio();
+  const go=()=>{ if(!progress.tutorialDone) startLevel('tut'); else showMap(); };
+  startStory('intro',()=>{ progress.storySeen=true; saveProgress(); go(); });
+});
 document.getElementById('nextBtn').addEventListener('click',()=>startLevel(lvlIdx==='tut'?0:Math.min(lvlIdx+1,LEVELS.length-1)));
 document.getElementById('clearMapBtn').addEventListener('click',showMap);
 document.getElementById('cpBtn').addEventListener('click',fromCheckpoint);
@@ -2120,6 +2335,8 @@ function press(k,v){
 }
 const KEYS={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'jump',w:'jump',W:'jump',' ':'jump',e:'power',E:'power',Shift:'power',x:'power',X:'power'};
 addEventListener('keydown',e=>{
+  if(e.target&&(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')) return;
+  if(story){ if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); storyNext(); } else if(e.key==='Escape') endStory(); return; }
   if(!running){
     if(paused && (e.key==='Escape'||e.key==='p'||e.key==='P')){ resumeGame(); return; }
     if(e.key==='Enter' && !document.getElementById('titleScreen').hidden){ e.preventDefault(); document.getElementById('playBtn').click(); }
@@ -2145,6 +2362,7 @@ resize(); loadLevel(0); selectCat(0,true);
 let last=performance.now();
 function frame(now){
   const dt=Math.min(1/30,(now-last)/1000); last=now;
+  if(story){ renderStory(dt); requestAnimationFrame(frame); return; }
   if(running) update(dt); else if(!paused){ time+=dt; updateParticles(dt); }
   render(dt);
   requestAnimationFrame(frame);
