@@ -81,6 +81,12 @@ Publishing on the App Store needs an Apple Developer account (yearly fee).
 
 ---
 
+## Vibration on iPhone
+
+Safari doesn't let websites vibrate an iPhone, so the web version only vibrates on Android.
+The installed app (Options 2 and 3) uses the phone's real haptics through `@capacitor/haptics`,
+which `npm install` adds automatically.
+
 ## Updating the game
 
 When the game changes, replace `www/index.html` with the new version, then:
