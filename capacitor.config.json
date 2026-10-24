@@ -1,0 +1,12 @@
+{
+  "appId": "com.catelement.game",
+  "appName": "Cat Element",
+  "webDir": "www",
+  "backgroundColor": "#17122b",
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "never"
+  }
+}
