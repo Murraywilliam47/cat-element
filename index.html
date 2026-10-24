@@ -50,8 +50,21 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #hint .bulb{flex:none;width:22px;height:22px;color:var(--gold)}
 #hint.collapsed{padding:6px;border-radius:999px;left:auto;right:10px;transform:none;top:10px}
 #hint.collapsed .ht{display:none}
-#toast{position:absolute;top:24%;left:50%;transform:translate(-50%,-50%);font:400 clamp(18px,5vw,26px)/1.1 var(--display);color:var(--ink);text-shadow:0 3px 0 #0f0b1e;text-align:center;width:90%;pointer-events:none;opacity:0;transition:opacity .25s}
-#toast.on{opacity:1}
+#toast{position:absolute;top:58px;left:50%;transform:translate(-50%,-8px);width:max-content;max-width:min(86%,440px);background:rgba(23,18,43,.9);border:2px solid rgba(255,243,227,.16);border-radius:16px;padding:8px 14px;font:800 14px/1.35 var(--body);color:var(--ink);text-align:center;text-wrap:balance;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;box-shadow:0 6px 16px rgba(0,0,0,.3);z-index:3}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#levelTitle{position:absolute;top:21%;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;opacity:0;width:90%}
+#levelTitle small{display:block;font:900 12px/1 var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+#levelTitle b{display:block;font:400 clamp(28px,8vw,46px)/1.05 var(--display);color:var(--ink);text-shadow:0 3px 0 #0f0b1e,0 0 18px rgba(15,10,30,.6)}
+#levelTitle.show{animation:titleInOut 2.3s ease-out forwards}
+@keyframes titleInOut{0%{opacity:0;transform:translate(-50%,-14px)}14%{opacity:1;transform:translate(-50%,0)}72%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-10px)}}
+@media (prefers-reduced-motion:reduce){ #levelTitle.show{animation:titleFade 2.3s linear forwards} @keyframes titleFade{0%,80%{opacity:1}100%{opacity:0}} }
+.starrow{display:flex;gap:10px;justify-content:center;margin:2px 0 4px}
+.starrow .st{display:flex;flex-direction:column;align-items:center;gap:4px;width:84px;font:800 10px/1.2 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.starrow svg{width:46px;height:46px;opacity:.25;transform:scale(.7);transition:opacity .25s,transform .35s cubic-bezier(.3,1.6,.5,1)}
+.starrow .st.on svg{opacity:1;transform:scale(1)}
+.starrow .st.on{color:var(--ink)}
+.node .stars{display:flex;justify-content:center;gap:1px;margin-top:2px}
+.node .stars svg{width:12px;height:12px}
 #levelTag{display:none!important;position:absolute;right:12px;bottom:10px;font:800 11px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(23,18,43,.7);padding:5px 8px;border-radius:8px;pointer-events:none}
 #forms{position:absolute;left:10px;bottom:10px;display:flex;gap:4px;background:rgba(23,18,43,.8);padding:4px;border-radius:14px;border:2px solid var(--el)}
 #forms button{border:0;border-radius:10px;background:transparent;color:var(--muted);font:900 11px/1 var(--body);padding:7px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:46px}
@@ -121,7 +134,7 @@ html.touchdev #forms{display:none!important}
   .joy-base{width:150px;height:150px;margin:-75px 0 0 -75px} .joy-knob{width:68px;height:68px;margin:-34px 0 0 -34px}
   .roster{justify-content:center} .cat-btn{max-width:132px;font-size:14px} .cat-btn canvas{width:54px;height:40px} .cat-btn small{font-size:10px}
   .hearts svg{width:26px;height:23px} .fishes{font-size:17px} .icon-btn{font-size:12px;padding:7px 10px}
-  #hint{font-size:17px;max-width:min(80%,560px)} #toast{font-size:30px}
+  #hint{font-size:17px;max-width:min(80%,560px)} #toast{font-size:17px;top:66px} #levelTitle b{font-size:56px} #levelTitle small{font-size:15px} .starrow svg{width:56px;height:56px}
   .overlay>*{zoom:1.3}
   .wheel .tray-title{font-size:13px} .wheel button{font-size:13px}
 }
@@ -236,7 +249,8 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <canvas id="game"></canvas>
     <div id="levelTag"></div>
     <div id="hint" hidden></div>
-    <div id="toast"></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="levelTitle" aria-hidden="true"><small></small><b></b></div>
     <div id="forms" role="group" aria-label="Pearl's forms" hidden></div>
     <div id="storyBox" hidden>
       <p id="storyText"></p>
@@ -326,6 +340,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <h2 id="clearTitle">Level <span>clear!</span></h2>
     <p id="clearSub"></p>
     <canvas id="clearCat" width="192" height="152" style="width:150px;height:auto;max-width:100%"></canvas>
+    <div class="starrow" id="clearStars"></div>
     <div class="stats">
       <div><b id="clearFish">0</b><span>Fish</span></div>
       <div><b id="clearTime">0:00</b><span>Time</span></div>
@@ -517,8 +532,9 @@ const LEVELS=[
     enemies:[['bunny',7],['moth',22,6,2],['spray',47,-1],['moth',55,6,3],['spiky',67],['bunny',73],['bunny',82],['spiky',88],['moth',105,4,2],['bunny',107],['bunny',115],['spiky',135],['bunny',146],['moth',145,8,3],['spray',150,-1],['moth',165,10,2],['bunny',174],['moth',183,1,2],['spiky',186],['bunny',193]] },
   { name:'Moonlit Rooftops', theme:'roof', w:160, start:3, goal:[152,8], speed:1.3,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,11); g(14,26,11); f(20,21,0,10,'S'); g(30,42,10); f(35,36,0,9,'W'); g(55,70,11); p(57,10,'K'); p(61,10,'Z'); f(66,67,0,10,'G');
-      f(71,81,11,13,'~'); g(82,96,11); f(85,85,10,10,'^'); f(88,89,0,10,'R'); f(94,95,0,10,'Y'); g(100,112,11); f(108,109,0,10,'D'); p(111,2,'L'); g(113,126,3); f(113,113,3,10,'V'); p(115,2,'K'); f(120,121,0,2,'S');
+      f(71,81,11,13,'~'); g(82,96,11); f(86,86,10,10,'^'); f(88,89,0,10,'R'); f(94,95,0,10,'Y'); g(100,112,11); f(108,109,0,10,'D'); p(111,2,'L'); g(113,126,3); f(113,113,3,10,'V'); p(115,2,'K'); f(120,121,0,2,'S');
       g(139,156,9); f(141,143,0,8,'X'); f(149,149,8,8,'^'); f(157,159,0,13,'#'); },
+    warns:[84],
     enemies:[['bunny',6],['spiky',24],['moth',33,6,2],['spray',41,-1],['moth',48,7,3],['bunny',58],['spray',69,-1],['bunny',84],['bunny',91],['spiky',104],['moth',118,1,2],['moth',132,5,3],['bunny',147],['spray',150,-1]] },
   { name:'Thunder Peaks', theme:'peaks', w:200, start:3, goal:[192,12], speed:1.45,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,12); g(11,24,7); f(16,17,6,6,'^'); g(28,40,7); f(33,34,0,6,'R'); g(41,43,12); f(44,54,12,13,'~'); g(55,68,12); p(57,11,'K'); p(60,11,'Z'); f(65,66,0,11,'G');
@@ -569,8 +585,9 @@ function buildMap(i){
 const FISH_TOTAL=LEVELS.map((_,i)=>buildMap(i).fish.length);
 
 /* ================= progress ================= */
-let progress={unlocked:0,best:[0,0,0,0,0,0],beaten:false,v:3};
+let progress={unlocked:0,best:[0,0,0,0,0,0],stars:[0,0,0,0,0],beaten:false,v:3};
 try{ const s=JSON.parse(localStorage.getItem('cat-element-progress')||'null'); if(s&&typeof s.unlocked==='number'){ progress=Object.assign(progress,s); if(s.v!==3) progress.best=[0,0,0,0,0,0]; progress.v=3; } }catch(e){}
+if(!Array.isArray(progress.stars)) progress.stars=[0,0,0,0,0];
 if(progress.tutorialDone===undefined) progress.tutorialDone = progress.unlocked>0;
 if(progress.storySeen===undefined) progress.storySeen = progress.unlocked>0;
 function saveProgress(){ try{ localStorage.setItem('cat-element-progress',JSON.stringify(progress)); }catch(e){} }
@@ -580,7 +597,7 @@ const canvas=document.getElementById('game'), ctx=canvas.getContext('2d');
 let W=150, map, fish=[], fx, lvl, lvlIdx=0, theme=THEMES.garden, GOAL=null;
 let cat=CATS[0], player, particles=[], enemies=[], shots=[], bolts=[], zaps=[], boss=null, bird=null, checkpoint=null;
 let cam={x:0,y:0}, running=false, time=0, deadT=0, shakeT=0, flashT=0, lastSafe, dpr=1, scale=1, viewW=0, viewH=0;
-let hintText='', toastTimer=0, walkPh=0, blinkT=2, hearts=3, maxHearts=3, finishing=0;
+let tookHit=false, hintText='', toastTimer=0, walkPh=0, blinkT=2, hearts=3, maxHearts=3, finishing=0;
 const input={left:false,right:false,jump:false,power:false}; let jumpBuf=0, powerPressed=false;
 
 function tile(tx,ty){ if(tx<0||tx>=W) return '#'; if(ty<0) return '#'; if(ty>=H) return ' '; return map[ty][tx]; }
@@ -617,7 +634,7 @@ function loadLevel(i){
   player={x:lvl.start*T,y:sy*T-26,w:24,h:26,vx:0,vy:0,ext:0,facing:1,onGround:false,coyote:0,airJumps:1,airDash:true,dashT:0,cool:0,inv:0,prevBottom:0,cloudT:0,cloudUsed:false,zapT:0,sprintT:0,blinkT:0,shineT:0,rollT:0,stormT:0,lion:false,stam:100,tiredT:0,pound:false};
   shadowT=0;
   lastSafe={x:player.x,y:player.y}; checkpoint={x:player.x,y:player.y};
-  time=0; deadT=0; finishing=0; flashT=0;
+  time=0; deadT=0; finishing=0; flashT=0; tookHit=false;
   for(const k in input) input[k]=false;
   document.getElementById('levelTag').textContent= i==='tut' ? 'Cat School' : `${i+1} · ${lvl.name}`;
   resize();
@@ -1262,7 +1279,7 @@ function overlap(a,b){ return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a
 function hurt(fromX){
   const p=player; if(p.inv>0||deadT>0||finishing) return;
   if(p.stormT>0||p.lion) return;
-  hearts--; updateHearts(); sfx('hurt'); vibrate(90); shakeT=.2; p.cloudT=0;
+  hearts--; tookHit=true; updateHearts(); sfx('hurt'); vibrate(90); shakeT=.2; p.cloudT=0;
   puff(p.x+p.w/2,p.y+p.h/2,'#ff6b8a',12,160,.5,3);
   if(hearts<=0){ gameOver(); return; }
   p.inv=1.3; const d=Math.sign(p.x+p.w/2-fromX)||-p.facing; p.vx=d*260; p.vy=-330; p.dashT=0;
@@ -1271,7 +1288,7 @@ function hazard(kind){
   if(deadT>0||finishing) return;
   const p=player; deadT=.75; p.cloudT=0;
   puff(p.x+p.w/2,Math.min(p.y+p.h,H*T),kind==='spike'?'#ff6b8a':'#8fd0ff',26,240,.7,3,600); sfx(kind==='spike'?'hurt':'splash');
-  hearts--; updateHearts(); vibrate(120);
+  hearts--; tookHit=true; updateHearts(); vibrate(120);
   if(hearts<=0){ gameOver(); return; }
   toast(kind==='spike'?'Ouch! Spikes':kind==='fall'?'Whoops! Mind the gap':'Splash! Cats hate water');
 }
@@ -1628,6 +1645,7 @@ function render(dt){
   }
   if(GOAL) drawGoal();
   if(lvl.signs) drawSigns();
+  if(lvl.warns) drawWarns();
   for(const f of fish) if(!f.got) drawFish(f);
   for(const e of enemies) if(e.alive){ ({bunny:drawBunny,spiky:drawSpiky,spray:drawSpray,moth:drawMoth})[e.type](e); if(e.frozen>0) drawIce(e); }
   if(boss) drawBoss(boss);
@@ -1968,6 +1986,16 @@ function drawTile(x,y){
       break; }
   }
 }
+function drawWarns(){
+  for(const c of lvl.warns){
+    const top=topAt(c), gx=c*T+16, gy=top*T; if(gx<cam.x-60||gx>cam.x+viewW+60) continue;
+    ctx.fillStyle='#5b4a7a'; ctx.fillRect(gx-2,gy-24,4,24);
+    const bob=Math.sin(time*3)*1;
+    ctx.beginPath(); ctx.moveTo(gx,gy-46+bob); ctx.lineTo(gx+13,gy-23+bob); ctx.lineTo(gx-13,gy-23+bob); ctx.closePath();
+    ctx.fillStyle='#ffcf5a'; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle='#2a1a10'; ctx.lineJoin='round'; ctx.stroke();
+    ctx.fillStyle='#2a1a10'; ctx.font='900 14px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillText('!',gx,gy-27+bob);
+  }
+}
 function drawSigns(){
   const pc=(player.x+player.w/2)/T;
   for(const s of lvl.signs){
@@ -2141,7 +2169,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v6';
+const GAME_VERSION='v7';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -2376,12 +2404,12 @@ function buildWorld(){
     b.innerHTML = (locked
       ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>'
       : (L.boss ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 2 7l6 5 4-8 4 8 6-5-1 11z" fill="#17122b"/></svg>' : String(i+1)))
-      + `<span class="lbl">${L.name}<small>${locked?'Locked':sub}</small></span>`;
+      + `<span class="lbl">${L.name}<small>${locked?'Locked':sub}</small>${!locked&&!L.boss&&progress.unlocked>i?`<span class="stars" aria-label="${progress.stars[i]||0} of 3 stars">${[0,1,2].map(k=>STAR_SVG(k<(progress.stars[i]||0)?'#ffcf5a':'#3a3058')).join('')}</span>`:''}</span>`;
     b.addEventListener('click',()=>startLevel(i));
     world.append(b);
   });
-  const done=progress.best.slice(0,5).reduce((a,b)=>a+b,0), tot=FISH_TOTAL.slice(0,5).reduce((a,b)=>a+b,0);
-  document.getElementById('mapNote').textContent = progress.beaten ? `You beat the Vacuum King! Fish found: ${done} of ${tot}.` : `Tap a level to play. Fish found: ${done} of ${tot}.`;
+  const done=progress.best.slice(0,5).reduce((a,b)=>a+b,0), tot=FISH_TOTAL.slice(0,5).reduce((a,b)=>a+b,0), stars=progress.stars.reduce((a,b)=>a+(b||0),0);
+  document.getElementById('mapNote').textContent = progress.beaten ? `You beat the Vacuum King! Stars: ${stars} of 15 · Fish: ${done} of ${tot}.` : `Tap a level to play. Stars: ${stars} of 15 · Fish: ${done} of ${tot}.`;
 }
 function showMap(){ running=false; buildWorld(); show('mapScreen'); }
 function startLevel(i){
@@ -2390,9 +2418,22 @@ function startLevel(i){
   selectCat(CATS.indexOf(cat),true);
   paused=false; show(null); running=true; fadeT=1.1;
   playMusic(levelSong());
-  toast(lvl.boss ? 'Boss: the Vacuum King!' : lvl.name, 1.6);
-  if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); setTimeout(()=>{ if(running) toast('Tip: swipe up on the power button to change form. Hold the cat button to pick a cat.',4.5); },1900); }
+  showLevelTitle(i==='tut'?'Tutorial':lvl.boss?'Boss fight':`Level ${i+1}`, lvl.boss?'The Vacuum King':lvl.name);
+  if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); setTimeout(()=>{ if(running) toast('Tip: swipe up on the power button to change form. Hold the cat button to pick a cat.',4.5); },2500); }
   layoutJoyZone();
+}
+const STAR_SVG=(fill)=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="${fill}" stroke="#0f0b1e" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+function showStars(earned){
+  const box=document.getElementById('clearStars'); if(!box) return;
+  const names=['Finish','All fish','No damage'];
+  box.hidden=!earned; if(!earned) return;
+  box.innerHTML=names.map((n,i)=>`<div class="st">${STAR_SVG('#ffcf5a')}<span>${n}</span></div>`).join('');
+  box.setAttribute('aria-label',`${earned.filter(Boolean).length} of 3 stars`);
+  [...box.children].forEach((el,i)=>{ if(earned[i]) setTimeout(()=>{ el.classList.add('on'); sfx('fish'); },350+i*380); });
+}
+function showLevelTitle(kicker,name){
+  const el=document.getElementById('levelTitle'); el.querySelector('small').textContent=kicker; el.querySelector('b').textContent=name;
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
 }
 function fmt(s){ s=Math.floor(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 function levelClear(){
@@ -2405,6 +2446,7 @@ function levelClear(){
     document.getElementById('clearTime').textContent=fmt(time);
     document.getElementById('clearHearts').textContent=`${hearts}/${maxHearts}`;
     const cv=document.getElementById('clearCat'); const g=cv.getContext('2d'); g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,cv.width,cv.height); g.setTransform(3.6,0,0,3.6,100,142); drawCat(g,cat,{});
+    showStars(null);
     document.getElementById('nextBtn').textContent='Start the adventure';
     show('clearScreen'); return;
   }
@@ -2417,6 +2459,9 @@ function levelClear(){
     document.getElementById('finalTime').textContent=fmt(time);
     startStory('ending',()=>show('finalScreen')); return;
   }
+  const earned=[true, got===fish.length, !tookHit];
+  progress.stars[lvlIdx]=Math.max(progress.stars[lvlIdx]||0, earned.filter(Boolean).length); saveProgress();
+  showStars(earned);
   document.getElementById('clearSub').textContent=`${lvl.name} is done. ${cat.name} curls up on the cushion.`;
   document.getElementById('clearFish').textContent=`${got}/${fish.length}`;
   document.getElementById('clearTime').textContent=fmt(time);
