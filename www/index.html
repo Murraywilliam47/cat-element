@@ -2866,7 +2866,10 @@ requestAnimationFrame(frame);
 </script>
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{
+    // check for a newer version whenever the game is reopened
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') r.update().catch(()=>{}); });
+  }).catch(()=>{}));
 }
 /* keep the screen awake while playing, where supported */
 let wakeLock=null;
