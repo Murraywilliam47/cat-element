@@ -284,6 +284,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -588,7 +589,13 @@ function drawCat(g,c,o={}){
   const tail = () => { g.beginPath(); g.moveTo(-11,by-1); g.quadraticCurveTo(-22,by-2+tw,-19,by-16+tw*0.5); };
   g.strokeStyle=OUT; g.lineWidth=c.fluffy?8:6; tail(); g.stroke();
   g.strokeStyle=c.tail; g.lineWidth=c.fluffy?6:4.2; tail(); g.stroke();
-  if(c.id==='cookie'){ g.strokeStyle='#3d2a1a'; g.lineWidth=1.6; for(const t of [.3,.55,.8]){ const x=-11+(-19+11)*t-4*Math.sin(t*3), y=by-1+(-15)*t*t+tw*t; g.beginPath(); g.moveTo(x-2.6,y-1); g.lineTo(x+2.6,y+1); g.stroke(); } }
+  if(c.id==='cookie'){ // stripes sit exactly on the tail curve and turn with it as it swishes
+    const x0=-11,y0=by-1, cx=-22,cy=by-2+tw, x1=-19,y1=by-16+tw*0.5, half=(c.fluffy?6:4.2)/2-.2;
+    g.save(); g.strokeStyle='#3d2a1a'; g.lineWidth=1.7; g.lineCap='butt';
+    for(const t of [.34,.56,.78]){ const u=1-t, x=u*u*x0+2*u*t*cx+t*t*x1, y=u*u*y0+2*u*t*cy+t*t*y1;
+      let dx=2*u*(cx-x0)+2*t*(x1-cx), dy=2*u*(cy-y0)+2*t*(y1-cy); const L=Math.hypot(dx,dy)||1; dx/=L; dy/=L;
+      g.beginPath(); g.moveTo(x-dy*half,y+dx*half); g.lineTo(x+dy*half,y-dx*half); g.stroke(); }
+    g.restore(); }
   const legs=[[-9,0],[-5,Math.PI],[5,Math.PI],[9,0]];
   for(const [lx,off] of legs){
     const sw = mv && !air ? Math.sin(ph+off)*2.6 : (air ? (off?-1.5:1.5) : 0);
@@ -3300,7 +3307,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v24';
+const GAME_VERSION='v25';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
