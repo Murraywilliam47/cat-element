@@ -612,8 +612,8 @@ const LEVELS=[
     vases:[[16,3],[31,6]], buttons:[{c:132,row:11,gate:[135,136]}],
     enemies:[['bunny',12],['moth',30,4,2],['bunny',49],['bunny',76],['moth',87,8,3],['spiky',106],['bunny',118],['gnome',140,12,137]] },
   { name:'Frosty Creek', cat:'pearl', theme:'frost', w:180, start:3, goal:[174,3], speed:1.1,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,12,12); f(8,9,0,11,'D'); p(11,3,'L'); f(13,23,12,13,'~'); g(24,34,12); p(25,11,'Z'); f(28,29,0,11,'G'); f(32,32,11,11,'^');
-      g(35,46,7); f(47,57,7,8,'~'); f(47,57,9,13,'#'); g(58,64,7); p(60,6,'K');
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,12,12); f(8,9,0,11,'D'); p(11,3,'L'); f(13,23,12,13,'~'); g(24,34,12); p(25,11,'Z'); f(28,29,0,11,'G'); f(31,31,11,11,'^');
+      g(35,46,7); f(33,33,7,11,'e'); f(30,34,6,6,'&'); f(47,57,7,8,'~'); f(47,57,9,13,'#'); g(58,64,7); p(60,6,'K');
       g(77,95,9); p(86,8,'Z'); f(90,91,0,8,'G'); g(96,99,12); f(100,110,12,13,'~'); g(111,153,12); p(113,11,'K'); p(118,11,'Z'); f(123,124,0,11,'G'); f(138,139,0,11,'D'); p(142,2,'L');
       g(154,176,4); f(177,179,0,13,'#');
       f(84,84,3,8,'e'); f(81,87,2,2,'&'); f(150,150,4,11,'e'); f(147,153,3,3,'&'); f(130,134,8,8,'#'); p(127,11,'C'); },
@@ -746,7 +746,7 @@ function saveProgress(){ try{ localStorage.setItem('cat-element-progress',JSON.s
 const canvas=document.getElementById('game'), ctx=canvas.getContext('2d');
 let W=150, map, fish=[], fx, lvl, lvlIdx=0, theme=THEMES.garden, GOAL=null;
 let cat=CATS[0], player, particles=[], enemies=[], shots=[], bolts=[], zaps=[], boss=null, bird=null, checkpoint=null;
-let cam={x:0,y:0}, running=false, time=0, deadT=0, shakeT=0, flashT=0, lastSafe, dpr=1, scale=1, viewW=0, viewH=0;
+let baseScale=1, camZoom=1, cam={x:0,y:0}, running=false, time=0, deadT=0, shakeT=0, flashT=0, lastSafe, dpr=1, scale=1, viewW=0, viewH=0;
 let windPush=0, hitCtx=null, tookHit=false, nests=[], boxesFalling=[], boxAnim=new Map(), stuckBoxes=new Set(), buttons=[], vases=[], hintText='', toastTimer=0, walkPh=0, blinkT=2, hearts=3, maxHearts=3, finishing=0;
 const input={left:false,right:false,jump:false,power:false}; let jumpBuf=0, powerPressed=false;
 
@@ -1597,8 +1597,8 @@ function autoHint(){
     const col=pcx+d;
     for(let row=head-2;row<foot;row++){ const c=tile(col,row); if(c==='W'||c==='B') return 'quincy'; if(c==='R') return 'cookie'; if(c==='S') return 'miley'; if(c==='G') return 'lightning'; if(c==='D') return 'bird'; if(c==='X') return 'teleport'; if(c==='H') return 'shadow'; if(c==='T') return 'knock'; if(c==='V') return 'climb'; if(c==='Q') return 'brick'; if(c==='Y') return 'storm'; if(c==='J') return 'lock'; if(c==='N') return 'thorns'; if(c==='U') return 'steel'; if(c==='A') return 'giant'; if(c==='M') return buttons.some(b=>!b.open)?'button':'gate'; if(c==='e' && d<=2) return 'tree'; }
     if(d<=4 && (tile(col,foot)==='~'||tile(col,foot-1)==='~')) return 'freeze';
-    if(d<=3 && isPit(col,foot)){ let run=0; while(run<14 && isPit(col+run,foot)) run++; if(run>=(lvl.cat==='miley'?7:8)) return lvl.cat==='miley'?'run':'cloud'; }
-    if(tile(col,0)!=='#' && tile(col,foot-1)==='#'){ let h=0; while(tile(col,foot-1-h)==='#' && h<9) h++; if(h>=7) return 'shadow'; if(h>=4) return 'lexus'; }
+    if(d<=3 && isPit(col,foot)){ let run=0; while(run<14 && isPit(col+run,foot)) run++; if(run>=(lvl.cat==='miley'?7:8) && (!lvl.cat||lvl.cat==='miley'||lvl.cat==='pearl')) return lvl.cat==='miley'?'run':'cloud'; }
+    if(tile(col,0)!=='#' && tile(col,foot-1)==='#'){ let h=0; while(tile(col,foot-1-h)==='#' && h<9) h++; if(lvl.cat && lvl.cat!=='miley' && lvl.cat!=='lexus'){ for(let k=-2;k<=4;k++) if(tile(pcx+k,foot-1)==='e'||tile(pcx+k,foot-2)==='e') return 'tree'; continue; } if(h>=7) return lvl.cat==='lexus'?null:'shadow'; if(h>=4) return lvl.cat==='miley'?null:'lexus'; }
   }
   if(p.cloudT>0) return 'cloud';
   if(shadowT>0) return 'shadow';
@@ -1892,7 +1892,7 @@ function resize(){
   const tilesWide = h>w*1.15 ? 8.6 : 11;
   scale=Math.max(.6,Math.min((h-overlayPad)/(H*T), w/(tilesWide*T)));
   if(h>w*1.15) scale=Math.max(scale, w/(tilesWide*T));
-  viewW=w/scale; viewH=h/scale;
+  viewW=w/scale; viewH=h/scale; baseScale=scale;
 }
 /* ---------- top bar: a thin trail with the cat walking along it as you move through the level ---------- */
 const trackCv=document.getElementById('trackCv');
@@ -1927,11 +1927,37 @@ function drawTrack(){
   g.restore();
   const pct=Math.round(prog*100); if(pct!==trackLabel){ trackLabel=pct; trackCv.setAttribute('aria-label',lvl.boss?`Vacuum King ${pct}% defeated`:`${cat.name} is ${pct}% of the way to the cushion`); }
 }
+function camFocus(){
+  // what the camera should keep in view besides the cat: a boss, or the ground past a ledge
+  const p=player, pcx=p.x+p.w/2;
+  let foe=null;
+  if(boss && boss.state!=='dead') foe={x:boss.x,w:boss.w,y:boss.y,h:boss.h};
+  else for(const e of enemies) if(e.alive && (e.nem||e.mop) && e.seen && e.state!=='hide'){ foe={x:e.x,w:e.w,y:e.y,h:e.h}; break; }
+  let drop=null;
+  if(!foe && p.onGround){ const foot=Math.floor((p.y+p.h+1)/T), pc=Math.floor(pcx/T), dir=p.facing||1;
+    for(let d=1;d<=4;d++){ const c=pc+dir*d; let g=-1; for(let y=foot;y<H;y++){ const t=tile(c,y); if(SOLID.includes(t)||t==='='||t==='&'||t==='~'||t==='P'){ g=y; break; } }
+      if(g<0){ drop={pit:true,dir}; break; } if(g-foot>=3){ drop={pit:false,row:g,dir}; break; } if(g<foot) break; } }
+  return {foe,drop};
+}
 function render(dt){
   const cw=canvas.clientWidth, ch=canvas.clientHeight, p=player;
+  { const f=lvl?camFocus():{foe:null,drop:null}; let zt=1;
+    if(f.foe){ const need=Math.abs(f.foe.x+f.foe.w/2-(p.x+p.w/2))+f.foe.w/2+3*T; zt=Math.max(.45,Math.min(1,(cw/baseScale)/need)); }
+    else if(f.drop) zt=.78;
+    if(viewH>=H*T && !f.foe) zt=1;
+    camZoom+=(zt-camZoom)*Math.min(1,dt*2.2); cam.focus=f;
+    scale=baseScale*camZoom; viewW=cw/scale; viewH=ch/scale; }
   cam.look=(cam.look||0)+((p.facing*Math.min(viewW*.22,2.6*T)+p.vx*.25)-(cam.look||0))*Math.min(1,dt*2.5);
-  const tx=Math.max(0,Math.min(Math.max(0,W*T-viewW), p.x+p.w/2-viewW/2+cam.look));
-  const ty= viewH>=H*T ? H*T-viewH+Math.min(84/scale,viewH-H*T) : Math.max(0,Math.min(H*T-viewH+Math.min(40/scale,viewH*.08), p.y-viewH*.56));
+  let tx=Math.max(0,Math.min(Math.max(0,W*T-viewW), p.x+p.w/2-viewW/2+cam.look));
+  const tyMin=-viewH*.22, tyMax=H*T-viewH+Math.min(40/scale,viewH*.08);
+  let ty= viewH>=H*T ? H*T-viewH+Math.min(84/scale,viewH-H*T) : Math.max(tyMin,Math.min(tyMax, p.y-viewH*.45));
+  { const f=cam.focus||{};
+    if(f.foe){ // frame the cat and the boss together
+      const mid=((p.x+p.w/2)+(f.foe.x+f.foe.w/2))/2; tx=mid-viewW/2;
+      tx=Math.max(p.x+p.w/2-viewW*.94,Math.min(p.x+p.w/2-viewW*.06,tx)); tx=Math.max(0,Math.min(Math.max(0,W*T-viewW),tx));
+      { const top=Math.min(p.y,f.foe.y), bot=Math.max(p.y+p.h,f.foe.y+f.foe.h); ty=Math.max(-viewH*.42,Math.min(Math.max(tyMax,H*T-viewH+Math.min(84/scale,viewH*.12)),(top+bot)/2-viewH*.55)); } }
+    else if(f.drop && viewH<H*T){ // show what is down there
+      const want=(f.drop.pit?H*T:(f.drop.row+1.6)*T)-viewH; ty=Math.max(tyMin,Math.min(tyMax,Math.min(p.y-1.5*T,Math.max(ty,want)))); } }
   const k=Math.min(1,dt*7); cam.x+=(tx-cam.x)*k; cam.y+=(ty-cam.y)*Math.min(1,dt*5);
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const sky=ctx.createLinearGradient(0,0,0,ch);
@@ -2524,6 +2550,8 @@ function nemHit(e,src){
 function nemAhead(e,dir){ if(dir<0&&e.x-2<=e.arena[0]) return true; if(dir>0&&e.x+e.w+2>=e.arena[1]) return true;
   const fx=Math.floor((dir>0?e.x+e.w+2:e.x-2)/T); return solidE(fx,Math.floor((e.floorY-6)/T))||solidE(fx,Math.floor((e.floorY-e.h+6)/T))||!solidE(fx,Math.floor((e.floorY+4)/T))&&tile(fx,Math.floor((e.floorY+4)/T))!=='&'; }
 function updateNem(e,dt){
+  // failsafe: never let a boss leave its arena or fall out of the world
+  if(!isFinite(e.x)||!isFinite(e.y)||e.x<e.arena[0]-T||e.x+e.w>e.arena[1]+T||e.y>H*T||e.y<-4*T){ e.x=Math.max(e.arena[0],Math.min(e.arena[1]-e.w,(e.arena[0]+e.arena[1])/2-e.w/2)); e.y=e.floorY-e.h; e.vy=0; if(e.state==='fall'||e.state==='perch') e.state='hop'; }
   const p=player, pcx=p.x+p.w/2, ecx=e.x+e.w/2, n=NEM[e.type];
   if(!e.seen && Math.abs(pcx-ecx)<10*T && Math.abs(p.y-e.y)<5*T && pcx>e.arena[0]){ e.seen=true; showLevelTitle(`${CAT_BY[n.cat].name}'s nemesis`,n.name); sfx('robot'); setTimeout(()=>{ if(e.alive) toast(n.how,3.4); },1400); }
   // what the cat's powers did to it this frame
@@ -2574,9 +2602,11 @@ function updateNem(e,dt){
       break;
     case 'squirrel': { // perches on a pillar and throws acorns; knock the pillar to drop him
       const pils=(lvl.squirrelPillars||[]), standing=c=>tile(c,Math.floor(e.floorY/T)-1)==='T';
-      if(e.state==='perch'){ const c=e.pillar; if(c==null||!standing(c)){ e.state='fall'; e.vy=0; } else { e.x=c*T+16-e.w/2; let top=0; while(top<H&&tile(c,top)!=='T') top++; e.y=top*T-e.h; e.dir=pcx<ecx?-1:1;
+      if(e.state==='perch'){ const c=e.pillar; let top=0; if(c!=null) while(top<H&&tile(c,top)!=='T') top++;
+        if(c==null||!standing(c)||top>=H){ e.state='fall'; e.vy=0; } else { e.x=c*T+16-e.w/2; e.y=top*T-e.h; e.dir=pcx<ecx?-1:1;
           if(e.t<=0){ e.t=1.4; const dx=pcx-ecx, tt=.75; shots.push({x:ecx,y:e.y+8,vx:dx/tt,vy:-(.5*900*tt)+((p.y+p.h/2)-(e.y+8))/tt,grav:900,life:2,kind:'acorn'}); sfx('chirp'); } } }
-      else if(e.state==='fall'){ e.vy=(e.vy||0)+1600*dt; e.y+=e.vy*dt; if(e.y+e.h>=e.floorY){ e.y=e.floorY-e.h; e.state='dizzy'; e.t=3.2; sfx('thud'); toast('Nutty fell! Scream at him now!',1.3); } }
+      else if(e.state==='fall'){ e.vy=(e.vy||0)+1600*dt; e.y+=e.vy*dt; const col=Math.floor(ecx/T); let land=e.floorY; for(let y=Math.max(0,Math.floor((e.y+e.h-e.vy*dt)/T));y<H;y++){ const tt=tile(col,y); if(SOLID.includes(tt)&&tt!=='T'){ land=y*T; break; } }
+        if(e.y+e.h>=land){ e.y=land-e.h; e.state='dizzy'; e.t=3.2; sfx('thud'); toast('Nutty fell! Scream at him now!',1.3); } }
       else if(e.state==='dizzy'){ if(e.t<=0){ e.state='hop'; e.t=.1; } }
       else if(e.state==='hop'){ // jump to a pillar that is still standing (they grow back when all are down)
         let free=pils.filter(standing); if(!free.length){ for(const c of pils){ for(let y=Math.floor(e.floorY/T)-4;y<Math.floor(e.floorY/T);y++){ map[y][c]='T'; } puff(c*T+16,e.floorY-60,'#8a5a2e',12,120,.5,3); } free=pils.slice(); toast('Nutty planted new pillars!',1); }
@@ -2866,7 +2896,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v11';
+const GAME_VERSION='v12';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
