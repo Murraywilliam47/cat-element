@@ -1,7 +1,7 @@
 // Cat Element offline support.
 // The game page itself is fetched fresh whenever there is internet (so testers always get the newest version),
 // and falls back to the saved copy when offline. Icons, fonts and other files are served from the saved copy.
-const CACHE = 'cat-element-v20';
+const CACHE = 'cat-element-v21';
 const APP_SHELL = [
   './',
   './index.html',
