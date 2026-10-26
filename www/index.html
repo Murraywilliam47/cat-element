@@ -286,6 +286,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -3307,7 +3308,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v26';
+const GAME_VERSION='v27';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3544,22 +3545,57 @@ function fillLineup(el){
 fillLineup(document.getElementById('lineup'));
 /* ================= title backdrop: the five cats on a moonlit rooftop ================= */
 const titleCv=document.getElementById('titleArt'), TSTARS=Array.from({length:70},()=>({x:Math.random(),y:Math.random()*.6,r:Math.random()*1.4+.4,p:Math.random()*6}));
+// Manama skyline (original drawing): Pearl Monument, Al Fateh Mosque, the twin sails of the World Trade Center, Financial Harbour towers
+function drawManama(g,w,h,roofY,t){
+  // one even scale so nothing gets stretched; on tall phone screens it zooms in around the centre of the skyline
+  const sc=Math.max(w/1000,Math.min((roofY*.55)/300,w/380)), sx=sc, sy=sc, ox=w/2-500*sc, U=(x,y)=>[ox+x*sx,roofY+y*sy];
+  const P=(pts)=>{ g.beginPath(); pts.forEach(([x,y],k)=>{ const [X,Y]=U(x,y); k?g.lineTo(X,Y):g.moveTo(X,Y); }); g.closePath(); g.fill(); };
+  // setting sun and its glow
+  const [sunX,sunY]=U(560,-70), sr=Math.max(26,70*sy);
+  const sg=g.createRadialGradient(sunX,sunY,sr*.3,sunX,sunY,sr*5); sg.addColorStop(0,'rgba(255,214,150,.55)'); sg.addColorStop(1,'rgba(255,214,150,0)'); g.fillStyle=sg; g.fillRect(sunX-sr*5,sunY-sr*5,sr*10,sr*10);
+  g.fillStyle='#ffd99a'; g.beginPath(); g.arc(sunX,sunY,sr,0,7); g.fill();
+  // soft clouds
+  g.fillStyle='rgba(255,200,170,.18)'; for(let k=0;k<4;k++){ const cx=((k*.29+t*.004)%1.2-.1)*w+0*ox, cy=roofY-(150+k*28)*sy; g.beginPath(); g.ellipse(cx,cy,120*sx+40,14*sy+6,0,0,7); g.ellipse(cx+60*sx,cy-8*sy,70*sx+20,12*sy+5,0,0,7); g.fill(); }
+  // hazy far towers
+  g.fillStyle='rgba(150,80,100,.45)'; for(let k=0;k<26;k++){ const x=k*40+((k*53)%17), hh=70+((k*97)%140); P([[x,0],[x,-hh],[x+26,-hh],[x+26,0]]); }
+  // main silhouettes
+  const sil=g.createLinearGradient(0,roofY-260*sy,0,roofY); sil.addColorStop(0,'#5a2f48'); sil.addColorStop(1,'#2e1b38'); g.fillStyle=sil;
+  // left tower with a crown
+  P([[30,0],[30,-200],[44,-215],[70,-215],[84,-200],[84,0]]); P([[48,-215],[57,-245],[66,-215]]);
+  // Pearl Monument: curved arms rising to hold the pearl
+  for(const d of [-1,-.45,.45,1]){ g.beginPath(); let [X,Y]=U(205+d*58,0); g.moveTo(X,Y); [X,Y]=U(205+d*46,-60); const [X2,Y2]=U(205+d*10,-150); const [X3,Y3]=U(205+d*16,-150); const [X4,Y4]=U(205+d*36,-60); const [X5,Y5]=U(205+d*48,0);
+    g.quadraticCurveTo(X,Y,X2,Y2); g.lineTo(X3,Y3); g.quadraticCurveTo(X4,Y4,X5,Y5); g.closePath(); g.fill(); }
+  { const [X,Y]=U(205,-168); g.beginPath(); g.arc(X,Y,20*sy,0,7); g.fill(); g.fillStyle='rgba(255,230,200,.35)'; g.beginPath(); g.arc(X-6*sy,Y-6*sy,6*sy,0,7); g.fill(); g.fillStyle=sil; }
+  P([[145,0],[145,-12],[265,-12],[265,0]]);
+  // Al Fateh Grand Mosque: hall, big dome, two minarets
+  P([[310,0],[310,-55],[490,-55],[490,0]]);
+  { const [X,Y]=U(400,-55); g.beginPath(); g.ellipse(X,Y,48*sx,52*sy,0,Math.PI,0); g.fill(); const [X2,Y2]=U(400,-108); g.fillRect(X2-1.5,Y2-14*sy,3,16*sy); g.beginPath(); g.arc(X2,Y2-15*sy,3*sy,0,7); g.fill(); }
+  for(const mx of [326,474]){ P([[mx-7,-55],[mx-7,-205],[mx+7,-205],[mx+7,-55]]); P([[mx-11,-140],[mx+11,-140],[mx+11,-134],[mx-11,-134]]); const [X,Y]=U(mx,-205); g.beginPath(); g.ellipse(X,Y,9*sx,12*sy,0,Math.PI,0); g.fill(); P([[mx-1.5,-177],[mx,-195],[mx+1.5,-177]]); }
+  { g.fillStyle='rgba(255,200,120,.55)'; for(let k=0;k<7;k++){ const [X,Y]=U(326+k*24,-40); g.beginPath(); g.ellipse(X,Y+8*sy,5*sx,9*sy,0,Math.PI,0); g.rect(X-5*sx,Y+8*sy,10*sx,14*sy); g.fill(); } g.fillStyle=sil; }
+  // Bahrain World Trade Center: two sail towers with three bridges and wind turbines
+  P([[540,0],[548,-120],[568,-230],[598,-290],[594,-160],[590,0]]);
+  P([[700,0],[692,-120],[672,-230],[642,-290],[646,-160],[650,0]]);
+  for(const by of [-75,-150,-215]){ const [X1,Y]=U(588,by), [X2]=U(652,by); g.fillRect(X1,Y-2*sy,X2-X1,4*sy); const [cx,cy]=U(620,by); g.save(); g.strokeStyle='rgba(255,220,170,.55)'; g.lineWidth=Math.max(1,1.6*sy); g.translate(cx,cy); g.rotate(t*1.5+by); for(let k=0;k<3;k++){ g.rotate(Math.PI*2/3); g.beginPath(); g.moveTo(0,0); g.lineTo(0,-13*sy); g.stroke(); } g.restore(); }
+  g.fillStyle='rgba(255,200,140,.35)'; for(let k=0;k<9;k++){ P([[560+k*3,-20-k*28],[574+k*2,-20-k*28],[574+k*2,-26-k*28],[560+k*3,-26-k*28]]); P([[680-k*3,-20-k*28],[666-k*2,-20-k*28],[666-k*2,-26-k*28],[680-k*3,-26-k*28]]); } g.fillStyle=sil;
+  // Financial Harbour towers with slanted tops
+  P([[770,0],[770,-215],[808,-245],[808,0]]); P([[826,0],[826,-235],[862,-205],[862,0]]);
+  // right-hand towers
+  P([[900,0],[900,-160],[935,-175],[935,0]]); P([[950,0],[950,-110],[990,-110],[990,0]]);
+  // lit windows on the towers
+  g.fillStyle='rgba(255,207,120,.5)'; for(const [x0,x1,top] of [[34,80,-195],[774,804,-205],[830,858,-195],[904,931,-150],[954,986,-100]]) for(let y=-12; y>top; y-=16) for(let x=x0+4; x<x1-6; x+=9) if(((x*7+y*13)%5)===0){ const [X,Y]=U(x,y); g.fillRect(X,Y,Math.max(1.5,4*sx),Math.max(2,6*sy)); }
+}
 function drawTitleArt(t){
   if(!titleCv || document.getElementById('titleScreen').hidden) return;
   const w=titleCv.clientWidth, h=titleCv.clientHeight; if(!w||!h) return;
   const d=Math.min(devicePixelRatio||1,2);
   if(titleCv.width!==Math.round(w*d)||titleCv.height!==Math.round(h*d)){ titleCv.width=Math.round(w*d); titleCv.height=Math.round(h*d); }
   const g=titleCv.getContext('2d'); g.setTransform(d,0,0,d,0,0);
-  const sky=g.createLinearGradient(0,0,0,h); sky.addColorStop(0,'#120d26'); sky.addColorStop(.55,'#2a1f52'); sky.addColorStop(1,'#3b2b63'); g.fillStyle=sky; g.fillRect(0,0,w,h);
-  for(const s of TSTARS){ g.globalAlpha=.35+.45*Math.sin(t*1.6+s.p); g.fillStyle='#fff3e3'; g.beginPath(); g.arc(s.x*w,s.y*h,s.r,0,7); g.fill(); } g.globalAlpha=1;
-  const mx=w*.78, my=h*.14, mr=Math.min(w,h)*.07+14;
-  const mg=g.createRadialGradient(mx,my,mr*.5,mx,my,mr*3.2); mg.addColorStop(0,'rgba(255,243,227,.28)'); mg.addColorStop(1,'rgba(255,243,227,0)'); g.fillStyle=mg; g.fillRect(mx-mr*3.2,my-mr*3.2,mr*6.4,mr*6.4);
-  g.fillStyle='#fff3e3'; g.beginPath(); g.arc(mx,my,mr,0,7); g.fill(); g.fillStyle='rgba(200,190,230,.35)'; g.beginPath(); g.arc(mx-mr*.3,my-mr*.15,mr*.22,0,7); g.arc(mx+mr*.3,my+mr*.3,mr*.15,0,7); g.fill();
-  // far skyline
+  // ---- dusk over Manama: an original skyline drawn in the game's style ----
   const card=document.querySelector('#titleScreen .card'), cardTop=card?card.getBoundingClientRect().top-titleCv.getBoundingClientRect().top:h*.6;
   const roofY=Math.max(h*.28,Math.min(h>w?h*.56:h*.5,cardTop-18));
-  g.fillStyle='#231a45'; let x=0, i=0; while(x<w){ const bw=40+((i*37)%50), bh=40+((i*53)%90); g.fillRect(x,roofY-bh,bw,bh+4); i++; x+=bw+6; }
-  g.fillStyle='rgba(255,207,90,.5)'; i=0; x=0; while(x<w){ const bw=40+((i*37)%50), bh=40+((i*53)%90); for(let wy=roofY-bh+10; wy<roofY-8; wy+=16) for(let wx=x+7; wx<x+bw-8; wx+=13) if(((wx*7+wy*3+i)%5)===0) g.fillRect(wx,wy,5,7); i++; x+=bw+6; }
+  const sky=g.createLinearGradient(0,0,0,roofY); sky.addColorStop(0,'#2a1d4e'); sky.addColorStop(.45,'#6b3f6e'); sky.addColorStop(.8,'#c46f72'); sky.addColorStop(1,'#f0a273'); g.fillStyle=sky; g.fillRect(0,0,w,h);
+  for(const s of TSTARS){ if(s.y*h>roofY*.45) continue; g.globalAlpha=(.25+.4*Math.sin(t*1.6+s.p))*(1-s.y*h/(roofY*.45)); g.fillStyle='#fff3e3'; g.beginPath(); g.arc(s.x*w,s.y*h,s.r,0,7); g.fill(); } g.globalAlpha=1;
+  drawManama(g,w,h,roofY,t);
   // the rooftop the cats sit on
   g.fillStyle='#4a2f3e'; g.fillRect(0,roofY,w,h-roofY);
   g.fillStyle='#8a3f4a'; g.fillRect(0,roofY,w,8); g.fillStyle='#a95462'; g.fillRect(0,roofY,w,3);
