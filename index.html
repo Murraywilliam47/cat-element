@@ -27,6 +27,9 @@
 }
 [hidden]{display:none!important}
 #trackCv{flex:1;min-width:0;height:44px;display:block}
+#lvlCode{flex:none;font:900 15px/1 var(--body);letter-spacing:.04em;color:#17122b;background:#ffcf5a;padding:6px 9px;border-radius:10px;box-shadow:0 2px 0 #b8892a;white-space:nowrap}
+#lvlCode:empty{display:none}
+@media (max-width:520px){ #lvlCode{font-size:12px;padding:5px 7px} }
 @media (max-width:520px){ header .hearts{font-size:19px;padding:2px 8px 2px 3px} header .hearts .lv-ic{width:24px;height:24px} header .fishes{font-size:13px} header .pause-btn .pt{display:none} header .pause-btn{padding:7px 9px} header{gap:6px} }
 header .meta{flex-direction:row!important;align-items:center;gap:10px}
 @media (max-width:380px){ header .meta{gap:6px} }
@@ -298,6 +301,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -326,6 +330,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 <div id="app">
   <header>
     <div class="roster" id="roster" role="group" aria-label="Choose a cat" hidden></div>
+    <span id="lvlCode" aria-hidden="true"></span>
     <canvas id="trackCv" role="img" aria-label="Level progress"></canvas>
     <div class="meta">
       <div class="meta-row">
@@ -914,6 +919,7 @@ function loadLevel(i){
   time=0; deadT=0; finishing=0; flashT=0; tookHit=false;
   for(const k in input) input[k]=false;
   document.getElementById('levelTag').textContent= i==='tut' ? 'Cat School' : i==='park' ? 'Puzzle Park' : `${levelCode(i)} · ${lvl.name}`;
+  document.getElementById('lvlCode').textContent = typeof i==='number' ? levelCode(i) : '';
   resize();
   cam.x=0; cam.y=viewH>=H*T?H*T-viewH:Math.max(0,player.y-viewH*.5);
   updateFish(); updateHearts(); setHint('');
@@ -3322,7 +3328,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v33';
+const GAME_VERSION='v34';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
