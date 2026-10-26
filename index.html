@@ -555,6 +555,7 @@ function drawCat(g,c,o={}){
     for(let i=0;i<=16;i++){ const a=i/16*Math.PI*2, r=i%2?11.2:8.6; g.lineTo(hx-1+Math.cos(a)*r, hy+3+Math.sin(a)*r*0.9); }
     g.closePath(); g.fillStyle=c.ruff; g.fill(); g.strokeStyle=OUT; g.lineWidth=1.2; g.stroke();
   }
+  if(typeof drawNeckwear==='function' && !o.lion) drawNeckwear(g,c,hx,hy,ph);
   const earCol = c.id==='lexus' ? '#80858f' : c.id==='quincy' ? '#2c2523' : c.base;
   const ear=(a,b,cc,d,e,f)=>{ g.beginPath(); g.moveTo(a,b); g.lineTo(cc,d); g.lineTo(e,f); g.closePath(); g.fillStyle=earCol; g.fill(); g.strokeStyle=OUT; g.lineWidth=1.4; g.stroke(); };
   ear(hx-6.5,hy-3,hx-5.5,hy-14,hx,hy-6.5);
@@ -2914,7 +2915,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v16';
+const GAME_VERSION='v17';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3210,29 +3211,29 @@ document.getElementById('mapRealBtn').addEventListener('click',()=>openReal('map
 const OUTFITS=[{id:'none',label:'None',need:0},{id:'collar',label:'Bell collar',need:30},{id:'bow',label:'Bow',need:70},{id:'scarf',label:'Scarf',need:120},{id:'hat',label:'Party hat',need:170},{id:'crown',label:'Crown',need:230}];
 if(!progress.outfits) progress.outfits={};
 function totalFish(){ return progress.best.slice(0,10).reduce((a,b)=>a+(b||0),0); }
+function neckPts(c,hx,hy){ return c.fluffy ? {x0:hx-8.6,y0:hy+3.2,x1:hx+1.2,y1:hy+9.8,cx:hx-6.2,cy:hy+9.6} : {x0:hx-7.4,y0:hy+3.6,x1:hx+1.6,y1:hy+9,cx:hx-4.9,cy:hy+9.6}; }
+function drawNeckwear(g,c,hx,hy,ph){
+  const o=progress.outfits&&progress.outfits[c.id]; if(o!=='collar'&&o!=='scarf') return;
+  const n=neckPts(c,hx,hy), col=o==='collar'?'#e23d5a':'#4f8fd6', w=o==='collar'?2.6:3.8;
+  g.save(); g.lineCap='round';
+  if(o==='scarf'){ // tail first so the band covers its knot
+    const fl=Math.sin(ph*1.6)*1.2; g.fillStyle=col; g.strokeStyle='#17122b'; g.lineWidth=.9;
+    g.beginPath(); g.moveTo(n.x0+1,n.y0+.5); g.quadraticCurveTo(n.x0-3,n.y0+3+fl,n.x0-5.5,n.y0+5+fl); g.lineTo(n.x0-3.8,n.y0+7.6+fl); g.quadraticCurveTo(n.x0-1.5,n.y0+5+fl,n.x0+2.4,n.y0+2.6); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle='#fff'; g.fillRect(n.x0-4.9,n.y0+5.2+fl,1.3,1.3); }
+  const path=()=>{ g.beginPath(); g.moveTo(n.x0,n.y0); g.quadraticCurveTo(n.cx,n.cy,n.x1,n.y1); };
+  g.strokeStyle='#17122b'; g.lineWidth=w+1.5; path(); g.stroke();
+  g.strokeStyle=col; g.lineWidth=w; path(); g.stroke();
+  g.strokeStyle='rgba(255,255,255,.4)'; g.lineWidth=.7; g.beginPath(); g.moveTo(n.x0+.4,n.y0-.6); g.quadraticCurveTo(n.cx+.2,n.cy-1.1,n.x1-.2,n.y1-1); g.stroke();
+  if(o==='scarf'){ g.strokeStyle='rgba(255,255,255,.6)'; g.lineWidth=.9; for(const t of [.25,.5,.75]){ const x=(1-t)*(1-t)*n.x0+2*(1-t)*t*n.cx+t*t*n.x1, y=(1-t)*(1-t)*n.y0+2*(1-t)*t*n.cy+t*t*n.y1; g.beginPath(); g.moveTo(x-.9,y-1.2); g.lineTo(x+.9,y+1.2); g.stroke(); } }
+  g.restore();
+}
 function drawOutfit(g,c,hx,hy,by,ph){
   const o=progress.outfits&&progress.outfits[c.id]; if(!o||o==='none') return;
   g.save(); g.lineJoin='round';
-  if(o==='collar'||o==='scarf'){
-    // a band that hugs the neck, following the underside of the head (fluffy cats have a thicker neck ruff)
-    const cx=hx-(c.fluffy?1:0), cy=hy+(c.fluffy?2.2:.6), r=c.fluffy?10.2:8.4, a0=.45, a1=2.75;
-    const band=o==='collar'?'#e23d5a':'#4f8fd6', w=o==='collar'?2.8:4.2;
-    g.lineCap='round';
-    g.strokeStyle='#17122b'; g.lineWidth=w+1.6; g.beginPath(); g.arc(cx,cy,r,a0,a1); g.stroke();
-    g.strokeStyle=band; g.lineWidth=w; g.beginPath(); g.arc(cx,cy,r,a0,a1); g.stroke();
-    if(o==='collar'){
-      g.strokeStyle='rgba(255,255,255,.35)'; g.lineWidth=.8; g.beginPath(); g.arc(cx,cy,r-.7,a0+.2,a1-.2); g.stroke();
-      const ba=1.15, bx=cx+Math.cos(ba)*(r+2.4), bby=cy+Math.sin(ba)*(r+2.4)+Math.sin(ph*2)*.4;
-      g.fillStyle='#ffcf5a'; g.strokeStyle='#17122b'; g.lineWidth=.9; g.beginPath(); g.arc(bx,bby,2.4,0,7); g.fill(); g.stroke();
-      g.fillStyle='#8a6a1a'; g.fillRect(bx-.4,bby+.4,.8,1.6); g.fillStyle='rgba(255,255,255,.7)'; g.beginPath(); g.arc(bx-.8,bby-.8,.7,0,7); g.fill();
-    } else {
-      g.strokeStyle='rgba(255,255,255,.55)'; g.lineWidth=1; for(const t of [.75,1.35,1.95,2.45]){ const x=cx+Math.cos(t)*r, y=cy+Math.sin(t)*r; g.beginPath(); g.moveTo(x-1,y-1); g.lineTo(x+1,y+1); g.stroke(); }
-      // the scarf tail flutters behind the neck
-      const sx=cx+Math.cos(a1-.15)*r, sy=cy+Math.sin(a1-.15)*r, fl=Math.sin(ph*1.6)*1.5;
-      g.fillStyle=band; g.strokeStyle='#17122b'; g.lineWidth=1;
-      g.beginPath(); g.moveTo(sx+1,sy-2); g.quadraticCurveTo(sx-5,sy+1+fl,sx-9,sy+3+fl); g.lineTo(sx-8,sy+7+fl); g.quadraticCurveTo(sx-4,sy+4+fl,sx+1,sy+2); g.closePath(); g.fill(); g.stroke();
-      g.fillStyle='#ffffff'; g.fillRect(sx-8.5,sy+4.2+fl,1.6,1.6);
-    }
+  if(o==='collar'){ // the bell hangs just under the chin
+    const n=neckPts(c,hx,hy), bx=n.x1+.6, bby=n.y1+2.6+Math.sin(ph*2)*.35;
+    g.fillStyle='#ffcf5a'; g.strokeStyle='#17122b'; g.lineWidth=.8; g.beginPath(); g.arc(bx,bby,2.1,0,7); g.fill(); g.stroke();
+    g.fillStyle='#8a6a1a'; g.fillRect(bx-.35,bby+.3,.7,1.4); g.fillStyle='rgba(255,255,255,.75)'; g.beginPath(); g.arc(bx-.7,bby-.7,.6,0,7); g.fill();
   } else if(o==='bow'){
     const bx=hx-5, byy=hy-8; g.fillStyle='#ff6b9e'; g.strokeStyle='#17122b'; g.lineWidth=.8;
     g.beginPath(); g.moveTo(bx,byy); g.lineTo(bx-5,byy-3.5); g.lineTo(bx-5,byy+3.5); g.closePath(); g.fill(); g.stroke();
