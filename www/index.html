@@ -303,6 +303,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -812,8 +813,8 @@ const PARK={ name:'Puzzle Park', park:true, theme:'garden', w:170, start:3, goal
     {c:113,text:'Light the lamp with LEXUS and SHINE. Jump under a mirror to turn it. Guide the light to the crystal!'},
   ],
   enemies:[['bunny',18],['bunny',46],['bunny',120],['bunny',150]] };
-// level codes: level number in its world, then the world (Frozen Falls, the 1st level of World 2, is 1-2)
-function levelCode(i){ if(typeof i!=='number') return ''; return i<5 ? `${i+1}-1` : `${i-4}-2`; }
+// level codes: World 1 reads 1-2, 2-3, 3-4, 4-5, 5-6; World 2 reads 1-2 to 6-2
+function levelCode(i){ if(typeof i!=='number') return ''; return i<5 ? `${i+1}-${i+2}` : `${i-4}-2`; }
 function levelDef(i){ return i==='tut' ? TUTORIAL : i==='park' ? PARK : LEVELS[i]; }
 const MAP_PTS=[[56,218],[150,150],[226,238],[338,154],[272,48],[104,38]];
 
@@ -3329,7 +3330,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v35';
+const GAME_VERSION='v36';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
