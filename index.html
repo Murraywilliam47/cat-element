@@ -285,6 +285,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -2422,10 +2423,9 @@ function foreground(cw,ch){
     if(r<.35) continue;
     const n=4+Math.floor(r*5); ctx.beginPath(); for(let k=0;k<n;k++){ const bx=x+k*5, h=7+hash(i,k)*10, lean=(hash(k,i)-.5)*10+Math.sin(time*1.4+i+k*.6)*2.5; ctx.moveTo(bx-2.5,ch+2); ctx.quadraticCurveTo(bx+lean*.4,ch-h*.6,bx+lean,ch-h); ctx.quadraticCurveTo(bx+lean*.3,ch-h*.5,bx+2.5,ch+2); } ctx.fill(); } ctx.globalAlpha=1; }
 function lights(dt){
-  const p=player, night=theme.moon||theme===THEMES.roof||theme===THEMES.lair;
+  const p=player;
   ctx.globalCompositeOperation='lighter';
   for(const [x,y,c] of sceneryLights){ const g=ctx.createRadialGradient(x,y,1,x,y,46); g.addColorStop(0,`rgba(${c},.35)`); g.addColorStop(1,`rgba(${c},0)`); ctx.fillStyle=g; ctx.fillRect(x-46,y-46,92,92); }
-  if(night && deadT<=0){ const x=p.x+p.w/2, y=p.y+p.h/2, g=ctx.createRadialGradient(x,y,4,x,y,95); g.addColorStop(0,'rgba(255,226,180,.12)'); g.addColorStop(1,'rgba(255,226,180,0)'); ctx.fillStyle=g; ctx.fillRect(x-95,y-95,190,190); }
   if(p.lightT>0){ p.lightT=Math.max(0,p.lightT-dt); const k=p.lightT/.4, x=p.x+p.w/2, y=p.y+p.h/2, [r,gg,b]=hexRgb(cat.color), g=ctx.createRadialGradient(x,y,4,x,y,130); g.addColorStop(0,`rgba(${r},${gg},${b},${.4*k})`); g.addColorStop(1,`rgba(${r},${gg},${b},0)`); ctx.fillStyle=g; ctx.fillRect(x-130,y-130,260,260); }
   ctx.globalCompositeOperation='source-over'; }
 function shootingStar(cw,ch,dt){
@@ -3307,7 +3307,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v25';
+const GAME_VERSION='v26';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
