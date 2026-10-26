@@ -185,6 +185,10 @@ html.touchdev #forms{display:none!important}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:9000;overflow:hidden}
 #confetti i{position:absolute;top:-12px;border-radius:1px;animation:confettiFall linear forwards;opacity:.95}
 @keyframes confettiFall{to{transform:translate(var(--dx),105vh) rotate(var(--r));}}
+button.locked{opacity:.6}
+button.locked::before{content:'';display:inline-block;width:.8em;height:.8em;margin-right:.4em;vertical-align:-.05em;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0110 0v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2zm2 0h6V7a3 3 0 00-6 0z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0110 0v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2zm2 0h6V7a3 3 0 00-6 0z'/%3E%3C/svg%3E") center/contain no-repeat}
+#lockNote{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:min(92vw,440px);padding:12px 18px;border-radius:14px;background:#120c24;color:#fff3e3;border:2px solid #ffcf5a;box-shadow:0 8px 24px rgba(0,0,0,.5);font:800 15px Nunito,sans-serif;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:9500}
+#lockNote.on{opacity:1;transform:translate(-50%,0)}
 #iris{position:fixed;left:50%;top:50%;width:0;height:0;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 200vmax #0f0a1e;pointer-events:none;z-index:9999;opacity:0}
 #iris.go{animation:irisOpen .6s cubic-bezier(.55,0,.35,1) forwards}
 @keyframes irisOpen{0%{opacity:1;width:0;height:0}98%{opacity:1;width:250vmax;height:250vmax}100%{opacity:0;width:250vmax;height:250vmax}}
@@ -279,6 +283,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 </style>
 </head>
 <body>
+
 
 
 
@@ -3307,13 +3312,13 @@ function drawBoss(b){
 const screens=['titleScreen','mapScreen','clearScreen','overScreen','finalScreen','pauseScreen','feedbackScreen','realScreen','wardrobeScreen','moveScreen'].map(id=>document.getElementById(id));
 function show(id){
   if(id && id!==lastShown && id!=='pauseScreen' && id!=='feedbackScreen' && lastShown!=='pauseScreen') iris(); lastShown=id;
-  for(const s of screens) s.hidden = s.id!==id; setHint(''); toastEl.classList.remove('on');
+  for(const s of screens) s.hidden = s.id!==id; setHint(''); toastEl.classList.remove('on'); if(id==='titleScreen'||id==='mapScreen') refreshLocks();
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v31';
+const GAME_VERSION='v32';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3528,7 +3533,12 @@ document.getElementById('pauseMapBtn').addEventListener('click',()=>{ paused=fal
 document.getElementById('settingsBackBtn').addEventListener('click',()=>{ settingsFrom=null; showMap(); });
 document.getElementById('mapSettingsBtn').addEventListener('click',openSettingsFromMap);
 document.getElementById('tutBtn').addEventListener('click',()=>startLevel('tut'));
-document.getElementById('parkBtn').addEventListener('click',()=>startLevel('park'));
+// Puzzle Park, the real cats and the wardrobe are rewards for finishing the whole game
+function extrasOpen(){ return !!progress.beaten; }
+function lockedTap(name){ sfx('nope'); vibrate(15); lockNote(`${name} unlocks when you beat the Vacuum King and finish the game`); }
+function lockNote(msg){ let n=document.getElementById('lockNote'); if(!n){ n=document.createElement('div'); n.id='lockNote'; n.setAttribute('role','status'); document.body.append(n); } n.textContent=msg; n.classList.remove('on'); void n.offsetWidth; n.classList.add('on'); clearTimeout(lockNote.t); lockNote.t=setTimeout(()=>n.classList.remove('on'),2600); }
+function refreshLocks(){ const open=extrasOpen(); for(const id of ['parkBtn','mapRealBtn','mapWardBtn','titleRealBtn']){ const b=document.getElementById(id); if(!b) continue; b.classList.toggle('locked',!open); b.setAttribute('aria-label',b.textContent.replace(/^\s+|\s+$/g,'')+(open?'':' (locked until you finish the game)')); } }
+document.getElementById('parkBtn').addEventListener('click',()=>{ if(!extrasOpen()) return lockedTap('Puzzle Park'); startLevel('park'); });
 document.getElementById('remixBtn').addEventListener('click',()=>{ remixOn=!remixOn; buildWorld(); });
 document.getElementById('musicVol').addEventListener('input',e=>{ settings.music=+e.target.value; saveSettings(); if(paused) applyVolumes(true); });
 document.getElementById('fxVol').addEventListener('input',e=>{ settings.fx=+e.target.value; saveSettings(); if(paused) applyVolumes(true); });
@@ -3685,8 +3695,8 @@ const REAL_NOTES={pearl:'White as snow, with blue eyes',miley:'The fluffy tuxedo
 let realFrom='mapScreen';
 function openReal(from){ realFrom=from; buildReal(); show('realScreen'); }
 document.getElementById('realBack').addEventListener('click',()=>{ if(realFrom==='mapScreen') showMap(); else show(realFrom); });
-document.getElementById('mapRealBtn').addEventListener('click',()=>openReal('mapScreen'));
-{ const meet=document.querySelector('#titleScreen .meet'); if(meet){ const b=document.createElement('button'); b.className='skip'; b.textContent='See the real cats'; b.addEventListener('click',()=>openReal('titleScreen')); meet.parentElement.insertBefore(b,meet.nextSibling); } }
+document.getElementById('mapRealBtn').addEventListener('click',()=>{ if(!extrasOpen()) return lockedTap('The real cats'); openReal('mapScreen'); });
+{ const meet=document.querySelector('#titleScreen .meet'); if(meet){ const b=document.createElement('button'); b.className='skip'; b.id='titleRealBtn'; b.textContent='See the real cats'; b.addEventListener('click',()=>{ if(!extrasOpen()) return lockedTap('The real cats'); openReal('titleScreen'); }); meet.parentElement.insertBefore(b,meet.nextSibling); } }
 
 // outfits unlock as you collect fish
 const OUTFITS=[{id:'none',label:'None',need:0},{id:'collar',label:'Bell collar',need:30},{id:'bow',label:'Bow',need:70},{id:'scarf',label:'Scarf',need:120},{id:'hat',label:'Party hat',need:170},{id:'crown',label:'Crown',need:230}];
@@ -3745,7 +3755,8 @@ function buildWardrobe(){
     paintPortrait(cv,c,78,58,1.5,36,52);
   }
 }
-document.getElementById('mapWardBtn').addEventListener('click',()=>{ buildWardrobe(); show('wardrobeScreen'); });
+document.getElementById('mapWardBtn').addEventListener('click',()=>{ if(!extrasOpen()) return lockedTap('The wardrobe'); buildWardrobe(); show('wardrobeScreen'); });
+refreshLocks();
 document.getElementById('wardBack').addEventListener('click',()=>showMap());
 
 // move progress between devices with a code
@@ -3764,7 +3775,7 @@ document.getElementById('moveLoad').addEventListener('click',()=>{ const st=docu
 
 function refreshMapExtras(){ const dm=dailyMission(), box=document.getElementById('dailyBox'); box.className='daily'+(dm.done?' done':''); box.innerHTML=`<b>Today's mission:</b> ${dm.text}${dm.done?' ✓':''}`;
   const rb=document.getElementById('remixBtn'); rb.hidden=!progress.beaten; rb.textContent=`Remix: ${remixOn?'on':'off'}`; rb.classList.toggle('on',remixOn); rb.title='Remix makes every level harder: faster enemies, more of them, no checkpoints and only 5 lives.';
-  document.getElementById('parkBtn').hidden=!progress.tutorialDone; }
+  document.getElementById('parkBtn').hidden=false; refreshLocks(); }
 function showMap(){ running=false; mapWorld = progress.unlocked>=5 ? 1 : 0; buildWorld(); show('mapScreen'); }
 document.getElementById('wPrev').addEventListener('click',()=>{ if(mapWorld>0){ mapWorld--; buildWorld(); } });
 document.getElementById('wNext').addEventListener('click',()=>{ if(mapWorld<WORLDS.length-1){ mapWorld++; buildWorld(); } });
@@ -3831,7 +3842,7 @@ function levelClear(){
   if(remix) progress.remix[lvlIdx]=true;
   { const dm=dailyMission(); if(dm.lv===lvlIdx && !dm.done){ const ok={nohit:!tookHit, allfish:got===fish.length, time:timeOk, mission:missionOk}[dm.kind]; if(ok){ progress.daily[dm.d]=true; setTimeout(()=>{ toast('Daily mission complete!',2); sfx('win'); },900); } } }
   progress.unlocked=Math.max(progress.unlocked,Math.min(lvlIdx+1,LEVELS.length-1));
-  if(lvl.boss) progress.beaten=true;
+  if(lvl.boss){ if(!progress.beaten) setTimeout(()=>lockNote('Unlocked: Puzzle Park, the real cats and the wardrobe!'),1600); progress.beaten=true; }
   saveProgress();
   if(lvl.boss){
     showBadges([]);
