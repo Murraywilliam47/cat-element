@@ -290,6 +290,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -723,29 +724,29 @@ const LEVELS=[
     vases:[[8,0],[62,11]], buttons:[{c:158,row:8,gate:[162,163]}],
     enemies:[['bunny',6],['moth',20,3,2],['spiky',38],['spray',62,-1],['moth',76,8,3],['giant',87,12],['moth',101,1,2],['bunny',109],['spiky',122],['moth',133,5,3],['bunny',148],['spray',160,-1],['moth',178,6,2],['mop',194,13]] },
   // ===== World 2: the Cat Trials. Each level is played by one cat and needs all of that cat's powers.
-  { name:'Frozen Falls', cat:'pearl', mission:{type:'toy',x:88,y:9},  theme:'frost', w:130, start:3, goal:[124,10], speed:1.2,
+  { name:'Frozen Falls', suns:[55], cat:'pearl', mission:{type:'toy',x:88,y:9},  theme:'frost', w:130, start:3, goal:[124,10], speed:1.2,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,11); f(15,24,11,13,'~'); g(25,38,11); p(28,10,'K'); p(32,10,'Z'); f(35,36,0,10,'G');
       g(51,80,11); p(54,10,'K'); f(60,61,0,10,'D'); p(64,3,'L'); f(81,92,11,13,'~'); g(93,104,11); p(95,10,'K'); p(98,10,'Z'); f(101,102,0,10,'G');
       g(115,128,11); f(129,129,0,13,'#'); },
     enemies:[['bunny',8],['bunny',29],['moth',44,6,3],['spray',72,-1],['moth',86,7,2],['bunny',98],['moth',110,6,2],['bath',124,11,115]] },
-  { name:'Shadow Alley', cat:'miley', mission:{type:'toy',x:36,y:2},  theme:'roof', w:130, start:3, goal:[125,10], speed:1.25,
+  { name:'Shadow Alley', suns:[61], cat:'miley', mission:{type:'toy',x:36,y:2},  theme:'roof', w:130, start:3, goal:[125,10], speed:1.25,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,26,11); f(10,11,0,10,'S'); f(22,23,8,8,'H'); f(25,26,5,5,'H'); g(27,38,3); p(30,2,'K');
       g(39,52,11); p(48,10,'K'); g(57,72,11); f(57,57,0,10,'J'); g(80,108,11); p(84,10,'K'); f(90,92,0,10,'X');
       f(103,104,8,8,'H'); f(106,107,5,5,'H'); g(109,117,3); f(115,115,0,2,'J'); g(118,128,11); f(129,129,0,13,'#'); },
     enemies:[['bunny',7],['spiky',16],['bunny',44],['spray',68,-1],['bunny',86],['moth',99,7,2],['bunny',112],['laser',125,11,118]] },
-  { name:'Ember Forest', cat:'quincy', mission:{type:'toy',x:44,y:3},  theme:'ember', w:150, start:3, goal:[145,11], speed:1.25,
+  { name:'Ember Forest', suns:[68], cat:'quincy', mission:{type:'toy',x:44,y:3},  theme:'ember', w:150, start:3, goal:[145,11], speed:1.25,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,28,12); f(12,13,0,11,'W'); g(29,44,4); f(29,29,4,11,'V'); f(38,39,0,3,'W');
       g(45,72,12); p(47,11,'K'); f(52,52,0,11,'T'); f(54,64,0,8,'#'); f(53,64,11,11,'^'); g(73,82,13); f(73,82,12,12,'^');
       g(83,100,12); p(86,11,'K'); g(101,116,5); f(101,101,5,11,'V'); f(110,111,0,4,'W');
       g(117,148,12); p(119,11,'K'); f(126,126,0,11,'T'); f(128,138,0,8,'#'); f(127,138,11,11,'^'); f(149,149,0,13,'#'); },
     nests:[{c:70,from:73,to:82,row:12}],
     enemies:[['bunny',7],['bunny',22],['spiky',48],['moth',78,8,3],['bunny',90],['spiky',96],['moth',108,2,2],['bunny',121],['spritz',145,12,139]] },
-  { name:'Storm Peaks', cat:'lexus', mission:{type:'toy',x:29,y:6},  theme:'peaks', w:150, start:3, goal:[144,6], speed:1.3,
+  { name:'Storm Peaks', suns:[84], cat:'lexus', mission:{type:'toy',x:29,y:6},  theme:'peaks', w:150, start:3, goal:[144,6], speed:1.3,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,12); g(15,30,7); f(24,25,0,6,'N'); g(31,70,12); p(33,11,'K'); f(40,41,0,11,'Y');
       f(53,62,0,9,'#'); f(57,57,10,11,'A'); g(71,86,7); p(73,6,'K'); f(80,81,0,6,'N'); g(87,125,12); f(96,97,0,11,'Y'); p(103,11,'K');
       f(108,118,0,9,'#'); f(113,113,10,11,'A'); g(126,148,7); f(149,149,0,13,'#'); },
     enemies:[['bunny',8],['moth',22,3,2],['spiky',36],['bunny',46],['giant',57,12],['spray',67,-1],['moth',78,3,2],['bunny',92],['spiky',101],['giant',113,12],['bunny',121],['cucumber',141,7,127]] },
-  { name:'Rock Quarry', cat:'cookie', mission:{type:'toy',x:56,y:12},  theme:'garden', w:150, start:3, goal:[143,10], speed:1.2,
+  { name:'Rock Quarry', suns:[85], cat:'cookie', mission:{type:'toy',x:56,y:12},  theme:'garden', w:150, start:3, goal:[143,10], speed:1.2,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,30,12); f(10,11,0,11,'R'); f(20,21,0,11,'Q'); p(25,11,'K'); g(31,50,10); f(40,41,0,9,'U');
       f(51,63,10,13,'#'); f(51,63,11,12,' '); f(51,52,10,10,'F'); f(57,59,0,9,'#'); g(64,80,13); p(66,12,'K'); f(72,73,0,12,'R');
       g(81,96,11); f(88,89,0,10,'U'); g(97,120,11); p(99,10,'K'); f(104,105,0,10,'Q'); f(112,113,0,10,'R');
@@ -1821,6 +1822,7 @@ function overlap(a,b){ return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a
 function hurt(fromX){
   const p=player; if(p.inv>0||deadT>0||finishing) return;
   if(p.stormT>0||p.lion) return;
+  if(p.napping){ if(time-(p.napSafeT||-9)>1.2){ p.napSafeT=time; puff(p.x+p.w/2,p.y,'#ffe066',8,90,.5,2.5,-40); toast('Sunbeams keep a napping cat safe',1.2); } return; }
   hearts--; tookHit=true; updateHearts(); sfx('hurt'); vibrate(90); shakeT=.2; p.cloudT=0;
   puff(p.x+p.w/2,p.y+p.h/2,'#ff6b8a',12,160,.5,3);
   if(hearts<=0){ gameOver(); return; }
@@ -3311,7 +3313,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v30';
+const GAME_VERSION='v31';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
