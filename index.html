@@ -1261,7 +1261,11 @@ function updateFalls(dt){
     const f=falls[i]; f.t+=dt*1.6;
     if(f.t>=1){
       falls.splice(i,1);
-      for(let k=1;k<=f.h;k++){ const col=f.x+f.dir*k; if(col>0&&col<W-1&&!SOLID.includes(tile(col,f.b))) map[f.b][col]='P'; }
+      const x0=Math.min(f.x+f.dir,f.x+f.dir*f.h)*T, x1=(Math.max(f.x+f.dir,f.x+f.dir*f.h)+1)*T, y1=(f.b+1)*T, y0=y1-2*T;
+      hitCtx='knock'; for(const e of enemies) if(e.alive && !e.giant && e.type!=='squirrel' && e.x<x1 && e.x+e.w>x0 && e.y<y1 && e.y+e.h>y0){ if(e.nem||e.mop) killEnemy(e); else { e.alive=false; puff(e.x+e.w/2,e.y+e.h/2,'#c9c3d6',16,180,.6,3,300); sfx('pop'); } } hitCtx=null;
+      const crumble=(lvl.squirrelPillars||[]).includes(f.x);
+      if(!crumble) for(let k=1;k<=f.h;k++){ const col=f.x+f.dir*k; if(col>0&&col<W-1&&!SOLID.includes(tile(col,f.b))) map[f.b][col]='P'; }
+      else for(let k=1;k<=f.h;k++) puff((f.x+f.dir*k)*T+16,y1-12,'#a9a3b8',10,200,.7,3.5,500);
       shakeT=.45; sfx('crash');
       for(let k=0;k<f.h;k+=2) puff((f.x+f.dir*(k+1))*T+16,(f.b+1)*T,'#8d899a',6,160,.6,3,500);
     }
@@ -2552,10 +2556,12 @@ function nemAhead(e,dir){ if(dir<0&&e.x-2<=e.arena[0]) return true; if(dir>0&&e.
 function updateNem(e,dt){
   // failsafe: never let a boss leave its arena or fall out of the world
   if(!isFinite(e.x)||!isFinite(e.y)||e.x<e.arena[0]-T||e.x+e.w>e.arena[1]+T||e.y>H*T||e.y<-4*T){ e.x=Math.max(e.arena[0],Math.min(e.arena[1]-e.w,(e.arena[0]+e.arena[1])/2-e.w/2)); e.y=e.floorY-e.h; e.vy=0; if(e.state==='fall'||e.state==='perch') e.state='hop'; }
+  if(e.state!=='perch'&&e.state!=='fall'){ const c0=Math.floor(e.x/T), c1=Math.floor((e.x+e.w-1)/T), r=Math.floor((e.y+e.h-2)/T); for(let c=c0;c<=c1;c++) if(tile(c,r)==='P'){ map[r][c]=' '; puff(c*T+16,r*T+16,'#a9a3b8',6,140,.5,3,400); } }
   const p=player, pcx=p.x+p.w/2, ecx=e.x+e.w/2, n=NEM[e.type];
   if(!e.seen && Math.abs(pcx-ecx)<10*T && Math.abs(p.y-e.y)<5*T && pcx>e.arena[0]){ e.seen=true; showLevelTitle(`${CAT_BY[n.cat].name}'s nemesis`,n.name); sfx('robot'); setTimeout(()=>{ if(e.alive) toast(n.how,3.4); },1400); }
   // what the cat's powers did to it this frame
   const frozen=e.frozen>0, pinned=e.pinned>0, confused=e.confused>0, annoyed=e.annoyed>0; e.frozen=0; e.pinned=0; e.confused=0; e.annoyed=0;
+  if(e.type==='squirrel' && e.state==='perch' && e.pillar!=null){ let top=0; while(top<H&&tile(e.pillar,top)!=='T') top++; if(top<H){ e.x=e.pillar*T+16-e.w/2; e.y=top*T-e.h; } }
   if(!e.seen) return;
   e.ph+=dt; e.t-=dt;
   if(e.state==='hurt'){ if(e.t<=0){ e.state=n.start==='hide'?'hide':e.type==='laser'?'fly':e.type==='bath'||e.type==='blower'?'idle':e.type==='gnome'?'shield':e.type==='squirrel'?'hop':e.type==='searchbot'?'patrol':'walk'; e.t=1.2; if(e.type==='gnome') puff(e.x+e.w/2,e.y+e.h/2,'#8d899a',14,120,.5,3); } }
@@ -2896,7 +2902,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v12';
+const GAME_VERSION='v13';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
