@@ -27,7 +27,7 @@
 }
 [hidden]{display:none!important}
 #trackCv{flex:1;min-width:0;height:44px;display:block}
-@media (max-width:520px){ header .hearts svg{width:16px;height:15px} header .fishes{font-size:13px} header .pause-btn .pt{display:none} header .pause-btn{padding:7px 9px} header{gap:6px} }
+@media (max-width:520px){ header .hearts{font-size:19px;padding:2px 8px 2px 3px} header .hearts .lv-ic{width:22px;height:20px} header .fishes{font-size:13px} header .pause-btn .pt{display:none} header .pause-btn{padding:7px 9px} header{gap:6px} }
 header .meta{flex-direction:row!important;align-items:center;gap:10px}
 @media (max-width:380px){ header .meta{gap:6px} }
 @media (min-width:700px) and (min-height:700px){ #trackCv{height:54px} }
@@ -45,7 +45,13 @@ header{display:flex;align-items:center;gap:8px;padding-block:8px;padding-left:ma
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
 .meta-row{display:flex;align-items:center;gap:6px}
-.hearts{display:flex;gap:1px}
+.hearts{display:flex;align-items:center;gap:4px;font:400 22px/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums;background:rgba(255,255,255,.06);border-radius:999px;padding:3px 10px 3px 4px}
+.hearts .lv-ic{width:26px;height:24px;flex:none}
+.hearts .lv-n{min-width:1ch;text-align:center;display:inline-block}
+.hearts .lv-n small{font:800 11px var(--body);color:var(--muted);margin-left:1px}
+.hearts.low .lv-n{color:#ff6b8a}
+.hearts.pop .lv-n{animation:lvpop .35s ease-out}
+@keyframes lvpop{0%{transform:scale(1.6)}100%{transform:scale(1)}}
 .hearts svg{width:21px;height:19px}
 .hearts svg.empty path{fill:#3a3058}
 .fishes{display:flex;align-items:center;gap:3px;font:900 14px/1 var(--body);font-variant-numeric:tabular-nums;color:var(--gold)}
@@ -147,7 +153,7 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
   .cat-btn{font-size:11px;overflow:hidden;padding-left:1px;padding-right:1px} .roster{gap:3px} header{gap:5px}
   .cat-btn canvas{width:34px!important;height:26px!important}
   .cat-btn small{font-size:8.5px;letter-spacing:0}
-  .hearts svg{width:17px;height:15px}
+  .hearts{font-size:18px}
 }
 @media (hover:hover) and (pointer:fine){ html:not(.touchdev) .touch-only{display:none!important} }
 @media (hover:none),(pointer:coarse){ #forms{display:none!important} }
@@ -160,7 +166,7 @@ html.touchdev #forms{display:none!important}
   .joy-hint{font-size:15px;padding:20px 28px}
   .joy-base{width:150px;height:150px;margin:-75px 0 0 -75px} .joy-knob{width:68px;height:68px;margin:-34px 0 0 -34px}
   .roster{justify-content:center} .cat-btn{max-width:132px;font-size:14px} .cat-btn canvas{width:54px;height:40px} .cat-btn small{font-size:10px}
-  .hearts svg{width:26px;height:23px} .fishes{font-size:17px} .icon-btn{font-size:12px;padding:7px 10px}
+  .hearts{font-size:26px} .hearts .lv-ic{width:32px;height:30px} .fishes{font-size:17px} .icon-btn{font-size:12px;padding:7px 10px}
   #hint{font-size:17px;max-width:min(80%,560px)} #toast{font-size:17px;top:66px} #levelTitle b{font-size:56px} #levelTitle small{font-size:15px} .starrow svg{width:56px;height:56px}
   .overlay>*:not(canvas){zoom:1.3}
   .wheel .tray-title{font-size:13px} .wheel button{font-size:13px}
@@ -289,7 +295,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <canvas id="trackCv" role="img" aria-label="Level progress"></canvas>
     <div class="meta">
       <div class="meta-row">
-        <div class="hearts" id="hearts" aria-label="Hearts left"></div>
+        <div class="hearts" id="hearts" aria-label="Lives left"></div>
         <div class="fishes" aria-label="Fish collected">
           <svg width="18" height="13" viewBox="0 0 20 14" aria-hidden="true"><path d="M2 7c3-5 9-6 12-1l4-4v10l-4-4c-3 5-9 4-12-1z" fill="#ffcf5a"/><circle cx="6" cy="6" r="1.2" fill="#17122b"/></svg>
           <span id="fishCount">0/0</span>
@@ -431,7 +437,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <div class="stats">
       <div><b id="clearFish">0</b><span>Fish</span></div>
       <div><b id="clearTime">0:00</b><span>Time</span></div>
-      <div><b id="clearHearts">3</b><span>Hearts left</span></div>
+      <div><b id="clearHearts">9</b><span>Lives left</span></div>
     </div>
     <div class="btns"><button class="big" id="nextBtn">Next level</button><button class="big alt" id="clearMapBtn">World map</button></div>
     <button class="skip" id="clearFbBtn">Tell us how that level felt</button>
@@ -786,7 +792,7 @@ function loadLevel(i){
   GOAL = lvl.goal ? {x:lvl.goal[0]*T-12,y:lvl.goal[1]*T,w:56,h:32} : null;
   boss=null;
   if(lvl.boss){ const ids=shuffle(CATS.map(c=>c.id)); const extra=shuffle(CATS.map(c=>c.id).filter(x=>x!==ids[4])).slice(0,2); boss={x:24*T,y:12*T-58,w:92,h:58,vx:0,dir:-1,state:'roam',t:2.2,hp:7,max:7,order:ids.concat(extra),idx:0,inv:0,anim:0,shotT:0,raged:false}; }
-  maxHearts = Math.max(1,(lvl.boss?5:3)+DIFF[settings.diff].hearts); hearts=maxHearts;
+  maxHearts = DIFF[settings.diff].lives; hearts=maxHearts;
   const sy=topAt(lvl.start);
   player={x:lvl.start*T,y:sy*T-26,w:24,h:26,vx:0,vy:0,ext:0,facing:1,onGround:false,coyote:0,airJumps:1,airDash:true,dashT:0,cool:0,inv:0,prevBottom:0,cloudT:0,cloudUsed:false,zapT:0,sprintT:0,blinkT:0,shineT:0,rollT:0,stormT:0,lion:false,stam:100,tiredT:0,pound:false};
   shadowT=0;
@@ -802,10 +808,16 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 
 /* ================= HUD ================= */
 const HEART='<svg viewBox="0 0 14 13" aria-hidden="true"><path d="M7 12.5S.5 8.4.5 4.3A3.3 3.3 0 0 1 7 2.6a3.3 3.3 0 0 1 6.5 1.7C13.5 8.4 7 12.5 7 12.5z" fill="#ff6b8a"/></svg>';
+let shownLives=-1;
 function updateHearts(){
-  const el=document.getElementById('hearts'); el.innerHTML='';
-  for(let i=0;i<maxHearts;i++){ el.insertAdjacentHTML('beforeend',HEART); if(i>=hearts) el.lastElementChild.classList.add('empty'); }
-  el.setAttribute('aria-label',`${hearts} of ${maxHearts} hearts left`);
+  const el=document.getElementById('hearts'), c=cat||CATS[0];
+  if(!el.querySelector('.lv-n')) el.innerHTML='<canvas class="lv-ic" width="52" height="48" aria-hidden="true"></canvas><span class="lv-n"></span>';
+  const cv=el.querySelector('canvas'); paintPortrait(cv,c,52,48,1.9,22,48);
+  el.querySelector('.lv-n').innerHTML=`${Math.max(0,hearts)}<small>/${maxHearts}</small>`;
+  el.classList.toggle('low',hearts<=2);
+  if(shownLives!==-1 && shownLives!==hearts){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+  shownLives=hearts;
+  el.setAttribute('aria-label',`${hearts} of ${maxHearts} lives left`);
 }
 function updateFish(){ document.getElementById('fishCount').textContent= lvl&&lvl.boss ? '–' : `${fish.filter(f=>f.got).length}/${fish.length}`; }
 const toastEl=document.getElementById('toast');
@@ -942,7 +954,7 @@ function sfx(type){
 let settings={music:60,fx:85,diff:'normal',shake:true,vibe:true,move:'joy',hand:'right',size:'m',saver:false};
 try{ Object.assign(settings,JSON.parse(localStorage.getItem('cat-element-settings')||'{}')); }catch(e){}
 if(!['easy','normal','hard'].includes(settings.diff)) settings.diff='normal';
-const DIFF={easy:{hearts:2,speed:.8},normal:{hearts:0,speed:1},hard:{hearts:-1,speed:1.2}};
+const DIFF={easy:{lives:9,speed:.8},normal:{lives:9,speed:1},hard:{lives:6,speed:1.2}};
 function saveSettings(){ try{ localStorage.setItem('cat-element-settings',JSON.stringify(settings)); }catch(e){} applyVolumes(); }
 function applyVolumes(duck){ soundOn=settings.fx>0; if(master) master.gain.value=.9*settings.fx/100; if(musicBus) musicBus.gain.value=.5*settings.music/100*(duck?.35:1); }
 function vibrate(ms){ if(!settings.vibe) return;
@@ -1100,7 +1112,7 @@ function selectCat(i,silent){
   if(player && c.id!=='cookie'){ player.lion=false; player.pound=false; }
   rosterBtns.forEach((b,j)=>b.setAttribute('aria-pressed', j===i));
   document.documentElement.style.setProperty('--el',c.color);
-  buildForms(); refreshPowerLabel();
+  buildForms(); refreshPowerLabel(); if(typeof shownLives!=='undefined') updateHearts();
   { const cv=document.getElementById('catBtnCv'); if(cv) paintPortrait(cv,c,44,32,.95,22,31); }
   if(!silent && player){ puff(player.x+player.w/2,player.y+player.h/2,'#fff3e3',14,110,.45,4); puff(player.x+player.w/2,player.y+player.h/2,c.color,22,170,.5,3); player.swapT=.38; player.tagT=1.1; sfx('meow-'+c.id); vibrate(15); }
 }
@@ -2902,7 +2914,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v14';
+const GAME_VERSION='v15';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
