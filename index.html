@@ -1936,7 +1936,7 @@ function camFocus(){
   const p=player, pcx=p.x+p.w/2;
   let foe=null;
   if(boss && boss.state!=='dead') foe={x:boss.x,w:boss.w,y:boss.y,h:boss.h};
-  else for(const e of enemies) if(e.alive && (e.nem||e.mop) && e.seen && e.state!=='hide'){ foe={x:e.x,w:e.w,y:e.y,h:e.h}; break; }
+  else for(const e of enemies) if(e.alive && (e.nem||e.mop) && e.seen && e.state!=='hide' && pcx>(e.arena?e.arena[0]:e.x-10*T)-T && Math.abs(e.x+e.w/2-pcx)<11*T){ foe={x:e.x,w:e.w,y:e.y,h:e.h}; break; }
   let drop=null;
   if(!foe && p.onGround){ const foot=Math.floor((p.y+p.h+1)/T), pc=Math.floor(pcx/T), dir=p.facing||1;
     for(let d=1;d<=4;d++){ const c=pc+dir*d; let g=-1; for(let y=foot;y<H;y++){ const t=tile(c,y); if(SOLID.includes(t)||t==='='||t==='&'||t==='~'||t==='P'){ g=y; break; } }
@@ -1946,7 +1946,7 @@ function camFocus(){
 function render(dt){
   const cw=canvas.clientWidth, ch=canvas.clientHeight, p=player;
   { const f=lvl?camFocus():{foe:null,drop:null}; let zt=1;
-    if(f.foe){ const need=Math.abs(f.foe.x+f.foe.w/2-(p.x+p.w/2))+f.foe.w/2+3*T; zt=Math.max(.45,Math.min(1,(cw/baseScale)/need)); }
+    if(f.foe){ const need=Math.abs(f.foe.x+f.foe.w/2-(p.x+p.w/2))+f.foe.w/2+3*T; zt=Math.max(.62,Math.min(1,(cw/baseScale)/need)); }
     else if(f.drop) zt=.78;
     if(viewH>=H*T && !f.foe) zt=1;
     camZoom+=(zt-camZoom)*Math.min(1,dt*2.2); cam.focus=f;
@@ -2571,7 +2571,7 @@ function updateNem(e,dt){
       if(e.state==='frozen'){ if(e.t<=0){ e.state='idle'; e.t=1; puff(ecx,e.y+10,'#e9f8ff',14,140,.5,3); } break; }
       if(e.state==='idle'&&e.t<=0){ e.state='hop'; e.t=.55; e.dir=pcx<ecx?-1:1; }
       else if(e.state==='hop'){ if(!nemAhead(e,e.dir)) e.x+=e.dir*150*dt; e.hop=Math.sin((1-e.t/.55)*Math.PI)*28; if(e.t<=0){ e.hop=0; e.state='spray'; e.t=.9; shakeT=Math.max(shakeT,.25); sfx('bell'); vibrate(40);
-          for(const k of [-1,1]) shots.push({x:ecx+k*22,y:e.floorY-11,vx:k*190,vy:0,grav:0,life:1.8,kind:'ring'}); } }
+          for(const k of [-1,1]) shots.push({x:ecx+k*22,y:e.floorY-11,vx:k*190,vy:0,grav:0,life:Math.min(1.8,Math.max(.2,(k<0?ecx-e.arena[0]:e.arena[1]-ecx)/190)),kind:'ring'}); } }
       else if(e.state==='spray'&&e.t<=0){ e.state='idle'; e.t=.9+Math.random()*.6; }
       break;
     case 'laser': // hovers, aims its red dot and swoops at Miley
@@ -2902,7 +2902,7 @@ function show(id){
   if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
 }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v13';
+const GAME_VERSION='v14';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
