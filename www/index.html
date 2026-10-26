@@ -189,6 +189,7 @@ button.locked{opacity:.6}
 button.locked::before{content:'';display:inline-block;width:.8em;height:.8em;margin-right:.4em;vertical-align:-.05em;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0110 0v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2zm2 0h6V7a3 3 0 00-6 0z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0110 0v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2zm2 0h6V7a3 3 0 00-6 0z'/%3E%3C/svg%3E") center/contain no-repeat}
 #lockNote{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:min(92vw,440px);padding:12px 18px;border-radius:14px;background:#120c24;color:#fff3e3;border:2px solid #ffcf5a;box-shadow:0 8px 24px rgba(0,0,0,.5);font:800 15px Nunito,sans-serif;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:9500}
 #lockNote.on{opacity:1;transform:translate(-50%,0)}
+.node .lbl .code{display:block;font-style:normal;font:900 11px Nunito,sans-serif;letter-spacing:.08em;color:#ffcf5a;line-height:1.1;margin-bottom:1px}
 #iris{position:fixed;left:50%;top:50%;width:0;height:0;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 200vmax #0f0a1e;pointer-events:none;z-index:9999;opacity:0}
 #iris.go{animation:irisOpen .6s cubic-bezier(.55,0,.35,1) forwards}
 @keyframes irisOpen{0%{opacity:1;width:0;height:0}98%{opacity:1;width:250vmax;height:250vmax}100%{opacity:0;width:250vmax;height:250vmax}}
@@ -283,6 +284,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 </style>
 </head>
 <body>
+
 
 
 
@@ -804,6 +806,8 @@ const PARK={ name:'Puzzle Park', park:true, theme:'garden', w:170, start:3, goal
     {c:113,text:'Light the lamp with LEXUS and SHINE. Jump under a mirror to turn it. Guide the light to the crystal!'},
   ],
   enemies:[['bunny',18],['bunny',46],['bunny',120],['bunny',150]] };
+// level codes like 1-1 and 2-3: world number, then level number in that world
+function levelCode(i){ if(typeof i!=='number') return ''; return i<5 ? `1-${i+1}` : `2-${i-4}`; }
 function levelDef(i){ return i==='tut' ? TUTORIAL : i==='park' ? PARK : LEVELS[i]; }
 const MAP_PTS=[[56,218],[150,150],[226,238],[338,154],[272,48],[104,38]];
 
@@ -909,7 +913,7 @@ function loadLevel(i){
   lastSafe={x:player.x,y:player.y}; checkpoint={x:player.x,y:player.y};
   time=0; deadT=0; finishing=0; flashT=0; tookHit=false;
   for(const k in input) input[k]=false;
-  document.getElementById('levelTag').textContent= i==='tut' ? 'Cat School' : i==='park' ? 'Puzzle Park' : `${i+1} · ${lvl.name}`;
+  document.getElementById('levelTag').textContent= i==='tut' ? 'Cat School' : i==='park' ? 'Puzzle Park' : `${levelCode(i)} · ${lvl.name}`;
   resize();
   cam.x=0; cam.y=viewH>=H*T?H*T-viewH:Math.max(0,player.y-viewH*.5);
   updateFish(); updateHearts(); setHint('');
@@ -3318,7 +3322,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v32';
+const GAME_VERSION='v33';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3332,7 +3336,7 @@ function openFeedback(from){
   for(const s of screens) s.hidden = s.id!=='feedbackScreen';
 }
 function feedbackText(){
-  const where = lvl ? (lvlIdx==='tut'?'Cat School':lvlIdx==='park'?'Puzzle Park':`Level ${lvlIdx+1} (${lvl.name})`) : 'Menu';
+  const where = lvl ? (lvlIdx==='tut'?'Cat School':lvlIdx==='park'?'Puzzle Park':`Level ${levelCode(lvlIdx)} (${lvl.name})`) : 'Menu';
   const ua=navigator.userAgent, dev=/iPhone|iPad/.test(ua)?'iPhone/iPad':/Android/.test(ua)?'Android':/Mac/.test(ua)?'Mac':/Windows/.test(ua)?'Windows':'Other';
   return `Cat Element feedback\nRating: ${fbRating?'★'.repeat(fbRating)+'☆'.repeat(5-fbRating)+` (${fbRating}/5)`:'not given'}\nTags: ${[...fbTagsOn].join(', ')||'none'}\nNotes: ${document.getElementById('fbText').value.trim()||'(none)'}\n---\nWhere: ${where} · Cat: ${cat.name} · Difficulty: ${settings.diff}\nDevice: ${dev}, ${innerWidth}x${innerHeight} · Game ${GAME_VERSION}`;
 }
@@ -3665,11 +3669,11 @@ function buildWorld(){
     b.style.setProperty('--c', L.boss ? '#ff6b8a' : L.cat ? CAT_BY[L.cat].color : CATS[i%5].color);
     b.disabled=locked;
     const sub = L.boss ? (progress.beaten?'Beaten!':'Boss') : `${progress.best[i]||0}/${FISH_TOTAL[i]} fish`;
-    b.setAttribute('aria-label',`${L.cat?CAT_BY[L.cat].name+(i<5?"'s level":"'s trial"):'Level '+(i+1)}, ${L.name}${locked?', locked':''}`);
+    b.setAttribute('aria-label',`Level ${levelCode(i)}, ${L.name}${L.cat?', '+CAT_BY[L.cat].name+(i<5?"'s level":"'s trial"):''}${locked?', locked':''}`);
     b.innerHTML = (locked
       ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>'
       : (L.boss ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 2 7l6 5 4-8 4 8 6-5-1 11z" fill="#17122b"/></svg>' : (L.cat ? '' : String(i+1))))
-      + `<span class="lbl">${L.name}<small>${locked?'Locked':sub}</small>${!locked&&!L.boss&&progress.unlocked>i?`<span class="stars" aria-label="${progress.stars[i]||0} of 3 stars">${[0,1,2].map(k=>STAR_SVG(k<(progress.stars[i]||0)?'#ffcf5a':'#3a3058')).join('')}</span>`:''}</span>`;
+      + `<span class="lbl"><em class="code">${levelCode(i)}</em>${L.name}<small>${locked?'Locked':sub}</small>${!locked&&!L.boss&&progress.unlocked>i?`<span class="stars" aria-label="${progress.stars[i]||0} of 3 stars">${[0,1,2].map(k=>STAR_SVG(k<(progress.stars[i]||0)?'#ffcf5a':'#3a3058')).join('')}</span>`:''}</span>`;
     { const bits=[]; if(L.mission && (progress.missions||{})[i]) bits.push(L.mission.type==='kitten'?'🐱':'🧶'); if((progress.times||{})[i]) bits.push('⏱'); if((progress.remix||{})[i]) bits.push('R'); if(bits.length && !locked){ const lb=b.querySelector('.lbl'); if(lb) lb.insertAdjacentHTML('beforeend',`<span class="badge-row">${bits.join(' ')}</span>`); } }
     if(L.cat && !locked){ const cv=document.createElement('canvas'); paintPortrait(cv,CAT_BY[L.cat],42,31,.92,21,30); b.prepend(cv); }
     b.addEventListener('click',()=>startLevel(i));
@@ -3786,7 +3790,7 @@ function startLevel(i){
   document.body.classList.toggle('trial',!!lvl.cat);
   paused=false; show(null); running=true; fadeT=1.1;
   playMusic(levelSong()); iris(); setTimeout(()=>{ if(running) sfx('motif-'+cat.id); },700);
-  showLevelTitle(i==='tut'?'Tutorial':i==='park'?'Bonus':remix?'Remix':lvl.boss?'Boss fight':lvl.cat?(i<5?`Level ${i+1} · ${CAT_BY[lvl.cat].name}`:`${CAT_BY[lvl.cat].name}'s trial`):`Level ${i+1}`, lvl.boss?'The Vacuum King':lvl.name);
+  showLevelTitle(i==='tut'?'Tutorial':i==='park'?'Bonus':remix?'Remix':lvl.boss?`Level ${levelCode(i)} · Boss fight`:lvl.cat?(i<5?`Level ${levelCode(i)} · ${CAT_BY[lvl.cat].name}`:`Level ${levelCode(i)} · ${CAT_BY[lvl.cat].name}'s trial`):`Level ${levelCode(i)}`, lvl.boss?'The Vacuum King':lvl.name);
   if(lvl.mission){ const lv0=lvl; setTimeout(()=>{ if(running&&lvl===lv0) toast(lv0.mission.type==='kitten'?'Mission: a lost kitten is hiding somewhere. Find it!':'Mission: find the hidden ball of yarn!',2.6); },lvl.cat?5200:2400); }
   if(lvl.cat) setTimeout(()=>{ if(running&&lvl.cat) toast(`Only ${CAT_BY[lvl.cat].name} plays here. Use every one of ${CAT_BY[lvl.cat].name==='Lexus'||CAT_BY[lvl.cat].name==='Cookie'?'his':'her'} powers!`,2.6); },2300);
   if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); setTimeout(()=>{ if(running) toast('Tip: swipe up on the power button to change form',2.8); if(!lvl.cat) setTimeout(()=>{ if(running) toast('Tip: hold the cat button to pick a cat',2.8); },3400); },2500); }
@@ -3858,7 +3862,7 @@ function levelClear(){
     if(lvl.photo) items.push([!!(progress.photos||{})[lvl.cat],'Photo found']);
     if(remix) items.push([true,'Remix cleared']);
     showBadges(items); }
-  document.getElementById('clearSub').textContent=`${lvl.name} is done. ${cat.name} curls up on the cushion.`;
+  document.getElementById('clearSub').textContent=`Level ${levelCode(lvlIdx)}, ${lvl.name}, is done. ${cat.name} curls up on the cushion.`;
   document.getElementById('clearFish').textContent=`${got}/${fish.length}`;
   document.getElementById('clearTime').textContent=fmt(time);
   document.getElementById('clearHearts').textContent=`${hearts}/${maxHearts}`;
