@@ -196,6 +196,10 @@ button.locked::before{content:'';display:inline-block;width:.8em;height:.8em;mar
 #lockNote{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:min(92vw,440px);padding:12px 18px;border-radius:14px;background:#120c24;color:#fff3e3;border:2px solid #ffcf5a;box-shadow:0 8px 24px rgba(0,0,0,.5);font:800 15px Nunito,sans-serif;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:9500}
 #lockNote.on{opacity:1;transform:translate(-50%,0)}
 .node .lbl .code{display:block;font-style:normal;font:900 11px Nunito,sans-serif;letter-spacing:.08em;color:#ffcf5a;line-height:1.1;margin-bottom:1px}
+#wardList .slots{display:flex;flex-direction:column;gap:6px}
+#wardList .slots .opts{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:8px}
+#wardList .btnrow{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+#wardList .slot{padding-top:11px;font:900 11px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:42px;text-align:left}
 #iris{position:fixed;left:50%;top:50%;width:0;height:0;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 200vmax #0f0a1e;pointer-events:none;z-index:9999;opacity:0}
 #iris.go{animation:irisOpen .6s cubic-bezier(.55,0,.35,1) forwards}
 @keyframes irisOpen{0%{opacity:1;width:0;height:0}98%{opacity:1;width:250vmax;height:250vmax}100%{opacity:0;width:250vmax;height:250vmax}}
@@ -290,6 +294,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 </style>
 </head>
 <body>
+
 
 
 
@@ -3352,7 +3357,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v44';
+const GAME_VERSION='v45';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3735,10 +3740,14 @@ document.getElementById('mapRealBtn').addEventListener('click',()=>{ if(!extrasO
 // outfits unlock as you collect fish
 const OUTFITS=[{id:'none',label:'None',need:0},{id:'collar',label:'Bell collar',need:30},{id:'bow',label:'Bow',need:70},{id:'scarf',label:'Scarf',need:120},{id:'hat',label:'Party hat',need:170},{id:'crown',label:'Crown',need:230}];
 if(!progress.outfits) progress.outfits={};
+// each cat can wear one thing on the head and one around the neck at the same time (saved as e.g. 'crown+scarf')
+const HEAD_ITEMS=['bow','hat','crown'], NECK_ITEMS=['collar','scarf'];
+function wearing(c){ const v=(progress.outfits&&progress.outfits[c.id])||''; const ids=String(v).split('+'); return {head:ids.find(x=>x==='bow'||x==='hat'||x==='crown')||'none', neck:ids.find(x=>x==='collar'||x==='scarf')||'none'}; } // works even while the game is still starting up
+function setWearing(c,slot,id){ const w=wearing(c); w[slot]=id; const v=[w.head,w.neck].filter(x=>x!=='none').join('+'); progress.outfits[c.id]=v||'none'; }
 function totalFish(){ return progress.best.slice(0,10).reduce((a,b)=>a+(b||0),0); }
 function neckPts(c,hx,hy){ return c.fluffy ? {x0:hx-8.6,y0:hy+3.2,x1:hx+1.2,y1:hy+9.8,cx:hx-6.2,cy:hy+9.6} : {x0:hx-7.4,y0:hy+3.6,x1:hx+1.6,y1:hy+9,cx:hx-4.9,cy:hy+9.6}; }
 function drawNeckwear(g,c,hx,hy,ph){
-  const o=progress.outfits&&progress.outfits[c.id]; if(o!=='collar'&&o!=='scarf') return;
+  const o=wearing(c).neck; if(o!=='collar'&&o!=='scarf') return;
   const n=neckPts(c,hx,hy), col=o==='collar'?'#e23d5a':'#4f8fd6', w=o==='collar'?2.6:3.8;
   g.save(); g.lineCap='round';
   if(o==='scarf'){ // tail first so the band covers its knot
@@ -3753,13 +3762,15 @@ function drawNeckwear(g,c,hx,hy,ph){
   g.restore();
 }
 function drawOutfit(g,c,hx,hy,by,ph){
-  const o=progress.outfits&&progress.outfits[c.id]; if(!o||o==='none') return;
+  const w=wearing(c); if(w.head==='none'&&w.neck!=='collar') return;
   g.save(); g.lineJoin='round';
-  if(o==='collar'){ // the bell hangs just under the chin
+  if(w.neck==='collar'){ // the bell hangs just under the chin
     const n=neckPts(c,hx,hy), bx=n.x1+.6, bby=n.y1+2.6+Math.sin(ph*2)*.35;
     g.fillStyle='#ffcf5a'; g.strokeStyle='#17122b'; g.lineWidth=.8; g.beginPath(); g.arc(bx,bby,2.1,0,7); g.fill(); g.stroke();
     g.fillStyle='#8a6a1a'; g.fillRect(bx-.35,bby+.3,.7,1.4); g.fillStyle='rgba(255,255,255,.75)'; g.beginPath(); g.arc(bx-.7,bby-.7,.6,0,7); g.fill();
-  } else if(o==='bow'){
+  }
+  const o=w.head;
+  if(o==='bow'){
     const bx=hx-5, byy=hy-8; g.fillStyle='#ff6b9e'; g.strokeStyle='#17122b'; g.lineWidth=.8;
     g.beginPath(); g.moveTo(bx,byy); g.lineTo(bx-5,byy-3.5); g.lineTo(bx-5,byy+3.5); g.closePath(); g.fill(); g.stroke();
     g.beginPath(); g.moveTo(bx,byy); g.lineTo(bx+5,byy-3.5); g.lineTo(bx+5,byy+3.5); g.closePath(); g.fill(); g.stroke();
@@ -3782,10 +3793,14 @@ function buildWardrobe(){
     const row=document.createElement('div'); row.className='row'; row.style.setProperty('--c',c.color);
     const cv=document.createElement('canvas'); row.append(cv);
     const right=document.createElement('div'); right.innerHTML=`<b style="font:400 18px var(--display)">${c.name}</b>`; const opts=document.createElement('div'); opts.className='opts';
-    for(const o of OUTFITS){ const b=document.createElement('button'); const cur=(progress.outfits[c.id]||'none')===o.id; b.setAttribute('aria-pressed',cur); b.disabled=have<o.need;
-      b.textContent = have<o.need ? `${o.label} · ${o.need} fish` : o.label;
-      b.addEventListener('click',()=>{ progress.outfits[c.id]=o.id; saveProgress(); sfx('swap'); buildWardrobe(); selectCat(CATS.indexOf(cat),true); }); opts.append(b); }
-    right.append(opts); row.append(right); list.append(row);
+    const w=wearing(c);
+    for(const [slot,label,ids] of [['head','Head',['none',...HEAD_ITEMS]],['neck','Neck',['none',...NECK_ITEMS]]]){
+      const grp=document.createElement('div'); grp.className='opts'; const lb=document.createElement('span'); lb.className='slot'; lb.textContent=label; grp.append(lb); const bx=document.createElement('div'); bx.className='btnrow'; grp.append(bx);
+      for(const id of ids){ const o=OUTFITS.find(x=>x.id===id); const b=document.createElement('button'); b.setAttribute('aria-pressed',w[slot]===id); b.disabled=have<o.need;
+        b.textContent = have<o.need ? `${o.label} · ${o.need} fish` : o.label; b.setAttribute('aria-label',`${c.name}, ${label.toLowerCase()}: ${o.label}`);
+        b.addEventListener('click',()=>{ setWearing(c,slot,id); saveProgress(); sfx('swap'); buildWardrobe(); selectCat(CATS.indexOf(cat),true); }); bx.append(b); }
+      opts.append(grp); }
+    opts.className='slots'; right.append(opts); row.append(right); list.append(row);
     paintPortrait(cv,c,78,58,1.5,36,52);
   }
 }
