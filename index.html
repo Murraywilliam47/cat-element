@@ -312,6 +312,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -2283,7 +2284,7 @@ function render(dt){
   cam.look=(cam.look||0)+((p.facing*Math.min(viewW*.22,2.6*T)+p.vx*.25)-(cam.look||0))*Math.min(1,dt*2.5);
   let tx=Math.max(0,Math.min(Math.max(0,W*T-viewW), p.x+p.w/2-viewW/2+cam.look));
   const tyMin=-viewH*.22, tyMax=H*T-viewH+Math.min(40/scale,viewH*.08);
-  let ty= viewH>=H*T ? H*T-viewH+Math.min(84/scale,viewH-H*T) : Math.max(tyMin,Math.min(tyMax, p.y-viewH*.45));
+  let ty= viewH>=H*T ? H*T-viewH+Math.min(84/scale,viewH-H*T) : Math.max(tyMin,Math.min(tyMax, p.y-viewH*(viewH>viewW*1.15?.6:.45)));
   { const f=cam.focus||{};
     if(f.foe){ // frame the cat and the boss together
       const mid=((p.x+p.w/2)+(f.foe.x+f.foe.w/2))/2; tx=mid-viewW/2;
@@ -3341,7 +3342,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v42';
+const GAME_VERSION='v43';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
