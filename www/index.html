@@ -326,6 +326,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -2312,7 +2313,6 @@ function render(dt){
   const cw=canvas.clientWidth, ch=canvas.clientHeight, p=player;
   { const f=lvl?camFocus():{foe:null,drop:null}; let zt=1;
     if(f.foe){ const need=Math.abs(f.foe.x+f.foe.w/2-(p.x+p.w/2))+f.foe.w/2+3*T; zt=Math.max(.62,Math.min(1,(cw/baseScale)/need)); }
-    else if(f.drop) zt=.78;
     if(viewH>=H*T && !f.foe) zt=1;
     camZoom+=(zt-camZoom)*Math.min(1,dt*2.2); cam.focus=f;
     scale=baseScale*camZoom; viewW=cw/scale; viewH=ch/scale; }
@@ -2325,9 +2325,10 @@ function render(dt){
       const mid=((p.x+p.w/2)+(f.foe.x+f.foe.w/2))/2; tx=mid-viewW/2;
       tx=Math.max(p.x+p.w/2-viewW*.94,Math.min(p.x+p.w/2-viewW*.06,tx)); tx=Math.max(0,Math.min(Math.max(0,W*T-viewW),tx));
       { const top=Math.min(p.y,f.foe.y), bot=Math.max(p.y+p.h,f.foe.y+f.foe.h); ty=Math.max(-viewH*.42,Math.min(Math.max(tyMax,H*T-viewH+Math.min(84/scale,viewH*.12)),(top+bot)/2-viewH*.55)); } }
-    else if(f.drop && viewH<H*T){ // show what is down there
+    else if(f.drop && viewH<H*T && (cam.dropT=(cam.dropT||0)+dt)>1.1){ // show what is down there
       const want=(f.drop.pit?H*T:(f.drop.row+1.6)*T)-viewH; ty=Math.max(tyMin,Math.min(tyMax,Math.min(p.y-1.5*T,Math.max(ty,want)))); } }
-  const k=Math.min(1,dt*7); cam.x+=(tx-cam.x)*k; cam.y+=(ty-cam.y)*Math.min(1,dt*5);
+  if(!(cam.focus&&cam.focus.drop)) cam.dropT=0;
+  const k=Math.min(1,dt*7); cam.x+=(tx-cam.x)*k; cam.y+=(ty-cam.y)*Math.min(1,dt*3);
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const sky=ctx.createLinearGradient(0,0,0,ch);
   theme.sky.forEach((c,i)=>sky.addColorStop([0,.55,.85,1][i],c));
@@ -3383,7 +3384,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v48';
+const GAME_VERSION='v49';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
