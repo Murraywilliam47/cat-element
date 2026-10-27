@@ -311,6 +311,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -873,7 +874,7 @@ const canvas=document.getElementById('game'), ctx=canvas.getContext('2d');
 let W=150, map, fish=[], fx, lvl, lvlIdx=0, theme=THEMES.garden, GOAL=null;
 let cat=CATS[0], player, particles=[], enemies=[], shots=[], bolts=[], zaps=[], boss=null, bird=null, checkpoint=null;
 let baseScale=1, camZoom=1, cam={x:0,y:0}, running=false, time=0, deadT=0, shakeT=0, flashT=0, lastSafe, dpr=1, scale=1, viewW=0, viewH=0;
-let hitStop=0, sceneryLights=[], shoot=null;
+let hintHold=0, hitStop=0, sceneryLights=[], shoot=null;
 let windPush=0, mission=null, photoItem=null, suns=[], pawSeq='', pawLast=null, lampOn=false, beamPath=null, floodDone=false, remix=false, hitCtx=null, tookHit=false, nests=[], boxesFalling=[], boxAnim=new Map(), stuckBoxes=new Set(), buttons=[], vases=[], hintText='', toastTimer=0, walkPh=0, blinkT=2, hearts=3, maxHearts=3, finishing=0;
 const input={left:false,right:false,jump:false,power:false}; let jumpBuf=0, powerPressed=false;
 
@@ -2038,7 +2039,8 @@ function update(dt){
   if(!running) return;
   const mopAlive=enemies.some(e=>(e.mop||e.nem)&&e.alive);
   if(GOAL && !mopAlive && overlap(p,GOAL)){ finishing=.9; sfx('win'); puff(GOAL.x+28,GOAL.y+16,'#ffcf5a',40,220,.9,3); setHint(''); return; }
-  if(boss) setHint(bossHint());
+  if(time<hintHold) setHint('');
+  else if(boss) setHint(bossHint());
   else { const h=autoHint(); setHint(h ? hintFor(h) : ''); }
 }
 function updateParticles(dt){
@@ -2222,7 +2224,7 @@ function resize(){
   const tilesWide = h>w*1.15 ? 8.6 : 11;
   scale=Math.max(.6,Math.min((h-overlayPad)/(H*T), w/(tilesWide*T)));
   if(h>w*1.15) scale=Math.max(scale, w/(tilesWide*T));
-  else if(w>=900 && h>=480) scale=Math.max(scale, w/(20*T)); // iPad landscape: about 20 tiles across, like a phone held sideways
+  else scale=Math.max(scale, w/((w>=900&&h>=480?20:21)*T)); // held sideways: about 20 tiles across, so the cat stays a good size on phones and tablets alike
   viewW=w/scale; viewH=h/scale; baseScale=scale;
 }
 /* ---------- top bar: a thin trail with the cat walking along it as you move through the level ---------- */
@@ -3339,7 +3341,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v41';
+const GAME_VERSION='v42';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3808,9 +3810,14 @@ function startLevel(i){
   paused=false; show(null); running=true; fadeT=1.1;
   playMusic(levelSong()); iris(); setTimeout(()=>{ if(running) sfx('motif-'+cat.id); },700);
   showLevelTitle(i==='tut'?'Tutorial':i==='park'?'Bonus':remix?'Remix':lvl.boss?`Level ${levelCode(i)} · Boss fight`:lvl.cat?(i<5?`Level ${levelCode(i)} · ${CAT_BY[lvl.cat].name}`:`Level ${levelCode(i)} · ${CAT_BY[lvl.cat].name}'s trial`):`Level ${levelCode(i)}`, lvl.boss?'The Vacuum King':lvl.name);
-  if(lvl.mission){ const lv0=lvl; setTimeout(()=>{ if(running&&lvl===lv0) toast(lv0.mission.type==='kitten'?'Mission: a lost kitten is hiding somewhere. Find it!':'Mission: find the hidden ball of yarn!',2.6); },lvl.cat?5200:2400); }
-  if(lvl.cat) setTimeout(()=>{ if(running&&lvl.cat) toast(`Only ${CAT_BY[lvl.cat].name} plays here. Use every one of ${CAT_BY[lvl.cat].name==='Lexus'||CAT_BY[lvl.cat].name==='Cookie'?'his':'her'} powers!`,2.6); },2300);
-  if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); setTimeout(()=>{ if(running) toast('Tip: swipe up on the power button to change form',2.8); if(!lvl.cat) setTimeout(()=>{ if(running) toast('Tip: hold the cat button to pick a cat',2.8); },3400); },2500); }
+  // start-of-level messages: one at a time, after the level name has faded, and only when they're new
+  { const lv0=lvl, msgs=[];
+    progress.intro=progress.intro||{};
+    if(lvl.cat && !progress.intro[i]){ const nm=CAT_BY[lvl.cat].name, his=(nm==='Lexus'||nm==='Cookie')?'his':'her'; msgs.push([`${nm}'s level: use all ${his} powers!`,2.4]); progress.intro[i]=true; saveProgress(); }
+    if(lvl.mission && !(progress.missions||{})[i]) msgs.push([lvl.mission.type==='kitten'?'Mission: find the lost kitten!':'Mission: find the hidden yarn!',2.4]);
+    if(isTouch && !settings.coached){ settings.coached=true; saveSettings(); msgs.push(['Tip: swipe up on the power button to change form',2.8]); }
+    let at=2.5; for(const [m,d] of msgs){ setTimeout(()=>{ if(running&&lvl===lv0) toast(m,d); },at*1000); at+=d+.4; }
+    hintHold=at; }
   layoutJoyZone();
 }
 const STAR_SVG=(fill)=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="${fill}" stroke="#0f0b1e" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
