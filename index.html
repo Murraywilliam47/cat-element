@@ -313,6 +313,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -2033,9 +2034,12 @@ function update(dt){
   // checkpoint
   const ktx=Math.floor(cx/T), kty=Math.floor((p.y+p.h-6)/T);
   if(tile(ktx,kty)==='K'){ map[kty][ktx]='k'; checkpoint={x:ktx*T+4,y:(kty+1)*T-26}; if(hearts<maxHearts){ hearts++; updateHearts(); } toast('Checkpoint!',1); sfx('check'); vibrate(25); puff(ktx*T+16,kty*T,'#ffcf5a',20,150,.6,3); }
+  // a box (or anything solid) that lands on a fish pushes the fish up on top of it, so it can still be collected
+  for(const f of fish){ if(f.got||f.hidden) continue; const fx=Math.floor(f.x/T); let fy=Math.floor(f.y/T);
+    if(fy>=0 && fy<H && (tile(fx,fy)==='C'||solid(fx,fy))){ while(fy>0 && (tile(fx,fy)==='C'||solid(fx,fy))) fy--; f.y=fy*T+16; puff(f.x,f.y,'#ffcf5a',6,80,.35,2); } }
   for(const f of fish){ if(!f.got && !f.hidden && Math.abs(f.x-cx)<22 && Math.abs(f.y-(p.y+p.h/2))<24){ f.got=true; puff(f.x,f.y,'#ffcf5a',10,120,.5,2.5); if(!settings.saver){ puff(f.x,f.y,'#fff7c2',7,70,.55,1.5,-80); particles.push({x:f.x,y:f.y,vx:0,vy:0,life:.35,max:.35,color:'#ffe9a8',size:4,grav:0,ring:1}); } sfx('fish'); updateFish();
     if(!lvl.boss && lvlIdx!=='tut' && lvlIdx!=='park' && fish.length && fish.every(q=>q.got)){ allFishCheer(); } } }
-  updateEnemies(dt); updateShots(dt);
+  updateEnemies(dt); updateShots(dt); keepFishFree();
   if(boss) updateBoss(dt);
   if(!running) return;
   const mopAlive=enemies.some(e=>(e.mop||e.nem)&&e.alive);
@@ -2479,6 +2483,12 @@ function celebrate(){ if(reduceMotion) return; const cols=CATS.map(c=>c.color).c
     box.append(e); }
   clearTimeout(celebrate.t); celebrate.t=setTimeout(()=>{ box.innerHTML=''; },4500);
   setTimeout(()=>sfx('confetti'),120); }
+// a fish must never end up stuck inside a box (or any block): pop it up on top, and let it drop back down once the box moves away
+function keepFishFree(){
+  for(const f of fish){ if(f.got||f.hidden) continue;
+    const c=Math.floor(f.x/T); let r=Math.floor(f.y/T);
+    if(SOLID.includes(tile(c,r))){ while(r>0 && SOLID.includes(tile(c,r))) r--; f.y=r*T+16; f.bumped=true; puff(f.x,f.y,'#ffcf5a',6,70,.35,2); }
+    else if(f.bumped && r<H-1 && tile(c,r+1)===' ' && tile(c,r+2)!==undefined){ f.y+=T; if(SOLID.includes(tile(c,r+2))||tile(c,r+2)==='='||r+2>=H) f.bumped=false; } } }
 function hexRgb(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16); return [n>>16&255,n>>8&255,n&255]; }
 function shade(h,a){ const [r,g,b]=hexRgb(h); const f=v=>Math.max(0,Math.min(255,Math.round(a<0?v*(1+a):v+(255-v)*a))); return `rgb(${f(r)},${f(g)},${f(b)})`; }
 function mixc(h1,h2,t){ const a=hexRgb(h1), b=hexRgb(h2); return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`; }
@@ -3342,7 +3352,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v43';
+const GAME_VERSION='v44';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
