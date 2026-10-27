@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Cat Element</title>
 <meta name="description" content="Five cats, five elemental powers. A platformer adventure starring Pearl, Miley, Quincy, Lexus and Cookie.">
 <meta name="theme-color" content="#231b3d">
@@ -309,6 +309,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -316,7 +317,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
   try{
     let vp=document.querySelector('meta[name=viewport]');
     if(!vp){ vp=document.createElement('meta'); vp.name='viewport'; document.head.appendChild(vp); }
-    const VP='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+    const VP='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
     vp.setAttribute('content',VP);
     const typing=()=>{ const a=document.activeElement; return a && (a.tagName==='TEXTAREA'||a.tagName==='INPUT'&&a.type==='text'); };
     for(const ev of ['gesturestart','gesturechange','gestureend']) document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
@@ -325,7 +326,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     let lastEnd=0;
     document.addEventListener('touchend',e=>{ const now=Date.now(); if(now-lastEnd<320 && !typing() && e.cancelable && !(e.target.closest&&e.target.closest('button,a,input,textarea,select,summary,label'))) e.preventDefault(); lastEnd=now; },{passive:false});
     // If the page does end up zoomed, snap it back to normal size.
-    const unzoom=()=>{ const v=window.visualViewport; if(!v||typing()) return; if(v.scale>1.01||v.offsetLeft>1||v.offsetTop>1){ vp.setAttribute('content',VP.replace('maximum-scale=1','maximum-scale=1.0001')); setTimeout(()=>{ vp.setAttribute('content',VP); window.scrollTo(0,0); },30); } };
+    const unzoom=()=>{ const v=window.visualViewport; if(!v||typing()) return; if(v.scale>1.01||v.scale<.99||v.offsetLeft>1||v.offsetTop>1){ vp.setAttribute('content',VP.replace('maximum-scale=1','maximum-scale=1.0001')); setTimeout(()=>{ vp.setAttribute('content',VP); window.scrollTo(0,0); },30); } };
     if(window.visualViewport){ visualViewport.addEventListener('resize',()=>setTimeout(unzoom,250)); visualViewport.addEventListener('scroll',()=>setTimeout(unzoom,250)); }
     document.addEventListener('focusout',()=>setTimeout(unzoom,150));
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(unzoom,200); });
@@ -2220,6 +2221,7 @@ function resize(){
   const tilesWide = h>w*1.15 ? 8.6 : 11;
   scale=Math.max(.6,Math.min((h-overlayPad)/(H*T), w/(tilesWide*T)));
   if(h>w*1.15) scale=Math.max(scale, w/(tilesWide*T));
+  else if(w>=900 && h>=480) scale=Math.max(scale, w/(20*T)); // iPad landscape: about 20 tiles across, like a phone held sideways
   viewW=w/scale; viewH=h/scale; baseScale=scale;
 }
 /* ---------- top bar: a thin trail with the cat walking along it as you move through the level ---------- */
@@ -3336,7 +3338,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v39';
+const GAME_VERSION='v40';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -4033,6 +4035,10 @@ for(const b of document.querySelectorAll('.pad button[data-k]')){
 
 /* ================= loop ================= */
 addEventListener('resize',resize);
+{ const relayout=()=>{ resize(); try{ layoutJoyZone(); }catch(e){} };
+  if(window.ResizeObserver){ const ro=new ResizeObserver(()=>relayout()); ro.observe(canvas); const pd=document.getElementById('pad'); if(pd) ro.observe(pd); }
+  addEventListener('orientationchange',()=>{ for(const ms of [60,250,600,1000]) setTimeout(relayout,ms); });
+  if(window.visualViewport) visualViewport.addEventListener('resize',()=>setTimeout(relayout,120)); }
 resize(); loadLevel(0); selectCat(0,true); applyControls();
 { const cb=document.getElementById('continueBtn'); cb.hidden=!(progress.storySeen||progress.unlocked>0);
   cb.addEventListener('click',()=>{ ensureAudio(); if(!progress.tutorialDone) startLevel('tut'); else showMap(); }); }
