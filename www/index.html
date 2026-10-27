@@ -319,6 +319,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -1107,6 +1108,7 @@ Object.assign(SOUNDS,{
   chitter:()=>{ for(let i=0;i<9;i++) tn({t:i*.045,type:'square',f0:1700+Math.random()*600,dur:.025,gain:.03,lp:3500,wet:.15}); },
   hiss:()=>{ nz({dur:.6,type:'highpass',f0:3500,f1:6000,gain:.12,a:.05,wet:.2}); },
   secret:()=>{ [72,76,79,84,88].forEach((m,i)=>{ tn({t:i*.07,f0:midiHz(m),dur:.6,gain:.06,wet:.6}); tn({t:i*.07,f0:midiHz(m+12),dur:.3,gain:.015,wet:.6}); }); nz({t:.3,dur:.6,type:'highpass',f0:7000,gain:.03,a:.1,wet:.7}); },
+  windup:()=>{ [77,81,84,89,93,96].forEach((m,i)=>{ tn({t:i*.07,f0:midiHz(m),dur:.3,gain:.05,wet:.5}); tn({t:i*.07,f0:midiHz(m)*3,dur:.12,gain:.012,wet:.5}); }); nz({t:.42,dur:.25,type:'lowpass',f0:900,f1:200,gain:.18,wet:.2}); tn({t:.42,f0:110,f1:55,dur:.25,gain:.2,wet:.1}); },
   confetti:()=>{ for(let i=0;i<10;i++) nz({t:i*.03,dur:.05,type:'highpass',f0:4000+Math.random()*3000,gain:.04,wet:.3}); },
 });
 const MOTIFS={pearl:{n:[88,83,80,88],type:'sine',g:.06,d:.09},miley:{n:[57,60,64,63],type:'square',g:.03,d:.11,lp:1100},quincy:{n:[72,76,79,84],type:'triangle',g:.07,d:.065},lexus:{n:[55,62,67,74],type:'sawtooth',g:.03,d:.1,lp:1500},cookie:{n:[48,55,52,60],type:'triangle',g:.08,d:.12}};
@@ -1152,11 +1154,20 @@ const SONGS={
   lair:  {bpm:138,root:48,chords:[[0,3,7],[0,3,7],[8,12,15],[7,11,14]],scale:[0,1,3,5,7,8,11],lead:'saw',drums:3,density:.72,ostinato:true},
   boss:  {bpm:132,root:50,chords:[[0,3,7],[8,12,15],[5,8,12],[7,11,14]],scale:[0,2,3,5,7,8,11],lead:'saw',drums:3,density:.7,ostinato:true},
 };
+// The main theme, "Lullaby to Victory": the same tune as a music-box lullaby (title screen) and as a bouncy arcade march (menus and map)
+{ const _=null, LUL=[81,_,84,_,81,_,77,_, 82,_,86,_,84,_,82,_, 81,_,79,_,77,_,79,_, 76,_,79,_,84,_,_,_,
+                    81,_,84,_,89,_,86,_, 84,_,82,_,86,_,84,_, 81,_,79,_,76,_,79,_, 77,_,_,_,_,_,_,_];
+  const MAR=LUL.map((n,i)=>n!=null?n:(i%8===7?null:(()=>{ for(let k=i-1;k>=0;k--) if(LUL[k]!=null) return (i%2?LUL[k]-12:LUL[k]); return null; })()));
+  MAR.splice(56,8,77,_,72,_,77,_,89,_);
+  const CH=[[0,4,7],[5,9,12],[0,4,7],[7,11,14],[0,4,7],[5,9,12],[7,11,14],[0,4,7]];
+  SONGS.lullaby={bpm:70,root:53,chords:CH,scale:[0,2,4,5,7,9,11],lead:'box',drums:0,density:0,fixed:LUL,soft:true};
+  SONGS.march={bpm:152,root:53,chords:CH,scale:[0,2,4,5,7,9,11],lead:'march',drums:1,density:0,fixed:MAR,ostinato:true}; }
 // World 2 gets its own take on each world's song: new key, new melody, swapped lead, a busier beat
 for(const k of ['garden','frost','ember','roof','peaks']){ const S=SONGS[k]; SONGS[k+'2']=Object.assign({},S,{root:S.root+2,bpm:S.bpm+6,lead:S.lead==='bell'?'tri':'bell',drums:S.drums||1,density:Math.min(.8,S.density+.08)}); }
 const midiHz=m=>440*Math.pow(2,(m-69)/12);
 function songPattern(name){
   if(music.pat[name]) return music.pat[name];
+  if(SONGS[name].fixed) return (music.pat[name]={mel:SONGS[name].fixed,bars:SONGS[name].fixed.length/8});
   const S=SONGS[name], rnd=srand([...name].reduce((a,c)=>a*31+c.charCodeAt(0),7)), bars=S.chords.length*2, mel=[];
   let prev=S.root+12+S.scale[2];
   for(let b=0;b<bars;b++){ const ch=S.chords[b%S.chords.length];
@@ -1185,12 +1196,15 @@ function mnoise(t,dur,type,f,gain){
 function musicStep(S,P,step,t,sd){
   const bar=Math.floor(step/8), s=step%8, ch=S.chords[bar%S.chords.length];
   if(s===0) for(const c of ch.slice(0,3)){ mvoice('sine',midiHz(S.root+c),t,sd*8.2,.022,0,.25); mvoice('triangle',midiHz(S.root+c)*1.004,t,sd*8.2,.008,1200,.4); }
-  if(s%2===1) mvoice('sine',midiHz(S.root+24+ch[(step>>1)%ch.length]),t,sd*1.3,.011);
+  if(s%2===1 && !S.soft) mvoice('sine',midiHz(S.root+24+ch[(step>>1)%ch.length]),t,sd*1.3,.011);
   if(music.intense>.5 && !music.soft){ mnoise(t,.02,'highpass',9000,.013); if(s===2||s===6) mvoice('sine',100,t,.12,.12,0,.002); }
   const n=P.mel[step];
-  if(n){ if(S.lead==='bell'){ mvoice('sine',midiHz(n),t,1.1,.05); mvoice('sine',midiHz(n+12),t,.5,.012); }
+  if(n){ if(S.lead==='box'){ mvoice('sine',midiHz(n),t,1.6,.055,0,.004); mvoice('sine',midiHz(n)*3,t,.35,.012,0,.002); mvoice('triangle',midiHz(n+12),t,.12,.01,0,.002); }
+    else if(S.lead==='march'){ mvoice('square',midiHz(n),t,sd*.9,.026,2600,.004); mvoice('triangle',midiHz(n),t,sd*1.2,.05,0,.004); }
+    else if(S.lead==='bell'){ mvoice('sine',midiHz(n),t,1.1,.05); mvoice('sine',midiHz(n+12),t,.5,.012); }
     else if(S.lead==='saw') mvoice('sawtooth',midiHz(n),t,sd*1.5,.03,1500);
     else mvoice('triangle',midiHz(n),t,sd*1.6,.06,3200); }
+  if(S.soft){ if(s===0) mvoice('triangle',midiHz(S.root-12+ch[0]),t,sd*6,.05,700,.05); return; } // lullaby: just a soft low note under the music box
   const bassN=S.root-12+ch[0];
   if(S.ostinato){ mvoice('sawtooth',midiHz(bassN+(s%2?12:0)),t,sd*.9,.05,500); }
   else if(s===0||s===4||(S.drums&&s===6)) mvoice('triangle',midiHz(bassN+(s===6?7:0)),t,sd*1.8,.1,900);
@@ -3352,12 +3366,12 @@ const screens=['titleScreen','mapScreen','clearScreen','overScreen','finalScreen
 function show(id){
   if(id && id!==lastShown && id!=='pauseScreen' && id!=='feedbackScreen' && lastShown!=='pauseScreen') iris(); lastShown=id;
   for(const s of screens) s.hidden = s.id!==id; setHint(''); toastEl.classList.remove('on'); if(id==='titleScreen'||id==='mapScreen') refreshLocks();
-  if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic('menu');
+  if(id && id!=='pauseScreen' && id!=='feedbackScreen') playMusic(id==='titleScreen'?'lullaby':'march');
 }
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v45';
+const GAME_VERSION='v46';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3415,7 +3429,7 @@ function startStory(kind,done){
   story={kind,panels:STORIES[kind],idx:0,t:0,done};
   running=false; for(const s of screens) s.hidden=true;
   document.body.classList.add('story-mode'); document.getElementById('storyBox').hidden=false;
-  playMusic(kind==='ending'?'garden':'menu'); paintStory(); resize();
+  playMusic(kind==='ending'?'garden':'march'); paintStory(); resize();
 }
 function paintStory(){
   document.getElementById('storyText').textContent=story.panels[story.idx].text;
@@ -3679,6 +3693,8 @@ function drawTitleArt(t){
 
 fillLineup(document.getElementById('lineup2'));
 function ensureAudio(){ initAudio(); }
+{ const wake=()=>{ ensureAudio(); if(!document.getElementById('titleScreen').hidden) playMusic('lullaby'); };
+  addEventListener('pointerdown',wake,{once:true,capture:true}); addEventListener('keydown',wake,{once:true,capture:true}); }
 const WORLDS=[{name:'World 1 · The Neighbourhood',lv:[0,1,2,3,4]},{name:'World 2 · The Cat Trials',lv:[5,6,7,8,9,10]}];
 let mapWorld=0;
 function buildWorld(){
@@ -3933,7 +3949,7 @@ function fromCheckpoint(){
   show(null); running=true; toast('Back at the checkpoint',1.2);
 }
 document.getElementById('playBtn').addEventListener('click',()=>{
-  ensureAudio();
+  ensureAudio(); sfx('windup');
   const go=()=>{ if(!progress.tutorialDone) startLevel('tut'); else showMap(); };
   startStory('intro',()=>{ progress.storySeen=true; saveProgress(); go(); });
 });
