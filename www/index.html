@@ -320,6 +320,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -421,7 +422,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     </div>
     <p id="mapNote">Tap a level to play.</p>
     <div class="daily" id="dailyBox"></div>
-    <div class="btns"><button class="big alt small" id="tutBtn">Cat School (tutorial)</button><button class="big alt small" id="parkBtn">Puzzle Park</button><button class="big alt small" id="remixBtn" hidden>Remix: off</button><button class="big alt small" id="storyBtn">Story</button><button class="big alt small" id="mapSettingsBtn">Settings</button><button class="big alt small" id="mapFbBtn">Send feedback</button><button class="big alt small" id="mapRealBtn">The real cats</button><button class="big alt small" id="mapWardBtn">Wardrobe</button><button class="big alt small" id="mapMoveBtn">Move my progress</button></div>
+    <div class="btns"><button class="big alt small" id="tutBtn">Cat School: try all 5 cats</button><button class="big alt small" id="parkBtn">Puzzle Park</button><button class="big alt small" id="remixBtn" hidden>Remix: off</button><button class="big alt small" id="storyBtn">Story</button><button class="big alt small" id="mapSettingsBtn">Settings</button><button class="big alt small" id="mapFbBtn">Send feedback</button><button class="big alt small" id="mapRealBtn">The real cats</button><button class="big alt small" id="mapWardBtn">Wardrobe</button><button class="big alt small" id="mapMoveBtn">Move my progress</button></div>
   </div>
 </div>
 
@@ -3371,7 +3372,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v46';
+const GAME_VERSION='v47';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3896,13 +3897,13 @@ function levelClear(){
     if(lvlIdx==='tut') progress.tutorialDone=true; else { progress.parkDone=true; progress.parkMission=progress.parkMission||missionOk; }
     saveProgress();
     showBadges(mission?[[missionOk,mission.type==='kitten'?'Kitten rescued':'Toy found']]:[]);
-    document.getElementById('clearSub').textContent= lvlIdx==='park' ? `You solved Puzzle Park! What a team.` : `You graduated from Cat School! ${cat.name} is ready for the real adventure.`;
+    document.getElementById('clearSub').textContent= lvlIdx==='park' ? `You solved Puzzle Park! What a team.` : `Cat School done! All five cats are ready for the adventure.`;
     document.getElementById('clearFish').textContent=`${got}/${fish.length}`;
     document.getElementById('clearTime').textContent=fmt(time);
     document.getElementById('clearHearts').textContent=`${hearts}/${maxHearts}`;
     const cv=document.getElementById('clearCat'); const g=cv.getContext('2d'); g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,cv.width,cv.height); storyBedBack(g,96,117,2.2); g.save(); g.translate(92,117); g.scale(2.7,2.7); drawSleepingCat(g,cat,0); g.restore(); storyBedFront(g,96,117,2.2);
     showStars(null);
-    document.getElementById('nextBtn').textContent= lvlIdx==='park' ? 'World map' : 'Start the adventure';
+    document.getElementById('nextBtn').textContent= (lvlIdx==='park'||progress.unlocked>0||(progress.best||[])[0]) ? 'World map' : 'Start the adventure';
     show('clearScreen'); return;
   }
   progress.best[lvlIdx]=Math.max(progress.best[lvlIdx]||0,got);
@@ -3950,10 +3951,10 @@ function fromCheckpoint(){
 }
 document.getElementById('playBtn').addEventListener('click',()=>{
   ensureAudio(); sfx('windup');
-  const go=()=>{ if(!progress.tutorialDone) startLevel('tut'); else showMap(); };
+  const go=()=>{ if(progress.unlocked===0 && !(progress.best||[])[0]) startLevel(0); else showMap(); }; // Cat School is optional practice now
   startStory('intro',()=>{ progress.storySeen=true; saveProgress(); go(); });
 });
-document.getElementById('nextBtn').addEventListener('click',()=>{ if(lvlIdx==='park'){ showMap(); return; } startLevel(lvlIdx==='tut'?0:Math.min(lvlIdx+1,LEVELS.length-1)); });
+document.getElementById('nextBtn').addEventListener('click',()=>{ if(lvlIdx==='park'||(lvlIdx==='tut'&&(progress.unlocked>0||(progress.best||[])[0]))){ showMap(); return; } startLevel(lvlIdx==='tut'?0:Math.min(lvlIdx+1,LEVELS.length-1)); });
 document.getElementById('clearMapBtn').addEventListener('click',showMap);
 document.getElementById('cpBtn').addEventListener('click',fromCheckpoint);
 document.getElementById('retryBtn').addEventListener('click',()=>startLevel(lvlIdx));
@@ -4091,7 +4092,7 @@ addEventListener('resize',resize);
   if(window.visualViewport) visualViewport.addEventListener('resize',()=>setTimeout(relayout,120)); }
 resize(); loadLevel(0); selectCat(0,true); applyControls();
 { const cb=document.getElementById('continueBtn'); cb.hidden=!(progress.storySeen||progress.unlocked>0);
-  cb.addEventListener('click',()=>{ ensureAudio(); if(!progress.tutorialDone) startLevel('tut'); else showMap(); }); }
+  cb.addEventListener('click',()=>{ ensureAudio(); showMap(); }); }
 let last=performance.now();
 function frame(now){
   const dt=Math.min(1/30,(now-last)/1000); last=now;
