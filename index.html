@@ -160,7 +160,14 @@ kbd{font:800 11px var(--body);background:var(--panel-2);border-radius:5px;paddin
 .meet{width:100%;text-align:left}
 .meet summary{cursor:pointer;font:400 18px var(--display);color:var(--gold);text-align:center;list-style:none;padding:8px}
 .meet summary::-webkit-details-marker{display:none}
-.meet[open]{display:flex;flex-direction:column;gap:10px}
+.meet[open]{display:flex;flex-direction:column;gap:12px}
+/* Meet the cats: tap or hover a cat to see her powers, one at a time */
+#lineup figure{cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .15s;opacity:.72}
+#lineup figure.sel{opacity:1;transform:translateY(-3px);box-shadow:0 0 0 2px var(--c),0 8px 18px rgba(0,0,0,.35)}
+#lineup figure:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.meet-info{display:none;max-width:none!important;font-size:15px!important;line-height:1.45;padding:12px 16px!important}
+.meet-info.on{display:block;animation:meetIn .2s ease-out}
+@keyframes meetIn{from{opacity:0;transform:translateY(-4px)}}
 @media (max-width:380px){
   .pad{--bs:.82;gap:6px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
   .pad.size-l{--bs:.9} .pad.size-s{--bs:.74}
@@ -329,6 +336,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -412,11 +420,11 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <div class="btns"><button class="big" id="playBtn">Play</button><button class="big alt" id="continueBtn" hidden>Continue</button></div>
     <details class="meet"><summary>Meet the cats</summary>
     <div class="lineup" id="lineup"></div>
-    <div class="pearl-card"><b>Pearl has four forms.</b> Freeze turns water and enemies to ice. Cloud lets her drift over wide gaps. Zap fires lightning at generators to open electric gates. Bird calls her friend to pull high levers and peck enemies.</div>
-    <div class="pearl-card" style="border-left-color:#b48cff"><b>Miley has four forms.</b> Shadow brings out hidden shadow steps and pins enemies down. Balls throws shadow balls. Run sprints at top speed. Blink teleports her through crystal walls. She can always walk through shadow walls.</div>
-    <div class="pearl-card" style="border-left-color:#ff8a3d"><b>Quincy has four forms.</b> Scream lets out a loud fire scream that burns wood and blasts every enemy around her. Climb lets her scale vine walls. Knock topples stone pillars into bridges. Chirp makes a bird sound that leaves enemies confused.</div>
-    <div class="pearl-card" style="border-left-color:#ffe066"><b>Lexus has four forms.</b> Leap is his double jump. Shine makes him stand still in a beam of light, then blast everything around him. Meow is so annoying that enemies lose it and pop. Storm has him roll in the dust and become a shredding grey storm cloud.</div>
-    <div class="pearl-card" style="border-left-color:#a5cf6c"><b>Cookie has three forms.</b> Smash breaks boulders. Break punches through brick walls and slams through concrete floors. Lion turns him into a big charging lion. He is a heavy tank, but he gets tired fast, so watch his stamina bar.</div>
+    <div class="pearl-card meet-info" data-i="0"><b>Pearl has four forms.</b> Freeze turns water and enemies to ice. Cloud lets her drift over wide gaps. Zap fires lightning at generators to open electric gates. Bird calls her friend to pull high levers and peck enemies.</div>
+    <div class="pearl-card meet-info" data-i="1" style="border-left-color:#b48cff"><b>Miley has four forms.</b> Shadow brings out hidden shadow steps and pins enemies down. Balls throws shadow balls. Run sprints at top speed. Blink teleports her through crystal walls. She can always walk through shadow walls.</div>
+    <div class="pearl-card meet-info" data-i="2" style="border-left-color:#ff8a3d"><b>Quincy has four forms.</b> Scream lets out a loud fire scream that burns wood and blasts every enemy around her. Climb lets her scale vine walls. Knock topples stone pillars into bridges. Chirp makes a bird sound that leaves enemies confused.</div>
+    <div class="pearl-card meet-info" data-i="3" style="border-left-color:#ffe066"><b>Lexus has four forms.</b> Leap is his double jump. Shine makes him stand still in a beam of light, then blast everything around him. Meow is so annoying that enemies lose it and pop. Storm has him roll in the dust and become a shredding grey storm cloud.</div>
+    <div class="pearl-card meet-info" data-i="4" style="border-left-color:#a5cf6c"><b>Cookie has three forms.</b> Smash breaks boulders. Break punches through brick walls and slams through concrete floors. Lion turns him into a big charging lion. He is a heavy tank, but he gets tired fast, so watch his stamina bar.</div>
     </details>
   </div>
 </div>
@@ -3389,7 +3397,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v51';
+const GAME_VERSION='v53';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3629,6 +3637,20 @@ function fillLineup(el){
   }
 }
 fillLineup(document.getElementById('lineup'));
+{ const figs=[...document.querySelectorAll('#lineup figure')], infos=[...document.querySelectorAll('.meet-info')];
+  const pick=k=>{ figs.forEach((f,j)=>{ f.classList.toggle('sel',j===k); f.setAttribute('aria-pressed',j===k); }); infos.forEach(c=>c.classList.toggle('on',+c.dataset.i===k)); };
+  figs.forEach((f,k)=>{ f.tabIndex=0; f.setAttribute('role','button'); f.setAttribute('aria-label',f.querySelector('b').textContent+': show powers');
+    f.addEventListener('click',()=>pick(k)); f.addEventListener('mouseenter',()=>{ if(matchMedia('(hover:hover)').matches) pick(k); });
+    f.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(k); } }); });
+  pick(0);
+  /* keep the title where it is when the section opens: the card grows downwards and the page scrolls, so the words never slide up over the rooftop cats */
+  const meet=document.querySelector('#titleScreen .meet'), tcard=document.querySelector('#titleScreen .card'), tscr=document.getElementById('titleScreen');
+  const pin=()=>{ if(meet.open||tcard.style.marginTop) return; const pad=parseFloat(getComputedStyle(tscr).paddingTop)||0, top=tcard.getBoundingClientRect().top-tscr.getBoundingClientRect().top+tscr.scrollTop-pad; let mt=Math.max(0,top); tcard.style.marginTop=mt+'px'; tcard.style.alignSelf='flex-start'; for(let i=0;i<4;i++){ const off=tcard.getBoundingClientRect().top-tscr.getBoundingClientRect().top+tscr.scrollTop-pad-top; if(Math.abs(off)<.5) break; mt=Math.max(0,mt-off); tcard.style.marginTop=mt+'px'; } };
+  if(meet&&tcard&&tscr){ const sm=meet.querySelector('summary'); sm.addEventListener('pointerdown',pin); sm.addEventListener('keydown',pin); sm.addEventListener('click',pin); }
+  if(meet&&tcard&&tscr) meet.addEventListener('toggle',()=>{
+    if(meet.open){ requestAnimationFrame(()=>{ const r=meet.getBoundingClientRect(), vh=tscr.clientHeight; if(r.bottom>vh-12) tscr.scrollBy({top:Math.min(r.bottom-vh+24, r.top-12),behavior:'smooth'}); });
+    } else { tcard.style.marginTop=''; tcard.style.alignSelf=''; tscr.scrollTo({top:0,behavior:'smooth'}); } });
+}
 /* ================= title backdrop: the five cats on a moonlit rooftop ================= */
 const titleCv=document.getElementById('titleArt'), TSTARS=Array.from({length:70},()=>({x:Math.random(),y:Math.random()*.6,r:Math.random()*1.4+.4,p:Math.random()*6}));
 // Manama skyline by moonlight (original drawing): Al Fateh Mosque, the World Trade Center sails, the curved tower, the frame tower and the towers in between, mirrored in the water
