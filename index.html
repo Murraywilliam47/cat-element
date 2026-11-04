@@ -344,6 +344,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -744,60 +745,60 @@ const LEVELS=[
     vases:[[16,3],[31,6]], buttons:[{c:132,row:11,gate:[135,136]}],
     enemies:[['bunny',24],['bunny',49],['bunny',76],['moth',87,8,3],['spiky',106],['bunny',118],['gnome',140,12,137]] },
   { name:'Frosty Creek', bossCP:[[152,11]], cat:'pearl', mission:{type:'kitten',x:82,y:1}, photo:{x:148,y:2}, suns:[132],  theme:'frost', w:180, start:3, goal:[174,3], speed:1.1,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,12,12); f(8,9,0,11,'D'); p(11,3,'L'); f(13,23,12,13,'~'); g(24,34,12); p(25,11,'Z'); f(28,29,0,11,'G'); f(31,31,11,11,'^');
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,12,12); f(13,23,12,13,'~'); g(24,34,12); f(25,29,12,13,'~'); f(31,31,11,11,'^');
       g(35,46,7); f(33,33,7,11,'e'); f(30,34,6,6,'&'); f(47,57,7,8,'~'); f(47,57,9,13,'#'); g(58,64,7); p(60,6,'K');
-      g(77,95,9); p(86,8,'Z'); f(90,91,0,8,'G'); g(96,99,12); f(100,110,12,13,'~'); g(111,153,12); p(113,11,'K'); p(118,11,'Z'); f(123,124,0,11,'G'); f(138,139,0,11,'D'); p(142,2,'L');
+      g(77,95,9); f(88,92,9,13,'~'); g(96,99,12); f(100,110,12,13,'~'); g(111,153,12); p(113,11,'K'); f(119,128,12,13,' '); f(142,146,12,13,'~');
       g(154,176,4); f(177,179,0,13,'#');
-      f(84,84,3,8,'e'); f(81,87,2,2,'&'); f(150,150,4,11,'e'); f(147,153,3,3,'&'); f(130,134,8,8,'#'); p(127,11,'C'); },
+      f(84,84,3,8,'e'); f(81,87,2,2,'&'); f(150,150,4,11,'e'); f(147,153,3,3,'&'); f(130,134,8,8,'#'); p(129,11,'C'); },
     vases:[[86,1],[133,7],[160,3]],
-    enemies:[['bunny',31],['moth',70,4,3],['moth',84,5,2],['spray',94,-1],['bunny',116],['spiky',130],['bunny',134],['spray',144,-1],['blower',167,4,158]] },
+    enemies:[['bunny',31],['moth',70,4,3],['moth',84,5,2],['spray',94,-1],['bunny',116],['spiky',130],['bunny',134],['spray',149,-1],['blower',167,4,158]] },
   { name:'Ember Woods', bossCP:[[155,11],[180,2]], cat:'quincy', mission:{type:'kitten',x:75,y:2}, photo:{x:178,y:2}, suns:[140],  theme:'ember', w:200, start:3, goal:[196,11], speed:1.2,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,12); f(10,11,0,11,'W'); g(15,30,12); f(18,20,11,11,'^'); f(25,27,11,11,'^'); f(17,21,9,9,'='); f(24,28,9,9,'='); g(33,48,10); f(42,43,0,9,'W');
       g(49,60,12); f(53,54,11,11,'^'); g(61,75,10); p(63,9,'K'); f(70,71,0,9,'W'); g(76,82,12); g(83,90,13); f(83,90,12,12,'^');
-      g(91,110,7); f(91,91,7,11,'V'); f(100,101,0,6,'W'); g(111,115,7); p(112,6,'K'); f(115,115,0,6,'T'); g(116,122,12); f(116,122,11,11,'^'); g(123,125,7);
-      g(126,176,12); f(130,131,11,11,'^'); f(158,158,0,11,'T'); f(160,170,0,8,'#'); f(159,170,11,11,'^');
-      g(177,183,3); f(177,177,3,11,'V'); g(184,198,12); f(199,199,0,13,'#'); f(188,188,8,11,'T'); f(193,193,8,11,'T');
+      g(91,110,7); f(88,90,9,9,'='); f(100,101,0,6,'W'); g(111,115,7); p(112,6,'K'); g(116,122,12); f(116,122,11,11,'^'); g(123,125,7);
+      g(126,176,12); f(130,131,11,11,'^'); f(160,170,0,8,'#'); f(159,170,11,11,'^');
+      g(177,183,3); f(172,174,9,9,'='); f(174,176,6,6,'='); g(184,198,12); f(199,199,0,13,'#'); f(188,188,8,11,'T'); f(193,193,8,11,'T');
       f(77,77,4,11,'e'); f(74,80,3,3,'&'); f(143,146,9,11,'#'); p(146,8,'C'); f(151,152,0,11,'M'); },
-    nests:[{c:80,from:83,to:90,row:12}], vases:[[79,2],[181,2]], buttons:[{c:147,row:11,gate:[151,152]}], squirrelPillars:[188,193],
+    nests:[{c:80,from:83,to:90,row:12},{c:113,from:116,to:122,row:7},{c:156,from:159,to:170,row:11}], vases:[[79,2],[181,2]], buttons:[{c:147,row:11,gate:[151,152]}], squirrelPillars:[188,193],
     enemies:[['bunny',7],['moth',22,6,2],['spray',47,-1],['moth',55,6,3],['spiky',67],['bunny',73],['moth',105,4,2],['bunny',107],['spiky',135],['bunny',141],['moth',145,8,3],['spray',150,-1],['moth',165,10,2],['bunny',174],['squirrel',188,12,184]] },
   { name:'Moonlit Rooftops', bossCP:[[94,10]], cat:'miley', mission:{type:'kitten',x:5,y:3}, photo:{x:125,y:2}, suns:[60],  theme:'roof', w:160, start:3, goal:[155,8], speed:1.3,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,11); g(14,26,11); f(20,21,0,10,'S'); g(30,42,10); f(36,36,0,9,'J'); g(50,70,11); p(57,10,'K'); f(66,67,0,10,'X');
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,11); g(14,26,11); f(20,21,0,10,'S'); g(30,42,10); f(36,36,0,9,'J'); g(50,70,11); p(57,10,'K'); f(55,55,0,10,'J'); f(60,65,11,13,' ');
       f(71,81,12,13,'#'); f(71,81,11,11,'^'); f(73,74,8,8,'H'); f(77,78,8,8,'H');
-      g(82,96,11); f(86,86,10,10,'^'); f(88,89,0,10,'X'); f(94,95,0,10,'S');
+      g(82,96,11); f(86,86,10,10,'^'); f(89,89,0,10,'J'); f(94,95,0,10,'S');
       g(100,111,11); f(104,104,0,10,'J'); f(107,108,8,8,'H'); f(110,111,5,5,'H'); g(112,131,3); p(115,2,'K'); f(120,121,0,2,'S');
-      g(139,156,9); f(141,143,0,8,'X'); f(157,159,0,13,'#');
+      g(139,156,9); f(141,141,0,8,'J'); f(157,159,0,13,'#');
       f(7,7,5,10,'e'); f(4,10,4,4,'&'); p(83,10,'C'); },
     warns:[84], vases:[[9,3],[124,2],[40,9]],
-    enemies:[['bunny',6],['spiky',24],['moth',33,6,2],['spray',41,-1],['moth',47,6,3],['bunny',58],['spray',69,-1],['bunny',91],['spiky',102],['moth',118,1,2],['moth',135,5,3],['searchbot',151,9,145]] },
+    enemies:[['bunny',6],['spiky',24],['moth',33,6,2],['spray',41,-1],['moth',47,6,3],['bunny',58],['spray',68,-1],['bunny',91],['spiky',102],['moth',118,1,2],['moth',135,5,3],['searchbot',151,9,145]] },
   { name:'Thunder Peaks', bossCP:[[138,8],[184,8]], cat:'lexus', mission:{type:'kitten',x:4,y:0}, photo:{x:142,y:3}, suns:[60],  theme:'peaks', w:200, start:3, goal:[192,12], speed:1.45,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,12); g(11,24,7); f(16,17,6,6,'^'); g(28,40,7); f(33,34,0,6,'Y'); g(41,43,12); f(44,48,12,13,'~'); g(49,73,12); p(57,11,'K'); f(65,66,0,11,'N');
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,12); g(11,24,7); f(16,17,6,6,'^'); g(28,40,7); f(33,34,2,6,'#'); g(41,43,12); f(44,48,12,13,'~'); g(49,73,12); p(57,11,'K'); f(65,66,7,11,'#');
       g(79,96,12); f(84,90,0,9,'#'); f(87,87,10,11,'A'); f(93,94,11,11,'^');
-      g(97,112,7); p(99,6,'K'); f(104,105,0,6,'N'); g(113,129,7); f(115,116,0,6,'Y');
-      g(135,173,9); f(140,145,4,8,'#'); f(151,151,8,8,'^'); f(168,169,0,8,'Y'); g(174,186,9); g(187,196,13); f(197,199,0,13,'#');
+      g(97,112,7); p(99,6,'K'); f(104,105,2,6,'#'); g(113,129,7); f(115,116,2,6,'#');
+      g(135,173,9); f(140,145,4,8,'#'); f(151,151,8,8,'^'); f(168,169,4,8,'#'); g(174,186,9); g(187,196,13); f(197,199,0,13,'#');
       f(6,6,2,11,'e'); f(3,9,1,1,'&'); f(154,157,6,8,'#'); p(157,5,'C'); f(162,163,0,8,'M'); },
     vases:[[8,0],[62,11]], buttons:[{c:158,row:8,gate:[162,163]}],
     enemies:[['bunny',6],['moth',20,3,2],['spiky',38],['spray',62,-1],['moth',76,8,3],['giant',87,12],['moth',101,1,2],['bunny',109],['spiky',122],['moth',133,5,3],['bunny',148],['spray',160,-1],['moth',178,6,2],['mop',194,13]] },
   // ===== World 2: the Cat Trials. Each level is played by one cat and needs all of that cat's powers.
   { name:'Frozen Falls', suns:[55], cat:'pearl', mission:{type:'toy',x:88,y:9},  theme:'frost', w:130, start:3, goal:[124,10], speed:1.2,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,11); f(15,24,11,13,'~'); g(25,38,11); p(28,10,'K'); p(32,10,'Z'); f(35,36,0,10,'G');
-      g(51,80,11); p(54,10,'K'); f(60,61,0,10,'D'); p(64,3,'L'); f(81,92,11,13,'~'); g(93,104,11); p(95,10,'K'); p(98,10,'Z'); f(101,102,0,10,'G');
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,11); f(15,24,11,13,'~'); g(25,38,11); p(28,10,'K'); f(33,35,11,13,'~');
+      g(51,80,11); p(54,10,'K'); f(59,63,11,13,'~'); f(68,76,11,13,' '); f(81,92,11,13,'~'); g(93,104,11); p(95,10,'K'); 
       g(115,128,11); f(129,129,0,13,'#'); },
-    enemies:[['bunny',8],['bunny',29],['moth',44,6,3],['spray',72,-1],['moth',86,7,2],['bunny',98],['moth',110,6,2],['bath',124,11,115]] },
+    enemies:[['bunny',8],['bunny',29],['moth',44,6,3],['spray',79,-1],['moth',86,7,2],['bunny',98],['moth',110,6,2],['bath',124,11,115]] },
   { name:'Shadow Alley', suns:[61], cat:'miley', mission:{type:'toy',x:36,y:2},  theme:'roof', w:130, start:3, goal:[125,10], speed:1.25,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,26,11); f(10,11,0,10,'S'); f(22,23,8,8,'H'); f(25,26,5,5,'H'); g(27,38,3); p(30,2,'K');
-      g(39,52,11); p(48,10,'K'); g(57,72,11); f(57,57,0,10,'J'); g(80,108,11); p(84,10,'K'); f(90,92,0,10,'X');
+      g(39,52,11); p(48,10,'K'); g(57,72,11); f(57,57,0,10,'J'); g(80,108,11); p(84,10,'K'); f(89,94,11,13,' ');
       f(103,104,8,8,'H'); f(106,107,5,5,'H'); g(109,117,3); f(115,115,0,2,'J'); g(118,128,11); f(129,129,0,13,'#'); },
     enemies:[['bunny',7],['spiky',16],['bunny',44],['spray',68,-1],['bunny',86],['moth',99,7,2],['bunny',112],['laser',125,11,118]] },
   { name:'Ember Forest', suns:[68], cat:'quincy', mission:{type:'toy',x:44,y:3},  theme:'ember', w:150, start:3, goal:[145,11], speed:1.25,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,28,12); f(12,13,0,11,'W'); g(29,44,4); f(29,29,4,11,'V'); f(38,39,0,3,'W');
-      g(45,72,12); p(47,11,'K'); f(52,52,0,11,'T'); f(54,64,0,8,'#'); f(53,64,11,11,'^'); g(73,82,13); f(73,82,12,12,'^');
-      g(83,100,12); p(86,11,'K'); g(101,116,5); f(101,101,5,11,'V'); f(110,111,0,4,'W');
-      g(117,148,12); p(119,11,'K'); f(126,126,0,11,'T'); f(128,138,0,8,'#'); f(127,138,11,11,'^'); f(149,149,0,13,'#'); },
-    nests:[{c:70,from:73,to:82,row:12}],
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,28,12); f(12,13,0,11,'W'); g(29,44,4); f(22,24,9,9,'='); f(25,27,6,6,'='); f(38,39,0,3,'W');
+      g(45,72,12); p(47,11,'K'); f(54,64,0,8,'#'); f(53,64,11,11,'^'); g(73,82,13); f(73,82,12,12,'^');
+      g(83,100,12); p(86,11,'K'); g(101,116,5); f(95,97,9,9,'='); f(98,100,7,7,'='); f(110,111,0,4,'W');
+      g(117,148,12); p(119,11,'K'); f(128,138,0,8,'#'); f(127,138,11,11,'^'); f(149,149,0,13,'#'); },
+    nests:[{c:50,from:53,to:64,row:11},{c:70,from:73,to:82,row:12},{c:124,from:127,to:138,row:11}],
     enemies:[['bunny',7],['bunny',22],['spiky',48],['moth',78,8,3],['bunny',90],['spiky',96],['moth',108,2,2],['bunny',121],['spritz',145,12,139]] },
   { name:'Storm Peaks', suns:[84], cat:'lexus', mission:{type:'toy',x:29,y:6},  theme:'peaks', w:150, start:3, goal:[144,6], speed:1.3,
-    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,12); g(15,30,7); f(24,25,0,6,'N'); g(31,70,12); p(33,11,'K'); f(40,41,0,11,'Y');
-      f(53,62,0,9,'#'); f(57,57,10,11,'A'); g(71,86,7); p(73,6,'K'); f(80,81,0,6,'N'); g(87,125,12); f(96,97,0,11,'Y'); p(103,11,'K');
+    build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,14,12); g(15,30,7); f(24,25,2,6,'#'); g(31,70,12); p(33,11,'K'); f(40,41,7,11,'#');
+      f(53,62,0,9,'#'); f(57,57,10,11,'A'); g(71,86,7); p(73,6,'K'); f(80,81,2,6,'#'); g(87,125,12); f(96,97,7,11,'#'); p(103,11,'K');
       f(108,118,0,9,'#'); f(113,113,10,11,'A'); g(126,148,7); f(149,149,0,13,'#'); },
     enemies:[['bunny',8],['moth',22,3,2],['spiky',36],['bunny',46],['giant',57,12],['spray',67,-1],['moth',78,3,2],['bunny',92],['spiky',101],['giant',113,12],['bunny',121],['cucumber',141,7,127]] },
   { name:'Rock Quarry', suns:[85], cat:'cookie', mission:{type:'toy',x:56,y:12},  theme:'garden', w:150, start:3, goal:[143,10], speed:1.2,
@@ -1995,7 +1996,7 @@ function autoHint(){
     const col=pcx+d;
     for(let row=head-2;row<foot;row++){ const c=tile(col,row); if(c==='W'||c==='B') return 'quincy'; if(c==='R') return 'cookie'; if(c==='S') return 'miley'; if(c==='G') return 'lightning'; if(c==='D') return 'bird'; if(c==='X') return 'teleport'; if(c==='J') return 'lock'; if(c==='Y') return 'storm'; if(c==='N') return 'thorns'; if(c==='H') return 'shadow'; if(c==='T') return 'knock'; if(c==='V') return 'climb'; if(c==='Q') return 'brick'; if(c==='Y') return 'storm'; if(c==='O') return 'waterfall'; if(c==='v') return 'climbice'; if(c==='p') return 'pipe'; if(c==='o') return lampOn?'mirrors':'lamp'; if(c==='r'||c==='s') return lampOn?'mirrors':'lamp'; if(c==='J') return 'lock'; if(c==='N') return 'thorns'; if(c==='U') return 'steel'; if(c==='A') return 'giant'; if(c==='M') return buttons.some(b=>!b.open)?'button':'gate'; if(c==='e' && d<=2) return 'tree'; }
     if(d<=4 && (tile(col,foot)==='~'||tile(col,foot-1)==='~')) return 'freeze';
-    if(d<=3 && isPit(col,foot)){ let run=0; while(run<14 && isPit(col+run,foot)) run++; if(run>=(lvl.cat==='miley'?7:8) && (!lvl.cat||lvl.cat==='miley'||lvl.cat==='pearl')) return lvl.cat==='miley'?'run':'cloud'; }
+    if(d<=3 && isPit(col,foot)){ let run=0; while(run<14 && isPit(col+run,foot)) run++; if(run>=(lvl.cat==='miley'?6:8) && (!lvl.cat||lvl.cat==='miley'||lvl.cat==='pearl')) return lvl.cat==='miley'?'run':'cloud'; }
     if(tile(col,0)!=='#' && tile(col,foot-1)==='#'){ let h=0; while(tile(col,foot-1-h)==='#' && h<9) h++; if(lvl.cat && lvl.cat!=='miley' && lvl.cat!=='lexus'){ for(let k=-10;k<=4;k++) if(tile(pcx+k,foot-1)==='e'||tile(pcx+k,foot-2)==='e') return k<-2?'treeback':'tree'; continue; } if(h>=7) return lvl.cat==='lexus'?null:'shadow'; if(h>=4) return lvl.cat==='miley'?null:'lexus'; }
   }
   if(p.cloudT>0) return 'cloud';
@@ -2073,7 +2074,7 @@ function update(dt){
   p.coyote = p.onGround ? .08 : Math.max(0,p.coyote-dt);
   if(jumpBuf>0 && !cloud && p.shineT<=0 && p.rollT<=0){
     jumpBuf-=dt;
-    if(p.coyote>0){ p.vy=-650; p.coyote=0; p.onGround=false; jumpBuf=0; p.sq=1.2; sfx('jump'); puff(p.x+p.w/2,p.y+p.h,'rgba(255,255,255,.6)',5,60,.3,2); }
+    if(p.coyote>0){ p.vy=-650; p.coyote=0; p.onGround=false; jumpBuf=0; p.dashT=0; p.sq=1.2; sfx('jump'); puff(p.x+p.w/2,p.y+p.h,'rgba(255,255,255,.6)',5,60,.3,2); }
     else if(cat.id==='lexus'&&p.airJumps>0){ stormJump(); jumpBuf=0; }
   }
   if(!input.jump && p.vy<-330 && p.dashT<=0 && !p.bounced && !cloud) p.vy=-330;
@@ -3435,7 +3436,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v55';
+const GAME_VERSION='v56';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
