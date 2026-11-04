@@ -337,6 +337,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -420,11 +421,11 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <div class="btns"><button class="big" id="playBtn">Play</button><button class="big alt" id="continueBtn" hidden>Continue</button></div>
     <details class="meet"><summary>Meet the cats</summary>
     <div class="lineup" id="lineup"></div>
-    <div class="pearl-card meet-info" data-i="0"><b>Pearl has four forms.</b> Freeze turns water and enemies to ice. Cloud lets her drift over wide gaps. Zap fires lightning at generators to open electric gates. Bird calls her friend to pull high levers and peck enemies.</div>
-    <div class="pearl-card meet-info" data-i="1" style="border-left-color:#b48cff"><b>Miley has four forms.</b> Shadow brings out hidden shadow steps and pins enemies down. Balls throws shadow balls. Run sprints at top speed. Blink teleports her through crystal walls. She can always walk through shadow walls.</div>
-    <div class="pearl-card meet-info" data-i="2" style="border-left-color:#ff8a3d"><b>Quincy has four forms.</b> Scream lets out a loud fire scream that burns wood and blasts every enemy around her. Climb lets her scale vine walls. Knock topples stone pillars into bridges. Chirp makes a bird sound that leaves enemies confused.</div>
-    <div class="pearl-card meet-info" data-i="3" style="border-left-color:#ffe066"><b>Lexus has four forms.</b> Leap is his double jump. Shine makes him stand still in a beam of light, then blast everything around him. Meow is so annoying that enemies lose it and pop. Storm has him roll in the dust and become a shredding grey storm cloud.</div>
-    <div class="pearl-card meet-info" data-i="4" style="border-left-color:#a5cf6c"><b>Cookie has three forms.</b> Smash breaks boulders. Break punches through brick walls and slams through concrete floors. Lion turns him into a big charging lion. He is a heavy tank, but he gets tired fast, so watch his stamina bar.</div>
+    <div class="pearl-card meet-info" data-i="0"><b>Pearl has two forms.</b> Freeze turns water into ice to walk on and freezes enemies. It even shorts out generators and shatters iron gates. Cloud lets her ride a cloud and drift over wide gaps.</div>
+    <div class="pearl-card meet-info" data-i="1" style="border-left-color:#b48cff"><b>Miley has two forms.</b> Run sprints at top speed and smashes straight through crystal walls. Shadow brings out hidden shadow steps, pins enemies down and opens shadow locks. She can always walk through shadow walls.</div>
+    <div class="pearl-card meet-info" data-i="2" style="border-left-color:#ff8a3d"><b>Quincy has two forms.</b> Scream is a loud fire scream that burns wooden walls, blasts every enemy around her and knocks stone pillars over. Chirp is a bird sound that confuses enemies. She is also a natural climber.</div>
+    <div class="pearl-card meet-info" data-i="3" style="border-left-color:#ffe066"><b>Lexus has two forms.</b> Meow is so annoying that enemies pop and junk piles rattle apart. Leap is his double jump, and its storm wind blows thorns away.</div>
+    <div class="pearl-card meet-info" data-i="4" style="border-left-color:#a5cf6c"><b>Cookie has two forms.</b> Lion turns him into a big charging lion that can bust through steel walls. Break punches through brick walls and boulders and slams down through concrete floors. He gets tired fast, so watch his stamina bar.</div>
     </details>
   </div>
 </div>
@@ -548,22 +549,22 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 (() => {
 const T = 32, H = 14;
 const CATS = [
-  { id:'pearl',  name:'Pearl',  el:'Ice · Sky', color:'#8fd3ff', verb:'Freeze', power:'Freeze, cloud, lightning and a bird friend', base:'#f5f6fb', eye:'#6aa9ff', tail:'#eceff8', paws:'#f5f6fb', fluffy:true, ruff:'#ffffff' },
-  { id:'miley',  name:'Miley',  el:'Shadow', color:'#b48cff', verb:'Dash',   power:'Shadow steps, shadow balls, sprint and teleport', base:'#1e1b24', eye:'#bfcc3e', tail:'#1e1b24', paws:'#ffffff', fluffy:true, ruff:'#26222e' },
-  { id:'quincy', name:'Quincy', el:'Fire',   color:'#ff8a3d', verb:'Burn',   power:'Fire scream, climbing, knocking down and chirping',      base:'#fbf6ee', eye:'#f2a72c', tail:'#2c2523', paws:'#fbf6ee' },
-  { id:'lexus',  name:'Lexus',  el:'Storm',  color:'#ffe066', verb:'Leap',   power:'Double jump, shine, annoying meow and dust storm',    base:'#fbfbfb', eye:'#e6a21e', tail:'#80858f', paws:'#fbfbfb' },
-  { id:'cookie', name:'Cookie', el:'Earth',  color:'#a5cf6c', verb:'Smash',  power:'Smash, break bricks and concrete, become a lion', base:'#8d6741', eye:'#a9c43c', tail:'#7a5634', paws:'#6e4c2e', fluffy:true, ruff:'#c9a878' },
+  { id:'pearl',  name:'Pearl',  el:'Ice · Sky', color:'#8fd3ff', verb:'Freeze', power:'Freeze and cloud', base:'#f5f6fb', eye:'#6aa9ff', tail:'#eceff8', paws:'#f5f6fb', fluffy:true, ruff:'#ffffff' },
+  { id:'miley',  name:'Miley',  el:'Shadow', color:'#b48cff', verb:'Dash',   power:'Sprint and shadow steps', base:'#1e1b24', eye:'#bfcc3e', tail:'#1e1b24', paws:'#ffffff', fluffy:true, ruff:'#26222e' },
+  { id:'quincy', name:'Quincy', el:'Fire',   color:'#ff8a3d', verb:'Burn',   power:'Fire scream and chirping',      base:'#fbf6ee', eye:'#f2a72c', tail:'#2c2523', paws:'#fbf6ee' },
+  { id:'lexus',  name:'Lexus',  el:'Storm',  color:'#ffe066', verb:'Leap',   power:'Annoying meow and double jump',    base:'#fbfbfb', eye:'#e6a21e', tail:'#80858f', paws:'#fbfbfb' },
+  { id:'cookie', name:'Cookie', el:'Earth',  color:'#a5cf6c', verb:'Lion',   power:'Become a lion, break bricks and concrete', base:'#8d6741', eye:'#a9c43c', tail:'#7a5634', paws:'#6e4c2e', fluffy:true, ruff:'#c9a878' },
 ];
 const CAT_BY = Object.fromEntries(CATS.map(c=>[c.id,c]));
 const EL_NAME = {pearl:'Ice',miley:'Shadow',quincy:'Fire',lexus:'Storm',cookie:'Earth'};
 const CAT_FORMS = {
-  pearl:[{id:'freeze',label:'Freeze',verb:'Freeze',color:'#8fd3ff'},{id:'cloud',label:'Cloud',verb:'Cloud',color:'#ffffff'},{id:'lightning',label:'Zap',verb:'Zap',color:'#6aa9ff'},{id:'bird',label:'Bird',verb:'Bird',color:'#6fb7ff'}],
-  miley:[{id:'shadow',label:'Shadow',verb:'Shadow',color:'#b48cff'},{id:'ball',label:'Balls',verb:'Throw',color:'#8a6cff'},{id:'run',label:'Run',verb:'Run',color:'#e2d6ff'},{id:'teleport',label:'Blink',verb:'Blink',color:'#e59cff'}],
-  quincy:[{id:'scream',label:'Scream',verb:'Scream',color:'#ff8a3d'},{id:'climb',label:'Climb',verb:'Hop',color:'#ffcf5a'},{id:'knock',label:'Knock',verb:'Knock',color:'#e98a3a'},{id:'chirp',label:'Chirp',verb:'Chirp',color:'#7fd1c7'}],
-  lexus:[{id:'leap',label:'Leap',verb:'Leap',color:'#ffe066'},{id:'shine',label:'Shine',verb:'Shine',color:'#fff3b0'},{id:'meow',label:'Meow',verb:'Meow',color:'#ffb3c7'},{id:'storm',label:'Storm',verb:'Storm',color:'#9aa3b5'}],
-  cookie:[{id:'smash',label:'Smash',verb:'Smash',color:'#a5cf6c'},{id:'break',label:'Break',verb:'Break',color:'#d9a066'},{id:'lion',label:'Lion',verb:'Lion',color:'#e8b04a'}],
+  pearl:[{id:'freeze',label:'Freeze',verb:'Freeze',color:'#8fd3ff'},{id:'cloud',label:'Cloud',verb:'Cloud',color:'#ffffff'}],
+  miley:[{id:'run',label:'Run',verb:'Run',color:'#e2d6ff'},{id:'shadow',label:'Shadow',verb:'Shadow',color:'#b48cff'}],
+  quincy:[{id:'scream',label:'Scream',verb:'Scream',color:'#ff8a3d'},{id:'chirp',label:'Chirp',verb:'Chirp',color:'#7fd1c7'}],
+  lexus:[{id:'meow',label:'Meow',verb:'Meow',color:'#ffb3c7'},{id:'leap',label:'Leap',verb:'Leap',color:'#ffe066'}],
+  cookie:[{id:'lion',label:'Lion',verb:'Lion',color:'#e8b04a'},{id:'break',label:'Break',verb:'Break',color:'#d9a066'}],
 };
-const modes = {pearl:'freeze', miley:'shadow', quincy:'scream', lexus:'leap', cookie:'smash'};
+const modes = {pearl:'freeze', miley:'run', quincy:'scream', lexus:'meow', cookie:'lion'};
 let falls = [];
 let shadowT = 0;
 const OUT = 'rgba(20,14,34,.9)';
@@ -815,8 +816,8 @@ const TUTORIAL={ name:'Cat School', mission:{type:'kitten',x:96,y:4}, theme:'gar
     {c:26,text:'A wooden wall. Tap the CAT button for QUINCY, then tap SCREAM to burn it.'},
     {c:35,text:'A shadow wall! MILEY can walk straight through shadows.'},
     {c:45,text:'Too high to jump! LEXUS can jump, then jump again in the air.'},
-    {c:54,text:'Boulders! COOKIE can SMASH them. Heavy moves tire him out, so watch his stamina bar.'},
-    {c:67,text:'Every cat has more forms. SWIPE UP on the power button, or press Q, to switch.'},
+    {c:54,text:'Boulders! COOKIE can BREAK them. Heavy moves tire him out, so watch his stamina bar.'},
+    {c:67,text:'Every cat has two forms. SWIPE UP on the power button, or press Q, to switch.'},
     {c:74,text:'A dust bunny! Jump on its head or hit it with a power. Flags are checkpoints.'},
     {c:92,text:'Cats love trees! Jump at the trunk and hold JUMP to climb. Then knock that vase off!'},
     {c:103,text:'A gate with a big button. Push the BOX off the ledge onto the button!'},
@@ -839,11 +840,11 @@ const PARK={ name:'Puzzle Park', park:true, theme:'garden', w:170, start:3, goal
   flood:{pipe:50,x0:51,x1:63,row:12},
   signs:[
     {c:5,text:'Welcome to Puzzle Park! Every puzzle needs TEAMWORK. Tap the CAT button to switch cats.'},
-    {c:23,text:'A waterfall! PEARL can FREEZE it into ice, then QUINCY can CLIMB the ice.'},
-    {c:45,text:'A broken pipe blocks the way. COOKIE can SMASH it... then what will the water do?'},
+    {c:23,text:'A waterfall! PEARL can FREEZE it into ice, then QUINCY can climb the ice.'},
+    {c:45,text:'A broken pipe blocks the way. COOKIE can BREAK it... then what will the water do?'},
     {c:65,text:'This gate needs BOTH buttons pressed. Knock both boxes down!'},
     {c:93,text:'JUMP onto the paw tiles in the order shown on the gate. Walking over them does not count.'},
-    {c:113,text:'Light the lamp with LEXUS and SHINE. Jump under a mirror to turn it. Guide the light to the crystal!'},
+    {c:113,text:'The lamp listens for LEXUS: MEOW next to it! Jump under a mirror to turn it. Guide the light to the crystal!'},
   ],
   enemies:[['bunny',18],['bunny',46],['bunny',120],['bunny',150]] };
 // level codes: 1-2, 2-3 … 5-6 in World 1, carrying on 6-7 … 11-12 in World 2
@@ -1285,6 +1286,7 @@ function buildForms(){
 }
 function setForm(id,silent){
   const list=CAT_FORMS[cat.id]; if(!list) return;
+  if(!list.some(f=>f.id===id)) id=list[0].id;
   if(!silent && !settings.formLearned){ settings.formLearned=true; saveSettings(); powerBtn.classList.remove('teach'); }
   modes[cat.id]=id;
   formBtns.forEach((b,i)=>b.setAttribute('aria-pressed',list[i].id===id));
@@ -1316,7 +1318,8 @@ const ICON={
 };
 function iconSvg(id){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON[id]||ICON.blast}" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
 function refreshPowerLabel(){
-  const list=CAT_FORMS[cat.id], mode=list?modes[cat.id]:'blast';
+  const list=CAT_FORMS[cat.id]; if(list && !list.some(f=>f.id===modes[cat.id])) modes[cat.id]=list[0].id;
+  const mode=list?modes[cat.id]:'blast';
   let label = list ? list.find(f=>f.id===mode).verb : (lvl&&lvl.boss?'Blast':cat.verb);
   if(lvl&&lvl.boss&&cat.id==='pearl'&&mode==='freeze') label='Ice';
   const dots = list ? `<span class="formdots">${list.map(f=>`<i class="${f.id===mode?'on':''}"></i>`).join('')}</span>` : '';
@@ -1360,11 +1363,11 @@ function usePower(){
   const cx=p.x+p.w/2, cy=p.y+p.h/2, pcx=Math.floor(cx/T), pcy=Math.floor(cy/T);
   const pearl = cat.id==='pearl', miley = cat.id==='miley', mode = modes[cat.id];
   if(pearl && mode==='cloud'){ startCloud(); return; }
-  if(pearl && mode==='bird'){ callBird(); return; }
-  if(miley && mode!=='ball'){ mileyPower(mode); return; }
+  if(miley && lvl.boss && mode==='shadow'){ p.cool=.35; bolts.push({x:cx+p.facing*14,y:cy-6,vx:p.facing*450,el:'miley',life:1.4,ball:true}); sfx('ball'); return; }
+  if(miley){ mileyPower(mode); return; }
   if(cat.id==='quincy' && mode!=='scream'){ quincyPower(mode); return; }
   if(cat.id==='lexus' && mode!=='leap'){ lexusPower(mode); return; }
-  if(cat.id==='cookie' && mode!=='smash'){ cookiePower(mode); return; }
+  if(cat.id==='cookie'){ cookiePower(mode); return; }
   if(cat.id==='cookie' && !useStamina(lvl.boss?18:25)) return;
   if(lvl.boss){
     p.cool=.35;
@@ -1381,13 +1384,16 @@ function usePower(){
     case 'pearl': {
       for(let tx=pcx-4;tx<=pcx+4;tx++) for(let ty=pcy-1;ty<=pcy+3;ty++) if(tile(tx,ty)==='~'&&tile(tx,ty-1)!=='~'){ queueFx(tx,ty,Math.abs(tx-pcx)*.05,'freeze'); n++; }
       for(let tx=pcx-4;tx<=pcx+4;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='O'){ queueFx(tx,ty,Math.abs(ty-pcy)*.04,'icefall'); n++; }
-      for(const e of enemiesNear(cx,cy,4.5*T)){ e.frozen=6; n++; puff(e.x+e.w/2,e.y+e.h/2,'#e9f8ff',10,100,.5,2.5); }
+      for(const e of enemiesNear(cx,cy,4.5*T)){ if(e.nem && (e.type==='bath'||e.type==='blower') && (e.state==='frozen'||e.state==='overheat')) nemHit(e,'freeze'); else e.frozen=6; n++; puff(e.x+e.w/2,e.y+e.h/2,'#e9f8ff',10,100,.5,2.5); }
+      { let gen=null; for(let tx=pcx-5;tx<=pcx+5&&!gen;tx++) for(let ty=pcy-3;ty<=pcy+3;ty++) if(tile(tx,ty)==='Z'){ gen=[tx,ty]; break; } if(gen){ powerGen(gen[0],gen[1],'freeze'); n++; } }
+      { let g=0; for(let tx=pcx-5;tx<=pcx+5;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='D'){ queueFx(tx,ty,.25+Math.abs(tx-pcx)*.04+ty*.03,'shatter'); g++; } if(g){ n++; toast('Brrr! The iron gate freezes and shatters',1.4); sfx('gate'); } }
       shots=shots.filter(s=>Math.hypot(s.x-cx,s.y-cy)>4.5*T);
       for(let i=0;i<18;i++) particles.push({x:cx+p.facing*10,y:cy,vx:p.facing*(120+Math.random()*200),vy:(Math.random()-.5)*120,life:.6,max:.6,color:i%2?'#ffffff':'#8fd3ff',size:2+Math.random()*2,grav:0});
       sfx('pearl'); if(!n) toast('Nothing to freeze here'); break; }
     case 'quincy':
       p.cool=1.1;
       for(let tx=pcx-5;tx<=pcx+5;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='W'){ queueFx(tx,ty,Math.max(0,pcy+1-ty)*.04+Math.abs(tx-pcx)*.04,'burn'); n++; }
+      { const fty=Math.floor((p.y+p.h-1)/T); for(let d=0;d<=3;d++){ const tx=Math.floor((d===0?(p.facing>0?p.x+p.w+3:p.x-3):cx+p.facing*d*T)/T); if(tile(tx,fty)==='T'){ topple(tx,p.facing); n++; break; } } }
       for(const e of enemiesNear(cx,cy,4.5*T)){ killEnemy(e); n++; }
       shots=shots.filter(s=>Math.hypot(s.x-cx,s.y-cy)>4.5*T);
       for(let i=0;i<48;i++){ const a=i/48*Math.PI*2, s=180+Math.random()*160; particles.push({x:cx,y:cy-4,vx:Math.cos(a)*s,vy:Math.sin(a)*s*.7,life:.55,max:.55,color:['#ffcf5a','#ff8a3d','#ff5a3d'][i%3],size:3+Math.random()*3,grav:-120}); }
@@ -1408,19 +1414,31 @@ function usePower(){
 function mileyPower(mode){
   const p=player, cx=p.x+p.w/2, cy=p.y+p.h/2;
   if(mode==='run'){
-    if(p.onGround||p.airDash){ p.dashT=.18; p.sprintT=2.6; if(!p.onGround) p.airDash=false; sfx('miley'); }
+    if(p.onGround||p.airDash){ p.dashT=.18; p.sprintT=2.6; if(!p.onGround) p.airDash=false; sfx('miley'); crystalAhead(3); }
     else p.cool=0;
-  } else if(mode==='teleport'){ teleport(); }
+  }
   else {
     p.cool=1; shadowT=6;
     let n=0; for(const e of enemiesNear(cx,cy,8*T)){ e.pinned=3; n++; }
     if(boss && boss.state!=='dead' && Math.abs(boss.x+boss.w/2-cx)<12*T){ stunBoss(1.5,'stun'); n++; }
     let steps=false; const pc=Math.floor(cx/T);
     for(let tx=pc-14;tx<=pc+14;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='H') steps=true;
+    let lock=null; for(let d=0;d<=7&&!lock;d++) for(const tx of [pc+d,pc-d]) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='J'){ lock=[tx,ty]; break; }
+    if(lock){ openLock(lock[0],lock[1]); n++; }
     for(let i=0;i<30;i++){ const a=i/30*Math.PI*2; particles.push({x:cx+Math.cos(a)*90,y:cy+Math.sin(a)*50,vx:-Math.cos(a)*180,vy:-Math.sin(a)*100,life:.5,max:.5,color:'#b48cff',size:3,grav:0}); }
     sfx('shadow');
     toast(steps?'Shadow steps rise! Climb fast':n?'Shadows pin the enemies':'The shadows stir',1.2);
   }
+}
+function crystalAhead(reach){
+  const p=player, dir=p.facing, r0=Math.floor(p.y/T), r1=Math.floor((p.y+p.h-1)/T);
+  for(let d=0;d<=reach;d++){ const tx=Math.floor((dir>0?p.x+p.w+2:p.x-2)/T)+dir*d; for(let ty=r0;ty<=r1;ty++) if(tile(tx,ty)==='X' && !fx.queued.has(tx+','+ty)){ shatterCrystal(tx,ty); return true; } }
+  return false;
+}
+function shatterCrystal(tx,ty){
+  const seen=new Set(), stack=[[tx,ty]]; let n=0;
+  while(stack.length){ const [x,y]=stack.pop(), k=x+','+y; if(seen.has(k)||tile(x,y)!=='X') continue; seen.add(k); queueFx(x,y,Math.abs(y-ty)*.03,'crystal'); n++; stack.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]); }
+  if(n){ shakeT=.3; sfx('crash'); toast('CRASH! Miley sprints right through the crystal',1.3); }
 }
 function openLock(tx,ty){
   const seen=new Set(), stack=[[tx,ty]]; let n=0;
@@ -1523,6 +1541,8 @@ function lexusPower(mode){
   } else if(mode==='meow'){
     p.cool=2; let n=0;
     for(const e of enemiesNear(cx,cy,12*T)){ e.annoyed=1.4+Math.random()*.5; e.confused=0; n++; }
+    { const pc=Math.floor(cx/T), pr=Math.floor(cy/T); let j=0; for(let tx=pc-6;tx<=pc+6;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='Y'){ queueFx(tx,ty,.2+Math.abs(tx-pc)*.05+Math.abs(ty-pr)*.02,'junk'); j++; } if(j){ n++; shakeT=.3; } }
+    if(lvl.beam && !lampOn && Math.abs(cx-(lvl.beam.lamp[0]*T+16))<6*T){ lampOn=true; n++; setTimeout(()=>toast('The lamp heard Lexus and switched on! Now turn the mirrors',1.8),900); }
     if(boss&&boss.state!=='dead'){ stunBoss(2,'stun'); n++; }
     for(let i=0;i<10;i++) particles.push({x:cx,y:cy-14,vx:(Math.random()-.5)*260,vy:-80-Math.random()*120,life:.9,max:.9,color:'#ffb3c7',size:3,grav:120});
     sfx('meows');
@@ -1560,6 +1580,9 @@ function cookiePower(mode){
   if(!p.onGround){ if(!useStamina(30)) return; p.pound=true; p.vy=950; sfx('whoosh'); return; }
   const r0=Math.floor(p.y/T), r1=Math.floor((p.y+p.h-1)/T);
   let col=null;
+  for(let d=0;d<=2;d++){ const tx=Math.floor((dir>0?p.x+p.w+2:p.x-2)/T)+dir*d; let hit=null; for(let ty=r0;ty<=r1;ty++) if(tile(tx,ty)==='R'||tile(tx,ty)==='p'){ hit=tile(tx,ty); break; }
+    if(hit){ if(!useStamina(30)) return; let n=0; for(let k=0;k<3;k++){ const cx2=tx+dir*k; for(let ty=0;ty<H;ty++){ const c=tile(cx2,ty); if(c==='R'){ queueFx(cx2,ty,k*.06+Math.abs(ty-r1)*.03,'smash'); n++; } else if(c==='p'){ queueFx(cx2,ty,.05,'pipe'); n++; } } }
+      shakeT=.35; sfx('smash'); puff(cx+dir*18,cy,'#a5cf6c',14,180,.4,3); toast('SMASH!',.8); return; } }
   for(let d=0;d<=2&&col===null;d++){ const tx=Math.floor((dir>0?p.x+p.w+2:p.x-2)/T)+dir*d; for(let ty=r0;ty<=r1;ty++) if(tile(tx,ty)==='Q'){ col=tx; break; } }
   if(col!==null){
     if(!useStamina(40)) return;
@@ -1568,7 +1591,7 @@ function cookiePower(mode){
   }
   if(floorUnder()){ if(!useStamina(40)) return; breakFloorUnder(); return; }
   if(!useStamina(15)) return;
-  let n=0; for(const e of enemies) if(e.alive){ const dx=(e.x+e.w/2-cx)*dir; if(dx>-8&&dx<2*T&&Math.abs(e.y+e.h/2-cy)<36){ killEnemy(e); n++; } }
+  let n=0; hitCtx='break'; for(const e of enemies) if(e.alive){ const dx=(e.x+e.w/2-cx)*dir, reach=(e.nem||e.mop)?2*T+e.w/2:2*T; if(dx>-8&&dx<reach&&Math.abs(e.y+e.h/2-cy)<Math.max(36,e.h/2+14)){ killEnemy(e); n++; } } hitCtx=null;
   if(boss&&boss.state!=='dead'&&Math.abs(boss.x+boss.w/2-cx)<boss.w/2+1.5*T){ hitBoss('cookie'); n++; }
   puff(cx+dir*16,cy,'#d9a066',10,140,.3,2.5); sfx('thud');
   if(!n) toast('Nothing strong to break here',.8);
@@ -1584,6 +1607,7 @@ function stormJump(){
   const p=player; if(p.airJumps<=0) return;
   p.airJumps--; p.vy=-610; p.sq=1.15;
   hitCtx='leap'; for(const e of enemiesNear(p.x+p.w/2,p.y+p.h,2.5*T)) killEnemy(e); hitCtx=null;
+  { const pc=Math.floor((p.x+p.w/2)/T), pr=Math.floor((p.y+p.h/2)/T); let k=0; for(let tx=pc-4;tx<=pc+4;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='N'){ queueFx(tx,ty,Math.abs(tx-pc)*.05+Math.abs(ty-pr)*.02,'thorns'); k++; } if(k) toast('Whoosh! Lexus\'s storm wind blows the thorns away',1.4); }
   for(let i=0;i<20;i++){ const a=i/20*Math.PI*2; particles.push({x:p.x+p.w/2,y:p.y+p.h,vx:Math.cos(a)*160,vy:Math.sin(a)*50+40,life:.45,max:.45,color:i%2?'#ffe066':'#ffffff',size:2.5,grav:0}); }
   sfx('lexus');
 }
@@ -1609,12 +1633,16 @@ function zap(){
   hitCtx='lightning'; for(const e of enemies) if(e.alive){ const ex=e.x+e.w/2; if((ex-cx)*dir>-8 && (ex-cx)*dir<Math.abs(endX-cx)+12 && Math.abs(e.y+e.h/2-cy)<(e.nem?e.h/2+14:30)){ killEnemy(e); n++; } } hitCtx=null;
   shots=shots.filter(s=>!((s.x-cx)*dir>0 && (s.x-cx)*dir<Math.abs(endX-cx) && Math.abs(s.y-cy)<30));
   flashT=Math.max(flashT,.12); sfx('zap');
-  if(hitZ){
-    const [zx,zy]=hitZ; map[zy][zx]='z'; let g=0;
+  if(hitZ) powerGen(hitZ[0],hitZ[1],'zap');
+  else if(!n) toast('Zap! Aim at a generator',.9);
+}
+function powerGen(zx,zy,how){
+  { map[zy][zx]='z'; let g=0;
     for(let tx=zx-20;tx<=zx+20;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='G'){ queueFx(tx,ty,.2+Math.abs(tx-zx)*.04+(H-ty)*.03,'gate'); g++; }
     puff(zx*T+16,zy*T+16,'#6aa9ff',24,200,.6,3); puff(zx*T+16,zy*T+16,'#e6f2ff',10,160,.5,2.5);
-    toast(g?'Power on! The electric gate opens':'Generator powered',1.4); sfx('gate');
-  } else if(!n) toast('Zap! Aim at a generator',.9);
+    if(how==='freeze'){ puff(zx*T+16,zy*T+16,'#e9f8ff',18,160,.6,3); }
+    toast(g?(how==='freeze'?'Frozen circuits! The electric gate shuts down':'Power on! The electric gate opens'):'Generator powered',1.4); sfx('gate');
+  }
 }
 function callBird(){
   const p=player, cx=p.x+p.w/2, cy=p.y+p.h/2, pcx=Math.floor(cx/T);
@@ -1669,6 +1697,10 @@ function updateFx(dt){
       map[ty][tx]=' '; puff(px,py,'#b5553a',7,200,.7,3.5,700); puff(px,py,'#d9a066',3,120,.5,3,500);
     } else if(e.kind==='crack' && map[ty][tx]==='F'){
       map[ty][tx]=' '; puff(px,py,'#9a9aa4',9,200,.7,3.5,700);
+    } else if(e.kind==='crystal' && map[ty][tx]==='X'){
+      map[ty][tx]=' '; puff(px,py,'#e59cff',8,220,.6,3,600); puff(px,py,'#ffffff',4,160,.4,2,300);
+    } else if(e.kind==='shatter' && map[ty][tx]==='D'){
+      map[ty][tx]=' '; puff(px,py,'#e9f8ff',7,200,.6,3,600); puff(px,py,'#8a8a96',4,160,.5,3,700);
     } else if(e.kind==='bars' && map[ty][tx]==='J'){
       map[ty][tx]=' '; puff(px,py,'#b48cff',7,140,.5,3,-60);
     } else if(e.kind==='thorns' && map[ty][tx]==='N'){
@@ -1906,17 +1938,17 @@ function hazard(kind){
 const NEEDS={
   lexus:{cat:'lexus',wrong:"That ledge is way too high. <b>Lexus</b> can double-jump on the storm wind.",right:"Jump, then jump again in mid-air!"},
   quincy:{cat:'quincy',mode:'scream',wrong:"A wooden barricade blocks the way. <b>Quincy</b>'s fire scream can burn it.",form:"Switch Quincy's form to <b>Scream</b>.",right:"Get close and tap Scream."},
-  climb:{cat:'quincy',mode:'climb',wrong:"A wall of vines, far too tall to jump. <b>Quincy</b> can climb it.",form:"Switch Quincy's form to <b>Climb</b>.",right:"Hold toward the vines to climb all the way up."},
-  knock:{cat:'quincy',mode:'knock',wrong:"A tall stone pillar blocks the way. <b>Quincy</b> can knock it down.",form:"Switch Quincy's form to <b>Knock</b>.",right:"Stand right next to the pillar and tap Knock."},
+  climb:{cat:'quincy',wrong:"A wall of vines, far too tall to jump. <b>Quincy</b> is a natural climber.",right:"Hold toward the vines to climb all the way up."},
+  knock:{cat:'quincy',mode:'scream',wrong:"A tall stone pillar blocks the way. <b>Quincy</b>'s scream can blast it over.",form:"Switch Quincy's form to <b>Scream</b>.",right:"Stand next to the pillar, face it and tap Scream."},
   miley:{cat:'miley',wrong:"A wall of pure shadow. Only <b>Miley</b> can slip through.",right:"Walk right in. You're one of the shadows."},
-  cookie:{cat:'cookie',mode:'smash',alt:'lion',wrong:"A cracked boulder! <b>Cookie</b> is strong enough to smash it.",form:"Switch Cookie's form to <b>Smash</b> or <b>Lion</b>.",right:"Get close and smash it!"},
+  cookie:{cat:'cookie',mode:'break',alt:'lion',wrong:"A cracked boulder! <b>Cookie</b> is strong enough to break it.",form:"Switch Cookie's form to <b>Break</b> or <b>Lion</b>.",right:"Get close and break it!"},
   brick:{cat:'cookie',mode:'break',alt:'lion',wrong:"A solid brick wall. Only heavy <b>Cookie</b> can break it.",form:"Switch Cookie's form to <b>Break</b> or <b>Lion</b>.",right:"Get close and break through!"},
   floor:{cat:'cookie',mode:'break',wrong:"The way ahead is sealed, but this concrete floor sounds hollow. <b>Cookie</b> can break through it.",form:"Switch Cookie's form to <b>Break</b>.",right:"Stand on the concrete and tap Break, or jump and slam down."},
-  storm:{cat:'lexus',mode:'storm',alt:'shine',wrong:"A giant junk pile. <b>Lexus</b> can turn into a dust storm and shred it.",form:"Switch Lexus's form to <b>Storm</b> (or <b>Shine</b> up close).",right:"Tap Storm on the ground, then charge into the junk!"},
+  storm:{cat:'lexus',mode:'meow',wrong:"A giant junk pile. <b>Lexus</b>'s meow is so annoying the junk rattles apart.",form:"Switch Lexus's form to <b>Meow</b>.",right:"Get close to the junk and tap Meow."},
   freeze:{cat:'pearl',mode:'freeze',wrong:"Cats and water don't mix! <b>Pearl</b> can freeze it.",form:"Switch Pearl's form to <b>Freeze</b>.",right:"Stand at the edge and tap Freeze."},
   cloud:{cat:'pearl',mode:'cloud',wrong:"That gap is far too wide to jump. <b>Pearl</b> can turn into a cloud and drift across.",form:"Switch Pearl's form to <b>Cloud</b>.",right:"Jump high, then tap Cloud at the top and float over."},
-  lightning:{cat:'pearl',mode:'lightning',wrong:"An electric gate! <b>Pearl's lightning</b> can power the generator.",form:"Switch Pearl's form to <b>Zap</b>.",right:"Face the generator and tap Zap."},
-  bird:{cat:'pearl',mode:'bird',wrong:"An iron gate, and its lever is way up high. <b>Pearl's bird</b> can reach it.",form:"Switch Pearl's form to <b>Bird</b>.",right:"Tap Bird and her friend will pull the lever."},
+  lightning:{cat:'pearl',mode:'freeze',wrong:"An electric gate! <b>Pearl</b> can freeze its generator.",form:"Switch Pearl's form to <b>Freeze</b>.",right:"Stand by the generator and tap Freeze."},
+  bird:{cat:'pearl',mode:'freeze',wrong:"An iron gate! <b>Pearl</b> can freeze it until it shatters.",form:"Switch Pearl's form to <b>Freeze</b>.",right:"Walk up to the gate and tap Freeze."},
   shadow:{cat:'miley',mode:'shadow',wrong:"That wall is far too tall, but hidden shadow steps lead up. <b>Miley</b> can bring them out.",form:"Switch Miley's form to <b>Shadow</b>.",right:"Tap Shadow, then climb the steps before they fade!"},
   tree:{any:true,right:"Cats love trees! Jump at the trunk and <b>hold JUMP</b> to climb up."},
   treeback:{any:true,right:"Too tall to jump! Go back to the <b>tree</b>, hold JUMP to climb it, and cross from the top."},
@@ -1924,18 +1956,18 @@ const NEEDS={
   button:{any:true,right:"A big button. Cats are too light to press it, so <b>knock a box onto it</b>. Heavy Cookie can press it too."},
   gate:{any:true,right:"A locked garden gate. Find the big button that opens it."},
   waterfall:{any:true,right:"A waterfall cliff. <b>Pearl</b> can FREEZE it, then <b>Quincy</b> can CLIMB the ice."},
-  climbice:{any:true,right:"Frozen solid! Switch to <b>Quincy</b>, set her form to <b>Climb</b>, and hold toward the ice."},
-  pipe:{any:true,right:"A broken pipe. <b>Cookie</b> can SMASH it. Then <b>Pearl</b> can freeze the water."},
+  climbice:{any:true,right:"Frozen solid! Switch to <b>Quincy</b> and hold toward the ice to climb it."},
+  pipe:{any:true,right:"A broken pipe. <b>Cookie</b> can BREAK it. Then <b>Pearl</b> can freeze the water."},
   pawlock:{any:true,right:"<b>Jump</b> onto the paw tiles in the order shown above the gate."},
-  lamp:{any:true,right:"Light the lamp with <b>Lexus</b>'s <b>Shine</b>, then jump under the mirrors to turn them."},
+  lamp:{any:true,right:"The lamp listens for <b>Lexus</b>! <b>Meow</b> near it to switch it on, then jump under the mirrors to turn them."},
   mirrors:{any:true,right:"Jump under a mirror to turn it. Send the light into the purple crystal!"},
   run:{cat:'miley',mode:'run',wrong:"That gap is far too wide to jump. <b>Miley</b> can sprint and leap it.",form:"That gap is too wide to jump. Switch Miley's form to <b>Run</b>.",right:"Tap Run a few steps before the edge, then jump at full speed!"},
-  lock:{cat:'miley',mode:'ball',wrong:"Shadow bars with a glowing lock. Only <b>Miley</b>'s shadow balls can open it.",form:"Shadow bars with a glowing lock! Switch Miley's form to <b>Balls</b>.",right:"Face the lock and tap Throw to hit it."},
+  lock:{cat:'miley',mode:'shadow',wrong:"Shadow bars with a glowing lock. Only <b>Miley</b>'s shadows can open it.",form:"Shadow bars with a glowing lock! Switch Miley's form to <b>Shadow</b>.",right:"Get close to the lock and tap Shadow."},
   nest:{cat:'quincy',mode:'chirp',wrong:"A birdhouse! <b>Quincy</b>'s chirp can call the birds.",form:"A birdhouse by the spikes! Switch Quincy's form to <b>Chirp</b>.",right:"Tap Chirp by the birdhouse. The birds will build a twig bridge."},
   giant:{cat:'lexus',mode:'meow',wrong:"A giant dust bunny is asleep in the tunnel. Nothing hurts it, but <b>Lexus</b>'s meow is unbearable.",form:"A giant dust bunny blocks the tunnel and nothing hurts it. Switch Lexus's form to <b>Meow</b>.",right:"Tap Meow. The giant gets so annoyed it pops!"},
-  thorns:{cat:'lexus',mode:'shine',wrong:"Dark thorns! Only light burns them away. <b>Lexus</b> can shine.",form:"Dark thorns! Only light burns them away. Switch Lexus's form to <b>Shine</b>.",right:"Stand on the ground near the thorns and tap Shine."},
+  thorns:{cat:'lexus',wrong:"Dark thorns! <b>Lexus</b>'s double jump whips up a storm wind that blows them away.",right:"Jump next to the thorns, then jump again in mid-air."},
   steel:{cat:'cookie',mode:'lion',wrong:"A steel wall. Only <b>Cookie</b> as a charging lion can bust through.",form:"A steel wall! Only a charging lion gets through. Switch Cookie's form to <b>Lion</b>.",right:"Tap Lion, then charge straight into the steel!"},
-  teleport:{cat:'miley',mode:'teleport',wrong:"A thick crystal wall. <b>Miley</b> can teleport right through it.",form:"Switch Miley's form to <b>Blink</b>.",right:"Walk up to the crystal and tap Blink."},
+  teleport:{cat:'miley',mode:'run',wrong:"A thick crystal wall. <b>Miley</b> can sprint right through it.",form:"Switch Miley's form to <b>Run</b>.",right:"Tap Run and sprint straight into the crystal."},
 };
 function hintFor(k){ const n=NEEDS[k]; if(n.any) return n.right; if(cat.id!==n.cat) return n.wrong;
   const needForm = n.mode && modes[n.cat]!==n.mode && modes[n.cat]!==n.alt;
@@ -1955,7 +1987,7 @@ function autoHint(){
   for(let d=-6;d<=3;d++) if(tile(pcx+d,foot)==='F') return 'floor';
   for(let d=1;d<=6;d++){
     const col=pcx+d;
-    for(let row=head-2;row<foot;row++){ const c=tile(col,row); if(c==='W'||c==='B') return 'quincy'; if(c==='R') return 'cookie'; if(c==='S') return 'miley'; if(c==='G') return 'lightning'; if(c==='D') return 'bird'; if(c==='X') return 'teleport'; if(c==='H') return 'shadow'; if(c==='T') return 'knock'; if(c==='V') return 'climb'; if(c==='Q') return 'brick'; if(c==='Y') return 'storm'; if(c==='O') return 'waterfall'; if(c==='v') return 'climbice'; if(c==='p') return 'pipe'; if(c==='o') return lampOn?'mirrors':'lamp'; if(c==='r'||c==='s') return lampOn?'mirrors':'lamp'; if(c==='J') return 'lock'; if(c==='N') return 'thorns'; if(c==='U') return 'steel'; if(c==='A') return 'giant'; if(c==='M') return buttons.some(b=>!b.open)?'button':'gate'; if(c==='e' && d<=2) return 'tree'; }
+    for(let row=head-2;row<foot;row++){ const c=tile(col,row); if(c==='W'||c==='B') return 'quincy'; if(c==='R') return 'cookie'; if(c==='S') return 'miley'; if(c==='G') return 'lightning'; if(c==='D') return 'bird'; if(c==='X') return 'teleport'; if(c==='J') return 'lock'; if(c==='Y') return 'storm'; if(c==='N') return 'thorns'; if(c==='H') return 'shadow'; if(c==='T') return 'knock'; if(c==='V') return 'climb'; if(c==='Q') return 'brick'; if(c==='Y') return 'storm'; if(c==='O') return 'waterfall'; if(c==='v') return 'climbice'; if(c==='p') return 'pipe'; if(c==='o') return lampOn?'mirrors':'lamp'; if(c==='r'||c==='s') return lampOn?'mirrors':'lamp'; if(c==='J') return 'lock'; if(c==='N') return 'thorns'; if(c==='U') return 'steel'; if(c==='A') return 'giant'; if(c==='M') return buttons.some(b=>!b.open)?'button':'gate'; if(c==='e' && d<=2) return 'tree'; }
     if(d<=4 && (tile(col,foot)==='~'||tile(col,foot-1)==='~')) return 'freeze';
     if(d<=3 && isPit(col,foot)){ let run=0; while(run<14 && isPit(col+run,foot)) run++; if(run>=(lvl.cat==='miley'?7:8) && (!lvl.cat||lvl.cat==='miley'||lvl.cat==='pearl')) return lvl.cat==='miley'?'run':'cloud'; }
     if(tile(col,0)!=='#' && tile(col,foot-1)==='#'){ let h=0; while(tile(col,foot-1-h)==='#' && h<9) h++; if(lvl.cat && lvl.cat!=='miley' && lvl.cat!=='lexus'){ for(let k=-10;k<=4;k++) if(tile(pcx+k,foot-1)==='e'||tile(pcx+k,foot-2)==='e') return k<-2?'treeback':'tree'; continue; } if(h>=7) return lvl.cat==='lexus'?null:'shadow'; if(h>=4) return lvl.cat==='miley'?null:'lexus'; }
@@ -2004,6 +2036,7 @@ function update(dt){
     for(let ty=Math.floor(p.y/T);ty<=Math.floor((p.y+p.h-1)/T);ty++){ const c=tile(fx0,ty); if(brk.includes(c)){ for(let yy=0;yy<H;yy++) if(tile(fx0,yy)===c) queueFx(fx0,yy,Math.abs(yy-ty)*.03,c==='Y'?'junk':c==='Q'?'brick':c==='R'?'smash':c==='U'?'steel':'burn'); shakeT=Math.max(shakeT,.15); break; } }
   }
   if(shadowT>0){ shadowT-=dt; if(shadowT<=0) toast('The shadow steps fade',.9); }
+  if(p.sprintT>0 && cat.id==='miley') crystalAhead(0);
   if(p.sprintT>0){ p.sprintT-=dt; if(Math.abs(p.vx)>250 && Math.random()<.6) particles.push({x:p.x+p.w/2-p.facing*10,y:p.y+p.h-8+(Math.random()-.5)*12,vx:-p.facing*60,vy:0,life:.35,max:.35,color:'rgba(180,140,255,.7)',size:3,grav:0}); }
   p.prevBottom=p.y+p.h;
   const cloud = p.cloudT>0;
@@ -2016,7 +2049,7 @@ function update(dt){
     const still = p.shineT>0 || p.rollT>0;
     const acc=p.onGround?(fast?3400:2600):(cloud?1400:1600), target= still ? (p.rollT>0?p.facing*130:0) : dir*spd;
     p.vx += Math.sign(target-p.vx)*Math.min(Math.abs(target-p.vx),acc*dt);
-    const canClimb = cat.id==='quincy' && modes.quincy==='climb';
+    const canClimb = cat.id==='quincy';
     const climbing = canClimb && dir && touchV(dir);
     const treeClimb = !climbing && !cloud && input.jump && onTrunk() && p.vy>-230;
     if(climbing){
@@ -2177,12 +2210,11 @@ function bossHint(){
   if(!boss||boss.state==='dead') return '';
   const need=bossNeed(), nm=EL_NAME[need];
   if(need==='pearl') return cat.id==='pearl' ? (modes.pearl==='freeze'?`His core glows <b>Ice</b>. Blast it!`:`Switch Pearl to <b>Freeze</b> and blast his core!`) : `His core glows <b>Ice</b>. Switch to <b>Pearl</b>!`;
-  if(need==='lexus' && cat.id==='lexus' && modes.lexus==='meow') return `His core glows <b>Storm</b>. Use Lexus's <b>Leap</b>, <b>Shine</b> or <b>Storm</b>!`;
-  if(need==='cookie' && cat.id==='cookie') return modes.cookie==='smash' ? `His core glows <b>Earth</b>. Blast it!` : `His core glows <b>Earth</b>. Get close and hit him, or charge in as a Lion!`;
+  if(need==='lexus' && cat.id==='lexus' && modes.lexus==='meow') return `His core glows <b>Storm</b>. Switch Lexus to <b>Leap</b> and blast it!`;
+  if(need==='cookie' && cat.id==='cookie') return `His core glows <b>Earth</b>. Get close and Break him, or charge in as a Lion!`;
   if(need==='quincy' && cat.id==='quincy' && modes.quincy!=='scream') return `His core glows <b>Fire</b>. Switch Quincy to <b>Scream</b>!`;
-  if(need==='miley' && cat.id==='miley' && modes.miley!=='ball') return `His core glows <b>Shadow</b>. Switch Miley to <b>Balls</b> and throw!`;
-  if(need==='lexus' && cat.id==='pearl') return modes.pearl==='lightning' ? `His core glows <b>Storm</b>. Zap it!` : `His core glows <b>Storm</b>. Pearl's <b>Zap</b> or Lexus can hit it.`;
-  return cat.id===need ? `His core glows <b>${nm}</b>. Blast it!` : `His core glows <b>${nm}</b>. Switch to <b>${CAT_BY[need].name}</b>${need==='lexus'?' (or Pearl\'s Zap)':''}!`;
+  if(need==='miley' && cat.id==='miley' && modes.miley!=='shadow') return `His core glows <b>Shadow</b>. Switch Miley to <b>Shadow</b> and throw!`;
+  return cat.id===need ? `His core glows <b>${nm}</b>. Blast it!` : `His core glows <b>${nm}</b>. Switch to <b>${CAT_BY[need].name}</b>!`;
 }
 function toRoam(){ boss.state='roam'; boss.t=1.4+Math.random()*1.1-(boss.max-boss.hp)*.1; }
 function stunBoss(t,kind){ if(!boss||boss.state==='dead') return; boss.state=kind; boss.t=t; boss.vx=0; }
@@ -3004,36 +3036,36 @@ function eyesAngry(){
 function drawBunny(e){ const done=fuzzBall(e,'#a79fb8','#4a4260'); eyesAngry(); ctx.fillStyle='#4a4260'; ctx.fillRect(-6,-1.5,4,2); ctx.fillRect(3,-1.5,4,2); done(); }
 /* ================= each cat's nemesis (end of their Cat Trial) ================= */
 const NEM={
-  bath:{name:'The Giant Bell', cat:'pearl', w:46,h:50, start:'idle', how:'Jump over the DONG waves! Freeze the Bell so it can\'t ring, then Zap it or send the Bird!'},
-  laser:{name:'The Laser Drone', cat:'miley', w:36,h:24, start:'fly', how:'Use Shadow to blind the Laser Drone, then hit it with Balls!'},
+  bath:{name:'The Giant Bell', cat:'pearl', w:46,h:50, start:'idle', how:'Jump over the DONG waves! Freeze the Bell so it can\'t ring, then Freeze it again to crack it!'},
+  laser:{name:'The Laser Drone', cat:'miley', w:36,h:24, start:'fly', how:'Use Shadow to blind the Laser Drone, then Run and dash into it!'},
   spritz:{name:'The Spray Bottle', cat:'quincy', w:30,h:48, start:'walk', how:'Chirp to confuse the Spray Bottle, then Scream at it!'},
-  cucumber:{name:'The Sneaky Cucumber', cat:'lexus', w:26,h:52, start:'hide', how:'Meow when the Cucumber pops up, then Storm, Shine or Leap on it!'},
-  robodog:{name:'Rex the Robo-Dog', cat:'cookie', w:46,h:34, start:'walk', how:'Charge Rex as a Lion, or Smash him when he is dizzy!'},
-  gnome:{name:'The Gnome King', cat:'cookie', w:30,h:42, start:'shield', how:'Smash the Gnome King\'s stone shield, then hit him with Smash, Break or Lion!'},
-  blower:{name:'The Snow Blower', cat:'pearl', w:46,h:38, start:'idle', how:'Wait until it overheats (or Freeze it), then Zap it or send the Bird!'},
-  squirrel:{name:'Nutty the Squirrel', cat:'quincy', w:26,h:28, start:'perch', how:'Knock down Nutty\'s pillar, then Scream at him while he\'s dizzy!'},
-  searchbot:{name:'The Searchlight Bot', cat:'miley', w:36,h:46, start:'patrol', how:'Its back is its weak spot! Blink behind it, then hit it with Balls or a Run dash.'},
+  cucumber:{name:'The Sneaky Cucumber', cat:'lexus', w:26,h:52, start:'hide', how:'Meow when the Cucumber pops up, then Leap on it!'},
+  robodog:{name:'Rex the Robo-Dog', cat:'cookie', w:46,h:34, start:'walk', how:'Charge Rex as a Lion, or Break him when he is dizzy!'},
+  gnome:{name:'The Gnome King', cat:'cookie', w:30,h:42, start:'shield', how:'Break the Gnome King\'s stone shield, then hit him with Break or Lion!'},
+  blower:{name:'The Snow Blower', cat:'pearl', w:46,h:38, start:'idle', how:'Wait until it overheats (or Freeze it), then Freeze it again!'},
+  squirrel:{name:'Nutty the Squirrel', cat:'quincy', w:26,h:28, start:'perch', how:'Scream at Nutty\'s pillar to knock it down, then Scream at him while he\'s dizzy!'},
+  searchbot:{name:'The Searchlight Bot', cat:'miley', w:36,h:46, start:'patrol', how:'Its back is its weak spot! Get behind it, then Run and dash into it.'},
 };
 function nemSrc(){ const p=player; return p.stormT>0?'storm':p.lion?'lion':p.dashT>0?'dash':modes[cat.id]; }
 function nemVulnerable(e,src){
   switch(e.type){
-    case 'bath': return e.state==='frozen' && (src==='lightning'||src==='bird');
-    case 'laser': return e.state==='blind' && (src==='ball'||src==='stomp');
+    case 'bath': return e.state==='frozen' && (src==='freeze'||src==='stomp');
+    case 'laser': return e.state==='blind' && (src==='dash'||src==='run'||src==='stomp');
     case 'spritz': return e.state==='confused' && (src==='scream'||src==='knock');
-    case 'cucumber': return e.state==='dizzy' && (src==='storm'||src==='shine'||src==='leap'||src==='stomp');
-    case 'robodog': return (e.state==='dizzy' && (src==='smash'||src==='break'||src==='lion'||src==='stomp')) || (e.state==='charge' && src==='lion');
-    case 'gnome': return e.state==='exposed' && (src==='smash'||src==='break'||src==='lion'||src==='stomp');
-    case 'blower': return (e.state==='overheat'||e.state==='frozen') && (src==='lightning'||src==='bird');
-    case 'squirrel': return e.state==='dizzy' && (src==='scream'||src==='knock'||src==='stomp');
-    case 'searchbot': { const behind=Math.sign(player.x+player.w/2-(e.x+e.w/2))!==e.dir; return (behind||e.state==='blind') && (src==='ball'||src==='dash'||src==='stomp'||src==='run'); }
+    case 'cucumber': return e.state==='dizzy' && (src==='leap'||src==='stomp');
+    case 'robodog': return (e.state==='dizzy' && (src==='break'||src==='lion'||src==='stomp')) || (e.state==='charge' && src==='lion');
+    case 'gnome': return e.state==='exposed' && (src==='break'||src==='lion'||src==='stomp');
+    case 'blower': return (e.state==='overheat'||e.state==='frozen') && (src==='freeze'||src==='stomp');
+    case 'squirrel': return e.state==='dizzy' && (src==='scream'||src==='stomp');
+    case 'searchbot': { const behind=Math.sign(player.x+player.w/2-(e.x+e.w/2))!==e.dir; return (behind||e.state==='blind') && (src==='dash'||src==='stomp'||src==='run'); }
   } return false;
 }
 const NEM_VOICE={bath:'bell',laser:'robot',spritz:'hiss',cucumber:'growl',robodog:'bark',gnome:'growl',blower:'motor',squirrel:'chitter',searchbot:'robot'};
-const NEM_NOPE={bath:'DONNNG! Freeze the bell first',laser:'Too quick! Blind it with Shadow first',spritz:'Pssht! Confuse it with Chirp first',cucumber:'It ducked! Meow at it first',robodog:'Clang! Wait until Rex is dizzy, or charge as a Lion',gnome:'His stone shield is up! Smash it first',blower:'Too hot to touch! Wait until it overheats',squirrel:'Nutty is up on his pillar! Knock it down first',searchbot:'It sees you coming! Hit its back'};
+const NEM_NOPE={bath:'DONNNG! Freeze the bell first',laser:'Too quick! Blind it with Shadow first',spritz:'Pssht! Confuse it with Chirp first',cucumber:'It ducked! Meow at it first',robodog:'Clang! Wait until Rex is dizzy, or charge as a Lion',gnome:'His stone shield is up! Break it first',blower:'Too hot to touch! Wait until it overheats',squirrel:'Nutty is up on his pillar! Scream to knock it down first',searchbot:'It sees you coming! Hit its back'};
 function nemHit(e,src){
   src=src||nemSrc();
   if(e.state==='hurt'||e.state==='hide') return;
-  if(e.type==='gnome' && e.state==='shield' && (src==='smash'||src==='break'||src==='lion')){ e.state='exposed'; e.t=3.2; sfx('crash'); shakeT=.3; puff(e.x+e.w/2,e.y+e.h/2,'#8d899a',24,220,.7,4,600); toast('Shield smashed! Hit him now!',1.4); return; }
+  if(e.type==='gnome' && e.state==='shield' && (src==='break'||src==='lion')){ e.state='exposed'; e.t=3.2; sfx('crash'); shakeT=.3; puff(e.x+e.w/2,e.y+e.h/2,'#8d899a',24,220,.7,4,600); toast('Shield smashed! Hit him now!',1.4); return; }
   if(!nemVulnerable(e,src)){ if(time-(e.nopeT||0)>.8){ e.nopeT=time; sfx('clang'); toast(NEM_NOPE[e.type],1); } return; }
   e.hp--; e.state='hurt'; e.t=.8; shakeT=.35; vibrate(60); hitStop=.09; sfx('crash'); puff(e.x+e.w/2,e.y+e.h/2,CAT_BY[NEM[e.type].cat].color,22,220,.6,3,200);
   if(e.type==='bath'||e.type==='laser'||e.type==='robodog') e.dir=player.x+player.w/2<e.x+e.w/2?-1:1;
@@ -3058,7 +3090,7 @@ function updateNem(e,dt){
   if(e.state==='hurt'){ if(e.t<=0){ e.state=n.start==='hide'?'hide':e.type==='laser'?'fly':e.type==='bath'||e.type==='blower'?'idle':e.type==='gnome'?'shield':e.type==='squirrel'?'hop':e.type==='searchbot'?'patrol':'walk'; e.t=1.2; if(e.type==='gnome') puff(e.x+e.w/2,e.y+e.h/2,'#8d899a',14,120,.5,3); } }
   else switch(e.type){
     case 'bath': // hops toward Pearl and splashes soapy water
-      if(frozen && e.state!=='frozen'){ e.state='frozen'; e.t=3.2; sfx('pearl'); toast('Frozen! The bell can\'t ring. Now Zap it or send the Bird',1.5); }
+      if(frozen && e.state!=='frozen'){ e.state='frozen'; e.t=3.2; sfx('pearl'); toast('Frozen! The bell can\'t ring. Freeze it again to crack it',1.5); }
       if(e.state==='frozen'){ if(e.t<=0){ e.state='idle'; e.t=1; puff(ecx,e.y+10,'#e9f8ff',14,140,.5,3); } break; }
       if(e.state==='idle'&&e.t<=0){ e.state='hop'; e.t=.55; e.dir=pcx<ecx?-1:1; }
       else if(e.state==='hop'){ if(!nemAhead(e,e.dir)) e.x+=e.dir*150*dt; e.hop=Math.sin((1-e.t/.55)*Math.PI)*28; if(e.t<=0){ e.hop=0; e.state='spray'; e.t=.9; shakeT=Math.max(shakeT,.25); sfx('bell'); vibrate(40);
@@ -3066,7 +3098,7 @@ function updateNem(e,dt){
       else if(e.state==='spray'&&e.t<=0){ e.state='idle'; e.t=.9+Math.random()*.6; }
       break;
     case 'laser': // hovers, aims its red dot and swoops at Miley
-      if(pinned && e.state!=='blind'){ e.state='blind'; e.t=3.2; sfx('shadow'); toast('Blinded! Hit it with Balls',1.4); }
+      if(pinned && e.state!=='blind'){ e.state='blind'; e.t=3.2; sfx('shadow'); toast('Blinded! Run and dash into it',1.4); }
       if(e.state==='blind'){ e.y=Math.min(e.floorY-e.h,e.y+260*dt); if(e.t<=0){ e.state='fly'; e.t=2; } break; }
       { const hoverY=e.floorY-e.h-2.2*T;
         if(e.state==='fly'){ e.x+=e.dir*90*dt; if(nemAhead(e,e.dir)) e.dir*=-1; e.y+=(hoverY+Math.sin(e.ph*3)*6-e.y)*Math.min(1,dt*4); if(e.t<=0){ e.state='aim'; e.t=.9; e.tx=pcx; sfx('robot'); } }
@@ -3081,7 +3113,7 @@ function updateNem(e,dt){
       break;
     case 'cucumber': // hides underground, pops up right behind Lexus
       if(e.state==='hide'){ e.x+=Math.sign(pcx-ecx)*90*dt; if(e.t<=0 && Math.abs(pcx-ecx)<2.5*T){ e.state='up'; e.t=2.4; e.dir=pcx<ecx?-1:1; sfx('bird'); toast('Eek! A cucumber!',.9); } }
-      else if(e.state==='up'){ if(annoyed){ e.state='dizzy'; e.t=3.2; sfx('meows'); toast('It fainted! Storm, Shine or Leap on it',1.5); } else if(e.t<=0){ e.state='hide'; e.t=1.6+Math.random(); } }
+      else if(e.state==='up'){ if(annoyed){ e.state='dizzy'; e.t=3.2; sfx('meows'); toast('It fainted! Leap on it',1.5); } else if(e.t<=0){ e.state='hide'; e.t=1.6+Math.random(); } }
       else if(e.state==='dizzy'){ if(e.t<=0){ e.state='hide'; e.t=1.2; } }
       e.x=Math.max(e.arena[0],Math.min(e.arena[1]-e.w,e.x));
       break;
@@ -3090,11 +3122,11 @@ function updateNem(e,dt){
       else if(e.state==='exposed'){ if(e.t<=0){ e.state='shield'; e.t=1; puff(ecx,e.y+e.h/2,'#8d899a',14,120,.5,3); toast('The shield grew back!',.9); } }
       break;
     case 'blower': // blasts freezing wind, then overheats
-      if(frozen && (e.state==='blast'||e.state==='idle')){ e.state='frozen'; e.t=3; sfx('pearl'); toast('Frozen! Now Zap it or send the Bird',1.4); }
+      if(frozen && (e.state==='blast'||e.state==='idle')){ e.state='frozen'; e.t=3; sfx('pearl'); toast('Frozen! Freeze it again',1.4); }
       if(e.state==='idle'){ e.dir=pcx<ecx?-1:1; if(e.t<=0){ e.state='blast'; e.t=2.6; sfx('cloud'); } }
       else if(e.state==='blast'){ const d=pcx-ecx; if(Math.sign(d)===e.dir && Math.abs(d)<9*T && Math.abs(p.y+p.h-e.floorY)<2*T) windPush=e.dir*190;
         if(Math.random()<.7) particles.push({x:ecx+e.dir*22,y:e.y+10+Math.random()*16,vx:e.dir*(260+Math.random()*120),vy:(Math.random()-.5)*40,life:.7,max:.7,color:'#ffffff',size:2+Math.random()*2,grav:0});
-        if(e.t<=0){ e.state='overheat'; e.t=2.4; sfx('nope'); toast('It overheated! Zap it or send the Bird',1.3); } }
+        if(e.t<=0){ e.state='overheat'; e.t=2.4; sfx('nope'); toast('It overheated! Freeze it now',1.3); } }
       else if(e.state==='overheat'||e.state==='frozen'){ if(Math.random()<.2) particles.push({x:ecx+(Math.random()-.5)*20,y:e.y,vx:0,vy:-60,life:.8,max:.8,color:'rgba(220,220,230,.7)',size:4,grav:-20}); if(e.t<=0){ e.state='idle'; e.t=1.2; } }
       break;
     case 'squirrel': { // perches on a pillar and throws acorns; knock the pillar to drop him
@@ -3110,7 +3142,7 @@ function updateNem(e,dt){
         e.pillar=free.reduce((a,c)=>Math.abs(c*T-pcx)>Math.abs(a*T-pcx)?c:a,free[0]); e.state='perch'; e.t=1.2; sfx('jump'); }
       break; }
     case 'searchbot': // turns slowly toward Miley; its searchlight zaps whatever it sees
-      if(pinned && e.state!=='blind'){ e.state='blind'; e.t=2.8; sfx('shadow'); toast('Blinded! Hit it with Balls',1.3); }
+      if(pinned && e.state!=='blind'){ e.state='blind'; e.t=2.8; sfx('shadow'); toast('Blinded! Run and dash into it',1.3); }
       if(e.state==='blind'){ if(e.t<=0){ e.state='patrol'; e.t=1; } break; }
       { const want=pcx<ecx?-1:1; if(want!==e.dir){ e.turnT=(e.turnT||0)+dt; if(e.turnT>1.1){ e.dir=want; e.turnT=0; sfx('robot'); } } else e.turnT=0;
         if(!nemAhead(e,e.dir) && Math.abs(pcx-ecx)>2*T) e.x+=e.dir*40*dt;
@@ -3122,7 +3154,7 @@ function updateNem(e,dt){
       if(e.state==='walk'){ e.x+=e.dir*80*dt; if(nemAhead(e,e.dir)) e.dir*=-1; if(e.t<=0){ e.state='growl'; e.t=.7; e.dir=pcx<ecx?-1:1; sfx('robot'); } }
       else if(e.state==='growl'){ e.x+=(Math.random()-.5)*2; if(e.t<=0) e.state='charge'; }
       else if(e.state==='charge'){ e.x+=e.dir*330*dt; if(Math.random()<.5) particles.push({x:e.x+(e.dir>0?0:e.w),y:e.floorY-4,vx:-e.dir*80,vy:-20,life:.4,max:.4,color:'#d9a066',size:3,grav:200});
-        if(nemAhead(e,e.dir)){ e.state='dizzy'; e.t=2.6; shakeT=.4; sfx('thud'); toast('Rex is dizzy! Smash him',1.2); } }
+        if(nemAhead(e,e.dir)){ e.state='dizzy'; e.t=2.6; shakeT=.4; sfx('thud'); toast('Rex is dizzy! Break him',1.2); } }
       else if(e.state==='dizzy'){ if(e.t<=0){ e.state='walk'; e.t=1.6; } }
       break;
   }
@@ -3397,7 +3429,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v53';
+const GAME_VERSION='v54';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
