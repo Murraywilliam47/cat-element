@@ -345,6 +345,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -428,10 +429,10 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
     <div class="btns"><button class="big" id="playBtn">Play</button><button class="big alt" id="continueBtn" hidden>Continue</button></div>
     <details class="meet"><summary>Meet the cats</summary>
     <div class="lineup" id="lineup"></div>
-    <div class="pearl-card meet-info" data-i="0"><b>Pearl has two forms.</b> Freeze turns water into ice to walk on and freezes enemies. It even shorts out generators and shatters iron gates. Cloud lets her ride a cloud and drift over wide gaps.</div>
-    <div class="pearl-card meet-info" data-i="1" style="border-left-color:#b48cff"><b>Miley has two forms.</b> Run sprints at top speed and smashes straight through crystal walls. Shadow brings out hidden shadow steps, pins enemies down and opens shadow locks. She can always walk through shadow walls.</div>
-    <div class="pearl-card meet-info" data-i="2" style="border-left-color:#ff8a3d"><b>Quincy has two forms.</b> Scream is a loud fire scream that burns wooden walls, blasts every enemy around her and knocks stone pillars over. Chirp is a bird sound that confuses enemies. She is also a natural climber.</div>
-    <div class="pearl-card meet-info" data-i="3" style="border-left-color:#ffe066"><b>Lexus has two forms.</b> Meow is so annoying that enemies pop and junk piles rattle apart. Leap is his double jump, and its storm wind blows thorns away.</div>
+    <div class="pearl-card meet-info" data-i="0"><b>Pearl has two forms.</b> Freeze turns ponds into ice to walk on and freezes enemies in place. Cloud lets her ride a cloud over chasms far too wide to jump.</div>
+    <div class="pearl-card meet-info" data-i="1" style="border-left-color:#b48cff"><b>Miley has two forms.</b> Run sprints at top speed, so she can leap the widest rooftop gaps and dash into enemies. Shadow brings out hidden shadow steps, pins enemies down and opens shadow locks. She can always walk through shadow walls.</div>
+    <div class="pearl-card meet-info" data-i="2" style="border-left-color:#ff8a3d"><b>Quincy has two forms.</b> Scream is a loud fire scream that burns wooden walls and blasts every enemy around her. Chirp calls the birds, who build twig bridges from their birdhouses, and confuses enemies.</div>
+    <div class="pearl-card meet-info" data-i="3" style="border-left-color:#ffe066"><b>Lexus has two forms.</b> Meow is so annoying that enemies pop, even the giant dust bunnies. Leap is his double jump, for walls far too tall for any other cat.</div>
     <div class="pearl-card meet-info" data-i="4" style="border-left-color:#a5cf6c"><b>Cookie has two forms.</b> Lion turns him into a big charging lion that can bust through steel walls. Break punches through brick walls and boulders and slams down through concrete floors. He gets tired fast, so watch his stamina bar.</div>
     </details>
   </div>
@@ -558,7 +559,7 @@ const T = 32, H = 14;
 const CATS = [
   { id:'pearl',  name:'Pearl',  el:'Ice · Sky', color:'#8fd3ff', verb:'Freeze', power:'Freeze and cloud', base:'#f5f6fb', eye:'#6aa9ff', tail:'#eceff8', paws:'#f5f6fb', fluffy:true, ruff:'#ffffff' },
   { id:'miley',  name:'Miley',  el:'Shadow', color:'#b48cff', verb:'Dash',   power:'Sprint and shadow steps', base:'#1e1b24', eye:'#bfcc3e', tail:'#1e1b24', paws:'#ffffff', fluffy:true, ruff:'#26222e' },
-  { id:'quincy', name:'Quincy', el:'Fire',   color:'#ff8a3d', verb:'Burn',   power:'Fire scream and chirping',      base:'#fbf6ee', eye:'#f2a72c', tail:'#2c2523', paws:'#fbf6ee' },
+  { id:'quincy', name:'Quincy', el:'Fire',   color:'#ff8a3d', verb:'Burn',   power:'Fire scream and bird chirps',      base:'#fbf6ee', eye:'#f2a72c', tail:'#2c2523', paws:'#fbf6ee' },
   { id:'lexus',  name:'Lexus',  el:'Storm',  color:'#ffe066', verb:'Leap',   power:'Annoying meow and double jump',    base:'#fbfbfb', eye:'#e6a21e', tail:'#80858f', paws:'#fbfbfb' },
   { id:'cookie', name:'Cookie', el:'Earth',  color:'#a5cf6c', verb:'Lion',   power:'Become a lion, break bricks and concrete', base:'#8d6741', eye:'#a9c43c', tail:'#7a5634', paws:'#6e4c2e', fluffy:true, ruff:'#c9a878' },
 ];
@@ -847,7 +848,7 @@ const PARK={ name:'Puzzle Park', park:true, theme:'garden', w:170, start:3, goal
   flood:{pipe:50,x0:51,x1:63,row:12},
   signs:[
     {c:5,text:'Welcome to Puzzle Park! Every puzzle needs TEAMWORK. Tap the CAT button to switch cats.'},
-    {c:23,text:'A waterfall! PEARL can FREEZE it into ice, then QUINCY can climb the ice.'},
+    {c:23,text:'A waterfall! PEARL can FREEZE it into ice. Then any cat can climb the ice: hold toward it.'},
     {c:45,text:'A broken pipe blocks the way. COOKIE can BREAK it... then what will the water do?'},
     {c:65,text:'This gate needs BOTH buttons pressed. Knock both boxes down!'},
     {c:93,text:'JUMP onto the paw tiles in the order shown on the gate. Walking over them does not count.'},
@@ -1391,7 +1392,7 @@ function usePower(){
     case 'pearl': {
       for(let tx=pcx-4;tx<=pcx+4;tx++) for(let ty=pcy-1;ty<=pcy+3;ty++) if(tile(tx,ty)==='~'&&tile(tx,ty-1)!=='~'){ queueFx(tx,ty,Math.abs(tx-pcx)*.05,'freeze'); n++; }
       for(let tx=pcx-4;tx<=pcx+4;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='O'){ queueFx(tx,ty,Math.abs(ty-pcy)*.04,'icefall'); n++; }
-      for(const e of enemiesNear(cx,cy,4.5*T)){ if(e.nem && (e.type==='bath'||e.type==='blower') && (e.state==='frozen'||e.state==='overheat')) nemHit(e,'freeze'); else e.frozen=6; n++; puff(e.x+e.w/2,e.y+e.h/2,'#e9f8ff',10,100,.5,2.5); }
+      for(const e of enemiesNear(cx,cy,4.5*T)){ e.frozen=6; n++; puff(e.x+e.w/2,e.y+e.h/2,'#e9f8ff',10,100,.5,2.5); }
       { let gen=null; for(let tx=pcx-5;tx<=pcx+5&&!gen;tx++) for(let ty=pcy-3;ty<=pcy+3;ty++) if(tile(tx,ty)==='Z'){ gen=[tx,ty]; break; } if(gen){ powerGen(gen[0],gen[1],'freeze'); n++; } }
       { let g=0; for(let tx=pcx-5;tx<=pcx+5;tx++) for(let ty=0;ty<H;ty++) if(tile(tx,ty)==='D'){ queueFx(tx,ty,.25+Math.abs(tx-pcx)*.04+ty*.03,'shatter'); g++; } if(g){ n++; toast('Brrr! The iron gate freezes and shatters',1.4); sfx('gate'); } }
       shots=shots.filter(s=>Math.hypot(s.x-cx,s.y-cy)>4.5*T);
@@ -1476,7 +1477,7 @@ function teleport(){
 }
 function touchV(s){
   const p=player, tx=Math.floor((s>0 ? p.x+p.w+1 : p.x-1)/T);
-  for(let ty=Math.floor(p.y/T);ty<=Math.floor((p.y+p.h-1)/T);ty++) if(tile(tx,ty)==='V'||tile(tx,ty)==='v') return true;
+  for(let ty=Math.floor(p.y/T);ty<=Math.floor((p.y+p.h-1)/T);ty++) if(tile(tx,ty)==='v') return true;
   return false;
 }
 function quincyPower(mode){
@@ -1717,7 +1718,7 @@ function updateFx(dt){
     } else if(e.kind==='twig' && (map[ty][tx]===' '||map[ty][tx]==='^')){
       map[ty][tx]='='; puff(px,py,'#c38a52',6,90,.5,2.5,200); sfx('thud');
     } else if(e.kind==='icefall' && map[ty][tx]==='O'){
-      map[ty][tx]='v'; puff(px,py,'#e9f8ff',8,100,.5,2.5); if(!fx.iceToast){ fx.iceToast=1; toast('The waterfall froze solid! QUINCY can climb ice',1.6); }
+      map[ty][tx]='v'; puff(px,py,'#e9f8ff',8,100,.5,2.5); if(!fx.iceToast){ fx.iceToast=1; toast('The waterfall froze solid! Hold toward the ice to climb it',1.6); }
     } else if(e.kind==='pipe' && map[ty][tx]==='p'){
       map[ty][tx]=' '; puff(px,py,'#8d899a',10,200,.6,3,600); shakeT=.3;
       const F=lvl.flood; if(F && !floodDone){ floodDone=true; for(let x=F.x0;x<=F.x1;x++) for(let y=F.row;y<H;y++) queueFx(x,y,.3+(x-F.x0)*.06,'flood'); toast('Whoosh! Water floods the pit. PEARL can freeze it!',1.8); sfx('splash'); }
@@ -1962,8 +1963,8 @@ const NEEDS={
   box:{any:true,right:"A cardboard box! Walk into it to push it. Knock it off a ledge, or use it as a step."},
   button:{any:true,right:"A big button. Cats are too light to press it, so <b>knock a box onto it</b>. Heavy Cookie can press it too."},
   gate:{any:true,right:"A locked garden gate. Find the big button that opens it."},
-  waterfall:{any:true,right:"A waterfall cliff. <b>Pearl</b> can FREEZE it, then <b>Quincy</b> can CLIMB the ice."},
-  climbice:{any:true,right:"Frozen solid! Switch to <b>Quincy</b> and hold toward the ice to climb it."},
+  waterfall:{any:true,right:"A waterfall cliff. <b>Pearl</b> can FREEZE it, then any cat can climb the ice."},
+  climbice:{any:true,right:"Frozen solid! Hold toward the ice to climb it."},
   pipe:{any:true,right:"A broken pipe. <b>Cookie</b> can BREAK it. Then <b>Pearl</b> can freeze the water."},
   pawlock:{any:true,right:"<b>Jump</b> onto the paw tiles in the order shown above the gate."},
   lamp:{any:true,right:"The lamp listens for <b>Lexus</b>! <b>Meow</b> near it to switch it on, then jump under the mirrors to turn them."},
@@ -2056,7 +2057,7 @@ function update(dt){
     const still = p.shineT>0 || p.rollT>0;
     const acc=p.onGround?(fast?3400:2600):(cloud?1400:1600), target= still ? (p.rollT>0?p.facing*130:0) : dir*spd;
     p.vx += Math.sign(target-p.vx)*Math.min(Math.abs(target-p.vx),acc*dt);
-    const canClimb = cat.id==='quincy';
+    const canClimb = true;
     const climbing = canClimb && dir && touchV(dir);
     const treeClimb = !climbing && !cloud && input.jump && onTrunk() && p.vy>-230;
     if(climbing){
@@ -2155,7 +2156,7 @@ function updateEnemies(dt){
   const p=player;
   for(const e of enemies){
     if(!e.alive) continue;
-    if(e.mop){ e.frozen=0; e.annoyed=0; e.confused=0; e.pinned=0; updateMop(e,dt); continue; }
+    if(e.mop){ const an=e.annoyed>0; e.frozen=0; e.annoyed=0; e.confused=0; e.pinned=0; if(an && e.seen && e.state==='roam'){ e.state='windup'; e.t=.45; e.dir=player.x+player.w/2<e.x+e.w/2?-1:1; toast('Meow meow! The mop is furious and charges!',1.2); } updateMop(e,dt); continue; }
     if(e.nem){ updateNem(e,dt); continue; }
     if(e.drowse){ if(Math.abs((p.x+p.w/2)-((lvl.start||3)*T+16))>1.5*T || (Math.abs((p.x+p.w/2)-(e.x+e.w/2))<2.5*T && Math.abs(p.y-e.y)<3*T)) e.drowse=false; else continue; }
     if(e.frozen>0){ e.frozen-=dt; if(e.frozen<=0) puff(e.x+e.w/2,e.y+e.h/2,'#bfe6ff',8,80,.4,2); continue; }
@@ -3043,32 +3044,32 @@ function eyesAngry(){
 function drawBunny(e){ const done=fuzzBall(e,'#a79fb8','#4a4260'); eyesAngry(); ctx.fillStyle='#4a4260'; ctx.fillRect(-6,-1.5,4,2); ctx.fillRect(3,-1.5,4,2); done(); }
 /* ================= each cat's nemesis (end of their Cat Trial) ================= */
 const NEM={
-  bath:{name:'The Giant Bell', cat:'pearl', w:46,h:50, start:'idle', how:'Jump over the DONG waves! Freeze the Bell so it can\'t ring, then Freeze it again to crack it!'},
+  bath:{name:'The Giant Bell', cat:'pearl', w:46,h:50, start:'idle', how:'Jump over the DONG waves! Freeze the Bell so it can\'t ring, then ride your Cloud over it and drop on top!'},
   laser:{name:'The Laser Drone', cat:'miley', w:36,h:24, start:'fly', how:'Use Shadow to blind the Laser Drone, then Run and dash into it!'},
   spritz:{name:'The Spray Bottle', cat:'quincy', w:30,h:48, start:'walk', how:'Chirp to confuse the Spray Bottle, then Scream at it!'},
   cucumber:{name:'The Sneaky Cucumber', cat:'lexus', w:26,h:52, start:'hide', how:'Meow when the Cucumber pops up, then Leap on it!'},
   robodog:{name:'Rex the Robo-Dog', cat:'cookie', w:46,h:34, start:'walk', how:'Charge Rex as a Lion, or Break him when he is dizzy!'},
   gnome:{name:'The Gnome King', cat:'cookie', w:30,h:42, start:'shield', how:'Break the Gnome King\'s stone shield, then hit him with Break or Lion!'},
-  blower:{name:'The Snow Blower', cat:'pearl', w:46,h:38, start:'idle', how:'Wait until it overheats (or Freeze it), then Freeze it again!'},
-  squirrel:{name:'Nutty the Squirrel', cat:'quincy', w:26,h:28, start:'perch', how:'Scream at Nutty\'s pillar to knock it down, then Scream at him while he\'s dizzy!'},
-  searchbot:{name:'The Searchlight Bot', cat:'miley', w:36,h:46, start:'patrol', how:'Its back is its weak spot! Get behind it, then Run and dash into it.'},
+  blower:{name:'The Snow Blower', cat:'pearl', w:46,h:38, start:'idle', how:'Freeze the Snow Blower (or wait until it overheats), then ride your Cloud over it and drop on top!'},
+  squirrel:{name:'Nutty the Squirrel', cat:'quincy', w:26,h:28, start:'perch', how:'Chirp so Nutty looks for the bird and tumbles off his pillar, then Scream at him while he\'s dizzy!'},
+  searchbot:{name:'The Searchlight Bot', cat:'miley', w:36,h:46, start:'patrol', how:'Blind it with Shadow or get behind it, then Run and dash into it!'},
 };
 function nemSrc(){ const p=player; return p.stormT>0?'storm':p.lion?'lion':p.dashT>0?'dash':modes[cat.id]; }
 function nemVulnerable(e,src){
   switch(e.type){
-    case 'bath': return e.state==='frozen' && (src==='freeze'||src==='stomp');
+    case 'bath': return e.state==='frozen' && src==='stomp';
     case 'laser': return e.state==='blind' && (src==='dash'||src==='run'||src==='stomp');
     case 'spritz': return e.state==='confused' && (src==='scream'||src==='knock');
     case 'cucumber': return e.state==='dizzy' && (src==='leap'||src==='stomp');
     case 'robodog': return (e.state==='dizzy' && (src==='break'||src==='lion'||src==='stomp')) || (e.state==='charge' && src==='lion');
     case 'gnome': return e.state==='exposed' && (src==='break'||src==='lion'||src==='stomp');
-    case 'blower': return (e.state==='overheat'||e.state==='frozen') && (src==='freeze'||src==='stomp');
+    case 'blower': return (e.state==='overheat'||e.state==='frozen') && src==='stomp';
     case 'squirrel': return e.state==='dizzy' && (src==='scream'||src==='stomp');
     case 'searchbot': { const behind=Math.sign(player.x+player.w/2-(e.x+e.w/2))!==e.dir; return (behind||e.state==='blind') && (src==='dash'||src==='stomp'||src==='run'); }
   } return false;
 }
 const NEM_VOICE={bath:'bell',laser:'robot',spritz:'hiss',cucumber:'growl',robodog:'bark',gnome:'growl',blower:'motor',squirrel:'chitter',searchbot:'robot'};
-const NEM_NOPE={bath:'DONNNG! Freeze the bell first',laser:'Too quick! Blind it with Shadow first',spritz:'Pssht! Confuse it with Chirp first',cucumber:'It ducked! Meow at it first',robodog:'Clang! Wait until Rex is dizzy, or charge as a Lion',gnome:'His stone shield is up! Break it first',blower:'Too hot to touch! Wait until it overheats',squirrel:'Nutty is up on his pillar! Scream to knock it down first',searchbot:'It sees you coming! Hit its back'};
+const NEM_NOPE={bath:'DONNNG! Freeze the bell first, then drop on top',laser:'Too quick! Blind it with Shadow first',spritz:'Pssht! Confuse it with Chirp first',cucumber:'It ducked! Meow at it first',robodog:'Clang! Wait until Rex is dizzy, or charge as a Lion',gnome:'His stone shield is up! Break it first',blower:'Brrr! Freeze it first, then drop on top',squirrel:'Nutty is up on his pillar! Chirp to bring him down first',searchbot:'It sees you coming! Hit its back'};
 function nemHit(e,src){
   src=src||nemSrc();
   if(e.state==='hurt'||e.state==='hide') return;
@@ -3097,7 +3098,7 @@ function updateNem(e,dt){
   if(e.state==='hurt'){ if(e.t<=0){ e.state=n.start==='hide'?'hide':e.type==='laser'?'fly':e.type==='bath'||e.type==='blower'?'idle':e.type==='gnome'?'shield':e.type==='squirrel'?'hop':e.type==='searchbot'?'patrol':'walk'; e.t=1.2; if(e.type==='gnome') puff(e.x+e.w/2,e.y+e.h/2,'#8d899a',14,120,.5,3); } }
   else switch(e.type){
     case 'bath': // hops toward Pearl and splashes soapy water
-      if(frozen && e.state!=='frozen'){ e.state='frozen'; e.t=3.2; sfx('pearl'); toast('Frozen! The bell can\'t ring. Freeze it again to crack it',1.5); }
+      if(frozen && e.state!=='frozen'){ e.state='frozen'; e.t=3.2; sfx('pearl'); toast('Frozen! The bell can\'t ring. Cloud over it and drop on top!',1.6); }
       if(e.state==='frozen'){ if(e.t<=0){ e.state='idle'; e.t=1; puff(ecx,e.y+10,'#e9f8ff',14,140,.5,3); } break; }
       if(e.state==='idle'&&e.t<=0){ e.state='hop'; e.t=.55; e.dir=pcx<ecx?-1:1; }
       else if(e.state==='hop'){ if(!nemAhead(e,e.dir)) e.x+=e.dir*150*dt; e.hop=Math.sin((1-e.t/.55)*Math.PI)*28; if(e.t<=0){ e.hop=0; e.state='spray'; e.t=.9; shakeT=Math.max(shakeT,.25); sfx('bell'); vibrate(40);
@@ -3129,17 +3130,18 @@ function updateNem(e,dt){
       else if(e.state==='exposed'){ if(e.t<=0){ e.state='shield'; e.t=1; puff(ecx,e.y+e.h/2,'#8d899a',14,120,.5,3); toast('The shield grew back!',.9); } }
       break;
     case 'blower': // blasts freezing wind, then overheats
-      if(frozen && (e.state==='blast'||e.state==='idle')){ e.state='frozen'; e.t=3; sfx('pearl'); toast('Frozen! Freeze it again',1.4); }
+      if(frozen && (e.state==='blast'||e.state==='idle')){ e.state='frozen'; e.t=3; sfx('pearl'); toast('Frozen! Cloud over it and drop on top!',1.5); }
       if(e.state==='idle'){ e.dir=pcx<ecx?-1:1; if(e.t<=0){ e.state='blast'; e.t=2.6; sfx('cloud'); } }
       else if(e.state==='blast'){ const d=pcx-ecx; if(Math.sign(d)===e.dir && Math.abs(d)<9*T && Math.abs(p.y+p.h-e.floorY)<2*T) windPush=e.dir*190;
         if(Math.random()<.7) particles.push({x:ecx+e.dir*22,y:e.y+10+Math.random()*16,vx:e.dir*(260+Math.random()*120),vy:(Math.random()-.5)*40,life:.7,max:.7,color:'#ffffff',size:2+Math.random()*2,grav:0});
-        if(e.t<=0){ e.state='overheat'; e.t=2.4; sfx('nope'); toast('It overheated! Freeze it now',1.3); } }
+        if(e.t<=0){ e.state='overheat'; e.t=2.4; sfx('nope'); toast('It overheated! Cloud over it and drop on top!',1.4); } }
       else if(e.state==='overheat'||e.state==='frozen'){ if(Math.random()<.2) particles.push({x:ecx+(Math.random()-.5)*20,y:e.y,vx:0,vy:-60,life:.8,max:.8,color:'rgba(220,220,230,.7)',size:4,grav:-20}); if(e.t<=0){ e.state='idle'; e.t=1.2; } }
       break;
     case 'squirrel': { // perches on a pillar and throws acorns; knock the pillar to drop him
       const pils=(lvl.squirrelPillars||[]), standing=c=>tile(c,Math.floor(e.floorY/T)-1)==='T';
       if(e.state==='perch'){ const c=e.pillar; let top=0; if(c!=null) while(top<H&&tile(c,top)!=='T') top++;
-        if(c==null||!standing(c)||top>=H){ e.state='fall'; e.vy=0; } else { e.x=c*T+16-e.w/2; e.y=top*T-e.h; e.dir=pcx<ecx?-1:1;
+        if(confused){ e.state='fall'; e.vy=0; toast('Chirp! Nutty looks for the bird and tumbles down',1.4); }
+        else if(c==null||!standing(c)||top>=H){ e.state='fall'; e.vy=0; } else { e.x=c*T+16-e.w/2; e.y=top*T-e.h; e.dir=pcx<ecx?-1:1;
           if(e.t<=0){ e.t=1.4; const dx=pcx-ecx, tt=.75; shots.push({x:ecx,y:e.y+8,vx:dx/tt,vy:-(.5*900*tt)+((p.y+p.h/2)-(e.y+8))/tt,grav:900,life:2,kind:'acorn'}); sfx('chirp'); } } }
       else if(e.state==='fall'){ e.vy=(e.vy||0)+1600*dt; e.y+=e.vy*dt; const col=Math.floor(ecx/T); let land=e.floorY; for(let y=Math.max(0,Math.floor((e.y+e.h-e.vy*dt)/T));y<H;y++){ const tt=tile(col,y); if(SOLID.includes(tt)&&tt!=='T'){ land=y*T; break; } }
         if(e.y+e.h>=land){ e.y=land-e.h; e.state='dizzy'; e.t=3.2; sfx('thud'); toast('Nutty fell! Scream at him now!',1.3); } }
@@ -3262,7 +3264,7 @@ function drawNem(e){
   if(e.seen && st!=='hide') for(let k=0;k<e.max;k++){ ctx.fillStyle=k<e.hp?CAT_BY[n.cat].color:'#3a3058'; ctx.beginPath(); ctx.arc(cx-10+k*10,e.y-18-(e.hop||0),3.5,0,7); ctx.fill(); ctx.strokeStyle='#17122b'; ctx.lineWidth=1; ctx.stroke(); }
 }
 function hitMop(e){
-  if(e.state!=='dizzy'){ if(time-(e.clangT||0)>.6){ e.clangT=time; sfx('clang'); toast('Clang! Wait until the mop is dizzy',1); } return; }
+  if(e.state!=='dizzy'){ if(time-(e.clangT||0)>.6){ e.clangT=time; sfx('clang'); toast('Clang! Meow so it charges into a wall, then Leap on it',1.3); } return; }
   e.hp--; e.state='hurt'; e.t=.7; shakeT=.35; hitStop=.09; sfx('crash'); puff(e.x+e.w/2,e.y+10,'#8fd0ff',18,200,.6,3,300); vibrate(60);
   if(e.hp<=0){ e.alive=false; puff(e.x+e.w/2,e.y+e.h/2,'#cfd6e0',40,260,.9,4,300); puff(e.x+e.w/2,e.y+e.h/2,'#8fd0ff',30,220,.8,3,200); sfx('boom'); shakeT=.6;
     toast('The Robot Mop is broken! The cushion is free',2); }
@@ -3270,7 +3272,7 @@ function hitMop(e){
 }
 function updateMop(e,dt){
   const p=player, pcx=p.x+p.w/2, ecx=e.x+e.w/2;
-  if(!e.seen && Math.abs(pcx-ecx)<9*T && Math.abs(p.y-e.y)<5*T){ e.seen=true; showLevelTitle('Mini boss','The Robot Mop'); sfx('robot'); }
+  if(!e.seen && Math.abs(pcx-ecx)<9*T && Math.abs(p.y-e.y)<5*T){ e.seen=true; showLevelTitle('Mini boss','The Robot Mop'); setTimeout(()=>{ if(e.alive) toast('Meow to make it charge into a wall, then Leap on it while it\'s dizzy!',3); },1400); sfx('robot'); }
   if(!e.seen) return;
   if(e.voiceT!=null){ e.voiceT-=dt; if(e.voiceT<=0){ e.voiceT=6+Math.random()*4; if(e.state!=='hurt') sfx(NEM_VOICE[e.type]||'growl'); } }
   e.ph+=dt; e.t-=dt;
@@ -3278,7 +3280,7 @@ function updateMop(e,dt){
   if(e.state==='roam'){ e.vx=e.dir*70; if(ahead(e.dir)) e.dir*=-1; e.x+=e.vx*dt; if(e.t<=0){ e.state='windup'; e.t=.75; e.dir=pcx<ecx?-1:1; sfx('robot'); } }
   else if(e.state==='windup'){ e.x+=(Math.random()-.5)*2; if(e.t<=0){ e.state='charge'; } }
   else if(e.state==='charge'){ e.vx=e.dir*340; e.x+=e.vx*dt; if(Math.random()<.5) particles.push({x:e.x+(e.dir>0?0:e.w),y:e.y+e.h-4,vx:-e.dir*80,vy:-20,life:.4,max:.4,color:'#8fd0ff',size:3,grav:200});
-    if(ahead(e.dir)){ e.state='dizzy'; e.t=2.4; shakeT=.4; sfx('thud'); puff(e.dir>0?e.x+e.w:e.x,e.y+e.h/2,'#cfd6e0',14,160,.5,3); toast('It crashed into the wall. Hit it now!',1.2); } }
+    if(ahead(e.dir)){ e.state='dizzy'; e.t=2.4; shakeT=.4; sfx('thud'); puff(e.dir>0?e.x+e.w:e.x,e.y+e.h/2,'#cfd6e0',14,160,.5,3); toast('It crashed into the wall. Leap on it now!',1.2); } }
   else if(e.state==='dizzy'){ if(e.t<=0){ e.state='roam'; e.t=1.6+Math.random(); } }
   else if(e.state==='hurt'){ if(e.t<=0){ e.state='roam'; e.t=1.2; e.dir=pcx<ecx?-1:1; } }
   // touching it
@@ -3436,7 +3438,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v56';
+const GAME_VERSION='v57';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
