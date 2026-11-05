@@ -346,6 +346,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 
 
 
+
 <script>try{ if(navigator.maxTouchPoints>0||'ontouchstart' in window) document.documentElement.classList.add('touchdev'); }catch(e){}</script>
 <script>
 /* Stop the page zooming on phones (iPhone Safari ignores "no zoom" settings, and two thumbs on the controls can read as a pinch). */
@@ -762,7 +763,7 @@ const LEVELS=[
       f(77,77,4,11,'e'); f(74,80,3,3,'&'); f(143,146,9,11,'#'); p(146,8,'C'); f(151,152,0,11,'M'); },
     nests:[{c:80,from:83,to:90,row:12},{c:113,from:116,to:122,row:7},{c:156,from:159,to:170,row:11}], vases:[[79,2],[181,2]], buttons:[{c:147,row:11,gate:[151,152]}], squirrelPillars:[188,193],
     enemies:[['bunny',7],['moth',22,6,2],['spray',47,-1],['moth',55,6,3],['spiky',67],['bunny',73],['moth',105,4,2],['bunny',107],['spiky',135],['bunny',141],['moth',145,8,3],['spray',150,-1],['moth',165,10,2],['bunny',174],['squirrel',188,12,184]] },
-  { name:'Moonlit Rooftops', bossCP:[[94,10]], cat:'miley', mission:{type:'kitten',x:5,y:3}, photo:{x:125,y:2}, suns:[60],  theme:'roof', w:160, start:3, goal:[155,8], speed:1.3,
+  { name:'Moonlit Rooftops', bossCP:[[94,10]], cat:'miley', mission:{type:'kitten',x:5,y:3}, photo:{x:125,y:2}, suns:[52],  theme:'roof', w:160, start:3, goal:[155,8], speed:1.3,
     build:(f,g,p)=>{ f(0,0,0,13,'#'); g(1,10,11); g(14,26,11); f(20,21,0,10,'S'); g(30,42,10); f(36,36,0,9,'J'); g(50,70,11); p(57,10,'K'); f(55,55,0,10,'J'); f(60,65,11,13,' ');
       f(71,81,12,13,'#'); f(71,81,11,11,'^'); f(73,74,8,8,'H'); f(77,78,8,8,'H');
       g(82,96,11); f(86,86,10,10,'^'); f(89,89,0,10,'J'); f(94,95,0,10,'S');
@@ -3438,7 +3439,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v57';
+const GAME_VERSION='v58';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
