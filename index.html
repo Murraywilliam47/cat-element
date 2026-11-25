@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Cat Elements</title>
-<meta name="description" content="Five cats, five elemental powers. A platformer adventure starring Pearl, Miley, Quincy, Lexus and Cookie.">
+<meta name="description" content="Five cats, five elements. A platformer adventure starring Pearl, Miley, Quincy, Lexus and Cookie.">
 <meta name="theme-color" content="#231b3d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -426,7 +426,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
   <canvas id="titleArt" aria-hidden="true"></canvas>
   <div class="card">
     <h1>Cat <span>Elements</span></h1>
-    <p>Five cats, five elemental powers. Cross the world, survive the spikes and the dust bunnies, and take down the Vacuum King.</p>
+    <p>Five cats, five elements. Cross the world, survive the spikes and the dust bunnies, and take down the Vacuum King.</p>
     <div class="btns"><button class="big" id="playBtn">Play</button><button class="big alt" id="continueBtn" hidden>Continue</button></div>
     <details class="meet"><summary>Meet the cats</summary>
     <div class="lineup" id="lineup"></div>
@@ -558,7 +558,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 (() => {
 const T = 32, H = 14;
 const CATS = [
-  { id:'pearl',  name:'Pearl',  el:'Ice · Sky', color:'#8fd3ff', verb:'Freeze', power:'Freeze and cloud', base:'#f5f6fb', eye:'#6aa9ff', tail:'#eceff8', paws:'#f5f6fb', fluffy:true, ruff:'#ffffff' },
+  { id:'pearl',  name:'Pearl',  el:'Ice', color:'#8fd3ff', verb:'Freeze', power:'Freeze and cloud', base:'#f5f6fb', eye:'#6aa9ff', tail:'#eceff8', paws:'#f5f6fb', fluffy:true, ruff:'#ffffff' },
   { id:'miley',  name:'Miley',  el:'Shadow', color:'#b48cff', verb:'Dash',   power:'Sprint and shadow steps', base:'#1e1b24', eye:'#bfcc3e', tail:'#1e1b24', paws:'#ffffff', fluffy:true, ruff:'#26222e' },
   { id:'quincy', name:'Quincy', el:'Fire',   color:'#ff8a3d', verb:'Burn',   power:'Fire scream and bird chirps',      base:'#fbf6ee', eye:'#f2a72c', tail:'#2c2523', paws:'#fbf6ee' },
   { id:'lexus',  name:'Lexus',  el:'Storm',  color:'#ffe066', verb:'Leap',   power:'Annoying meow and double jump',    base:'#fbfbfb', eye:'#e6a21e', tail:'#80858f', paws:'#fbfbfb' },
@@ -3439,7 +3439,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v59';
+const GAME_VERSION='v60';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
