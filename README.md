@@ -1,4 +1,4 @@
-# Cat Element — mobile app
+# Cat Elements — mobile app
 
 Pearl, Miley, Quincy, Lexus and Cookie, ready to install on a phone.
 
@@ -34,7 +34,7 @@ like a normal app with its own icon. It opens full screen and works offline.
   (or **Add to Home screen**).
 - **iPhone (Safari):** open the link → tap the **Share** button → **Add to Home Screen**.
 
-Tap the **Cat Element** icon on your home screen to play. After the first launch it
+Tap the **Cat Elements** icon on your home screen to play. After the first launch it
 works without internet.
 
 > Sound tip: turn the volume up. On iPhone, switch off silent mode.
@@ -100,7 +100,7 @@ When the game changes, replace `www/index.html` with the new version, then:
 
 | Setting      | Value                 |
 |--------------|-----------------------|
-| App name     | Cat Element           |
+| App name     | Cat Elements           |
 | App ID       | com.catelement.game   |
 | Orientation  | Portrait or landscape |
 | Theme colour | #231b3d               |

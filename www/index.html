@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Cat Element</title>
+<title>Cat Elements</title>
 <meta name="description" content="Five cats, five elemental powers. A platformer adventure starring Pearl, Miley, Quincy, Lexus and Cookie.">
 <meta name="theme-color" content="#231b3d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cat Element">
+<meta name="apple-mobile-web-app-title" content="Cat Elements">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -425,7 +425,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 <div class="overlay" id="titleScreen">
   <canvas id="titleArt" aria-hidden="true"></canvas>
   <div class="card">
-    <h1>Cat <span>Element</span></h1>
+    <h1>Cat <span>Elements</span></h1>
     <p>Five cats, five elemental powers. Cross the world, survive the spikes and the dust bunnies, and take down the Vacuum King.</p>
     <div class="btns"><button class="big" id="playBtn">Play</button><button class="big alt" id="continueBtn" hidden>Continue</button></div>
     <details class="meet"><summary>Meet the cats</summary>
@@ -476,7 +476,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 <div class="overlay" id="realScreen" hidden>
   <div class="card">
     <h2>The <span>real</span> cats</h2>
-    <p>Cat Element stars five real cats. Here they are.</p>
+    <p>Cat Elements stars five real cats. Here they are.</p>
     <div class="realgrid" id="realGrid"></div>
     <button class="big" id="realBack">Back</button>
   </div>
@@ -505,7 +505,7 @@ header{padding-top:calc(8px + env(safe-area-inset-top,0px))}
 <div class="overlay" id="feedbackScreen" hidden>
   <div class="card">
     <h2>Send <span>feedback</span></h2>
-    <p>How was it? Your notes help make Cat Element better.</p>
+    <p>How was it? Your notes help make Cat Elements better.</p>
     <div class="stars" id="fbStars" role="group" aria-label="Your rating"></div>
     <div class="chips" id="fbTags" role="group" aria-label="Quick tags"></div>
     <label for="fbText" class="setnote" style="align-self:center">Tell us more (optional)</label>
@@ -3439,7 +3439,7 @@ function show(id){
 let lastShown=null;
 function iris(){ if(reduceMotion) return; const el=document.getElementById('iris'); if(!el) return; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 /* ---------- feedback ---------- */
-const GAME_VERSION='v58';
+const GAME_VERSION='v59';
 let fbFrom=null, fbRating=0; const fbTagsOn=new Set();
 const FB_TAGS=['Loved it','Too hard','Too easy','Confusing','Found a bug','I have an idea'];
 const fbStarsEl=document.getElementById('fbStars'), fbTagsEl=document.getElementById('fbTags');
@@ -3455,7 +3455,7 @@ function openFeedback(from){
 function feedbackText(){
   const where = lvl ? (lvlIdx==='tut'?'Cat School':lvlIdx==='park'?'Puzzle Park':`Level ${levelCode(lvlIdx)} (${lvl.name})`) : 'Menu';
   const ua=navigator.userAgent, dev=/iPhone|iPad/.test(ua)?'iPhone/iPad':/Android/.test(ua)?'Android':/Mac/.test(ua)?'Mac':/Windows/.test(ua)?'Windows':'Other';
-  return `Cat Element feedback\nRating: ${fbRating?'★'.repeat(fbRating)+'☆'.repeat(5-fbRating)+` (${fbRating}/5)`:'not given'}\nTags: ${[...fbTagsOn].join(', ')||'none'}\nNotes: ${document.getElementById('fbText').value.trim()||'(none)'}\n---\nWhere: ${where} · Cat: ${cat.name} · Difficulty: ${settings.diff}\nDevice: ${dev}, ${innerWidth}x${innerHeight} · Game ${GAME_VERSION}`;
+  return `Cat Elements feedback\nRating: ${fbRating?'★'.repeat(fbRating)+'☆'.repeat(5-fbRating)+` (${fbRating}/5)`:'not given'}\nTags: ${[...fbTagsOn].join(', ')||'none'}\nNotes: ${document.getElementById('fbText').value.trim()||'(none)'}\n---\nWhere: ${where} · Cat: ${cat.name} · Difficulty: ${settings.diff}\nDevice: ${dev}, ${innerWidth}x${innerHeight} · Game ${GAME_VERSION}`;
 }
 function closeFeedback(){
   if(fbFrom==='pause'){ for(const s of screens) s.hidden = s.id!=='pauseScreen'; }
@@ -3465,7 +3465,7 @@ function closeFeedback(){
 document.getElementById('fbClose').addEventListener('click',closeFeedback);
 document.getElementById('fbShare').addEventListener('click',async()=>{
   const st=document.getElementById('fbStatus');
-  try{ await navigator.share({title:'Cat Element feedback',text:feedbackText()}); st.textContent='Thanks! Your feedback is on its way.'; }
+  try{ await navigator.share({title:'Cat Elements feedback',text:feedbackText()}); st.textContent='Thanks! Your feedback is on its way.'; }
   catch(e){ if(e&&e.name==='AbortError') return; st.textContent='Sharing is not available here. Tap Copy instead and paste it into a message.'; }
 });
 document.getElementById('fbCopy').addEventListener('click',()=>{
